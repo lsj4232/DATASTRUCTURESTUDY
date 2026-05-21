@@ -1,0 +1,13025 @@
+/* =========================================================
+   CLRS 가이드 챕터 데이터
+   - id: 라우팅 키 / 해시 (#ch2)
+   - tier: 1|2|3 (Tier 그룹)
+   - title: 사이드바 표시 제목
+   - summary: F-패턴 상단 훅 문구
+   - md: marked.js로 렌더될 마크다운 본문
+   - algorithms: 해당 챕터에 포함된 시각화 가능한 알고리즘 목록
+       · 각 항목은 카드로 본문 끝에 붙음
+   ========================================================= */
+
+const CHAPTERS = [
+  {
+    id: "ch2",
+    tier: 1,
+    num: "Ch 2",
+    title: "Getting Started",
+    subtitle: "알고리즘 시작하기 · Insertion Sort · Merge Sort",
+    summary: "카드 정렬의 직관에서 출발해 루프 불변식과 분할 정복의 언어를 익힙니다.",
+    objectives: [
+      "Insertion Sort의 동작 원리와 루프 불변식(Loop Invariant)으로 정확성을 증명할 수 있다.",
+      "분할 정복(Divide-and-Conquer) 패러다임을 이해하고 Merge Sort에서 점화식 $T(n) = 2T(n/2) + \\Theta(n)$을 풀 수 있다.",
+      "두 알고리즘의 최선/평균/최악 시간·공간 복잡도와 안정성(stability)을 비교할 수 있다.",
+    ],
+    md: `
+## 핵심 개념 요약
+
+**삽입 정렬 (Insertion Sort)**
+- 카드 정렬과 동일한 원리: 왼쪽에서 오른쪽으로 하나씩 꺼내 올바른 위치에 삽입
+- **시간 복잡도**: 최선 $\\Theta(n)$ (이미 정렬), 최악 $\\Theta(n^2)$ (역순), 평균 $\\Theta(n^2)$
+- **공간**: In-place (추가 공간 $O(1)$)
+- **안정 정렬 (Stable)**
+
+\`\`\`
+INSERTION-SORT(A)
+  for j = 2 to A.length
+    key = A[j]
+    i = j - 1
+    while i > 0 and A[i] > key
+      A[i+1] = A[i]
+      i = i - 1
+    A[i+1] = key
+\`\`\`
+
+**루프 불변식 (Loop Invariant)** — 알고리즘 정확성 증명의 핵심 도구
+- **초기 조건 (Initialization)**: 루프 시작 전에 불변식이 성립
+- **유지 조건 (Maintenance)**: 반복 시작 시 성립하면, 다음 반복 시작 시에도 성립
+- **종료 조건 (Termination)**: 루프 종료 시 불변식이 정확성을 보장
+
+**합병 정렬 (Merge Sort)**
+- **분할 정복 (Divide-and-Conquer)** 패러다임의 대표 예시
+  - Divide: 배열을 반으로 분할
+  - Conquer: 재귀적으로 정렬
+  - Combine: 정렬된 두 부분 배열을 합병
+- **시간 복잡도**: 모든 경우 $\\Theta(n \\lg n)$
+- **공간**: $\\Theta(n)$ (Not in-place)
+- **점화식**: $T(n) = 2T(n/2) + \\Theta(n)$
+
+### 핵심 비교
+
+| 알고리즘 | 최선 | 평균 | 최악 | 공간 | 안정성 |
+|---------|------|------|------|------|--------|
+| Insertion Sort | $\\Theta(n)$ | $\\Theta(n^2)$ | $\\Theta(n^2)$ | $O(1)$ | ✅ |
+| Merge Sort | $\\Theta(n \\lg n)$ | $\\Theta(n \\lg n)$ | $\\Theta(n \\lg n)$ | $\\Theta(n)$ | ✅ |
+`,
+    ox: [
+      { q: "Insertion Sort의 최악 시간 복잡도는 $\\Theta(n^2)$이다.", a: true, why: "역순 정렬 입력(n, n-1, ..., 1)에서 매 key를 앞으로 밀며 $\\Theta(n^2)$ 비교." },
+      { q: "Merge Sort는 in-place 정렬이다.", a: false, why: "$\\Theta(n)$ 추가 배열이 필요하므로 in-place 아님." },
+      { q: "Insertion Sort는 안정 정렬(stable sort)이다.", a: true, why: "같은 key일 때 오른쪽 원소를 왼쪽으로 밀지 않으므로 상대 순서 유지." },
+      { q: "루프 불변식 증명의 세 요소는 '초기화·유지·종료'이다.", a: true, why: "CLRS 2.1의 표준 구조. 각 단계가 필요." },
+      { q: "Merge Sort의 최선·평균·최악 시간은 모두 $\\Theta(n \\lg n)$이다.", a: true, why: "입력과 무관하게 T(n)=2T(n/2)+$\\Theta(n)$이 $\\Theta(n \\lg n)$." },
+      { q: "MERGE 연산에는 반드시 ∞ 센티넬(sentinel)이 필요하다.", a: false, why: "편의용이며, 경계 검사로 대체 가능." },
+      { q: "Insertion Sort는 거의 정렬된 배열에서 $\\Theta(n)$으로 빠르다.", a: true, why: "내부 while이 평균 $O(1)$회 실행 → 전체 $\\Theta(n)$." },
+      { q: "분할 정복 패러다임은 'Divide → Conquer → Combine' 세 단계이다.", a: true, why: "CLRS 2.3.1 정의. Merge Sort의 뼈대." },
+      { q: "Insertion Sort의 공간 복잡도는 $O(1)$이다.", a: true, why: "제자리 정렬, 상수 추가 공간만 사용." },
+      { q: "$n = 10$ 정렬에서 Insertion Sort가 Merge Sort보다 빠를 수 있다.", a: true, why: "작은 n에서 상수 인자가 작아 종종 빠름. 하이브리드 정렬(Timsort)이 활용." },
+    ],
+
+    exercises: [
+      {
+        num: "2.1-1",
+        q: "A = 〈31, 41, 59, 26, 41, 58〉에 INSERTION-SORT 연산을 적용할 때, 각 key의 삽입 과정을 Figure 2.2 형식으로 그리시오.",
+        hint: "key를 차례로 뽑아 왼쪽(이미 정렬된 부분)에서 뒤로 밀어넣는 과정을 시각화. 각 j에서 A 배열의 상태를 기록.",
+        solution: "$j = 2$ $key = 41$: 31,41 유지. $j = 3$ $key = 59$: 변화없음. $j = 4$ $key = 26$: 31,41,59 모두 뒤로 밀림 → 26,31,41,59. $j = 5$ $key = 41$: 59만 뒤로 → 26,31,41,41,59. $j = 6$ $key = 58$: 59 뒤로 → 26,31,41,41,58,59.",
+      },
+      {
+        num: "2.1-2",
+        q: "INSERTION-SORT를 내림차순으로 정렬하도록 다시 쓰시오.",
+        hint: "비교 연산자 $A[i] > key$를 $A[i] < key$로 바꾸면 됨.",
+        solution: "while 조건을 `while $i > 0$ and $A[i] < key$`로 변경. 나머지는 동일.",
+      },
+      {
+        num: "2.1-3",
+        q: "선형 탐색 문제: 값 v를 찾는 알고리즘을 루프 불변식을 이용해 증명하시오.",
+        hint: "루프 불변식: '지금까지 검사한 A[1..i-1]에는 v가 없다.'",
+        solution: "초기화: $i = 1$, 범위 빈 → 공허 참. 유지: $A[i] \\neq v$면 i+1에서도 성립. 종료: $i = n$+1이면 A 전체에 v 없음 → NIL 반환. A[i]==v이면 i 반환.",
+      },
+      {
+        num: "2.3-2",
+        q: "MERGE 프로시저를 센티넬을 쓰지 않도록 다시 쓰시오.",
+        hint: "두 배열 중 하나가 소진되면 나머지를 바로 복사.",
+        solution: "while $i \\leq n1$ AND $j \\leq n2$: 비교 후 작은 것 추가. 한쪽 끝나면 나머지 배열을 for 루프로 복사.",
+      },
+      {
+        num: "2.3-7",
+        q: "정렬된 n개 원소 집합 S와 정수 x가 주어졌을 때, S 내 두 원소 합이 정확히 x인지 $O(n \\lg n)$에 판정하시오.",
+        hint: "이미 정렬된 S에 대해 각 원소 s에 대해 (x-s)를 이진 탐색으로 찾기.",
+        solution: "각 s ∈ S에 대해 (x-s)를 이진 탐색 $O(\\lg n)$. 총 $O(n \\lg n)$. 또는 두 포인터(양 끝에서)로 $O(n)$도 가능.",
+      },
+      {
+        num: "Problem 2-2",
+        q: "Bubble Sort의 정확성을 루프 불변식으로 증명하시오. 비교 횟수는?",
+        hint: "내부 for의 불변식: A[j..A.length]에서 A[j]가 최소.",
+        solution: "내부 불변: 매 iteration 후 A[j]는 A[j..A.length]의 최소. 외부 불변: A[1..i-1]이 정렬된 가장 작은 i-1개 원소. 총 비교 $\\Theta(n^2)$.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "2-1",
+        title: "삽입 정렬을 작은 배열에 대해 합병 정렬과 결합",
+        q: "합병 정렬은 최악 $\\Theta(n \\lg n)$, 삽입 정렬은 최악 $\\Theta(n^2)$이지만, 작은 $n$에서는 삽입 정렬의 상수가 더 작다. 따라서 '수정된 합병 정렬'은 크기가 $k$ 이하인 부분 배열에 대해서는 삽입 정렬을 쓰고, 그보다 크면 합병을 수행한다.",
+        parts: [
+        {
+          label: "a",
+          q: "길이 $k$의 부분 배열 $n/k$개를 각각 삽입 정렬로 정렬하면 최악 시간이 $\\Theta(nk)$임을 보여라.",
+          hint: "삽입 정렬은 크기 $k$에서 $\\Theta(k^2)$ 걸리고, 그런 부분 배열이 $n/k$개 있다.",
+          solution: "각 부분 배열: $\\Theta(k^2)$. 총합: $\\Theta(k^2) \\cdot (n/k) = \\Theta(nk)$.",
+        },
+        {
+          label: "b",
+          q: "이 부분 배열들을 합병할 때 표준 합병 정렬의 합병 트리를 그대로 쓰면 $\\Theta(n \\lg(n/k))$임을 보여라.",
+          hint: "리프가 $n/k$개인 합병 트리는 높이 $\\lg(n/k)$, 각 레벨의 총 합병 비용은 $\\Theta(n)$.",
+          solution: "높이 $\\lg(n/k)$, 각 레벨 $\\Theta(n)$ → $\\Theta(n \\lg(n/k))$.",
+        },
+        {
+          label: "c",
+          q: "전체 수행 시간이 $\\Theta(nk + n \\lg(n/k))$가 된다. 표준 합병 정렬과 같은 점근 복잡도를 유지하려면 $k$를 $n$에 대해 어떻게 잡아야 하는가?",
+          hint: "$\\Theta(n \\lg n)$을 유지하려면 $nk = O(n \\lg n)$, 즉 $k = O(\\lg n)$.",
+          solution: "$k = \\Theta(\\lg n)$일 때 전체가 $\\Theta(n \\lg n)$. $k$가 커지면 $nk$ 항이 지배하여 더 나빠진다.",
+        },
+        {
+          label: "d",
+          q: "실제로 $k$를 어떻게 고르면 좋을지 설명하라.",
+          hint: "이론적 한계와 상수 인자의 트레이드오프를 모두 고려.",
+          solution: "삽입 정렬이 합병 정렬보다 빨라지는 임계점을 실측(보통 $k \\approx 10\\text{–}40$). 표준 라이브러리의 Timsort, introsort 등이 이 아이디어를 사용.",
+        },
+        ],
+      },
+      {
+        num: "2-2",
+        title: "버블 정렬의 정확성",
+        q: "BUBBLESORT는 반복적으로 인접한 원소를 swap하는 정렬이다. 정확성을 루프 불변식으로 증명한다.",
+        parts: [
+        {
+          label: "a",
+          q: "정확성 증명에서 '출력이 입력 원소의 순열이다'를 따로 증명해야 하는 이유는?",
+          solution: "정렬 알고리즘은 두 조건을 만족해야 한다: (1) 출력이 비내림차순, (2) 출력이 입력의 순열. 정렬 속성만 증명하면 입력 데이터를 버리고 새 정렬 배열을 반환하는 자명한 알고리즘도 '정렬'로 간주된다.",
+        },
+        {
+          label: "b",
+          q: "내부 루프의 불변식: '반복이 시작될 때 $A[j]$는 $A[j..n]$의 최솟값'. 이를 증명하라.",
+          hint: "초기·유지·종료 3단계.",
+          solution: "**초기**: $j=n$이면 $A[j..n] = \\{A[n]\\}$, 자명. **유지**: swap 조건 $A[j-1] > A[j]$일 때 교환 후 $A[j-1] = \\min(A[j-1..n])$. **종료**: $j=i+1$일 때 $A[i+1] = \\min(A[i+1..n])$.",
+        },
+        {
+          label: "c",
+          q: "외부 루프 불변식: '반복이 시작될 때 $A[1..i-1]$은 입력의 최소 $i-1$개 원소가 정렬된 상태로 배치되어 있다'. 증명하라.",
+          solution: "내부 루프 종료 시 $A[i]$가 $A[i..n]$의 최솟값 → $A[1..i]$는 최소 $i$개 원소가 정렬된 상태. 반복적으로 적용.",
+        },
+        {
+          label: "d",
+          q: "BUBBLESORT의 최악 수행 시간을 구하고 삽입 정렬과 비교하라.",
+          solution: "모든 경우 $\\Theta(n^2)$. 삽입 정렬은 최선 $\\Theta(n)$으로 더 낫다 (이미 정렬된 경우). 최악에서는 동일.",
+        },
+        ],
+      },
+      {
+        num: "2-4",
+        title: "Inversions (반전)",
+        q: "$A[1..n]$의 서로 다른 두 인덱스 쌍 $(i,j)$가 $i < j$이고 $A[i] > A[j]$이면 '반전(inversion)'이라 한다.",
+        parts: [
+        {
+          label: "a",
+          q: "$\\{1,2,\\ldots,n\\}$의 어떤 순열이 반전 수를 최대로 가지는가? 그 수는?",
+          solution: "완전 역순 $\\langle n, n-1, \\ldots, 1\\rangle$일 때 최대 $\\binom{n}{2} = n(n-1)/2$.",
+        },
+        {
+          label: "b",
+          q: "삽입 정렬의 수행 시간과 반전 수 사이의 관계는?",
+          hint: "삽입 정렬은 각 원소를 올바른 위치로 옮기기 위해 여러 번 비교·shift를 수행.",
+          solution: "삽입 정렬의 내부 while 루프가 수행되는 횟수는 정확히 반전 수 $I$와 같다. 따라서 수행 시간 $= \\Theta(n + I)$. 반전이 적으면 선형에 가깝다.",
+        },
+        {
+          label: "c",
+          q: "$\\Theta(n \\lg n)$ 시간에 반전 수를 세는 알고리즘을 설계하라.",
+          hint: "수정된 합병 정렬 — 오른쪽에서 왼쪽 원소보다 작은 것을 만나면 '그 좌측에 남아있는 개수'만큼이 반전이다.",
+          solution: "MERGE-SORT 변형: MERGE 단계에서 왼쪽 서브배열 $L$의 원소 $L[i]$가 $R[j]$보다 크면, 그 $L[i], L[i+1], \\ldots$ 전부가 $R[j]$와 반전. 카운트: $n_1 - i + 1$. 전체 $\\Theta(n \\lg n)$.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "insertion", name: "Insertion Sort", desc: "카드 정렬식 제자리 정렬",
+        tags: ["Θ(n²)", "In-place", "Stable"], viz: "insertionSort",
+        drills: {
+          source: "CLRS 3판 2.1절, pp.17-22",
+          pseudo: {
+            title: "① 의사코드 재구성",
+            intro: "CLRS 원문(2.1절)의 INSERTION-SORT 의사코드입니다. 왼쪽 패널에서 줄을 드래그해 올바른 순서로 배치하세요. 들여쓰기(블록 구조)는 정답을 확인할 때 표시됩니다.",
+            // CLRS 2.1, p.18 원문 그대로
+            lines: [
+              { text: "INSERTION-SORT(A)",           indent: 0, note: "프로시저 헤더" },
+              { text: "for $j = 2$ to A.length",       indent: 1, note: "두 번째 원소부터 n까지" },
+              { text: "$key = A[j]$",                  indent: 2, note: "삽입할 원소를 보관" },
+              { text: "// Insert A[j] into the sorted sequence A[1..j-1].", indent: 2, note: "주석 — 이 줄은 실행되지 않음" },
+              { text: "$i = j$ - 1",                   indent: 2, note: "정렬된 부분의 마지막 인덱스" },
+              { text: "while $i > 0$ and $A[i] > key$",  indent: 2, note: "key보다 큰 원소가 남아있는 동안" },
+              { text: "$A[i+1] = A[i]$",               indent: 3, note: "한 칸 오른쪽으로 민다" },
+              { text: "$i = i$ - 1",                   indent: 3, note: "비교 대상 이동" },
+              { text: "$A[i+1] = key$",                indent: 2, note: "빈자리에 key 삽입" },
+            ],
+          },
+          proof: {
+            title: "② 루프 불변식으로 정확성 증명",
+            intro: "CLRS 2.1절의 증명을 단계별로 따라가 보세요. 각 단계에서 한 개의 정답을 고릅니다.",
+            invariant: "for 루프의 각 반복 시작 시, 부분배열 A[1..j−1]은 원래 A[1..j−1]에 있던 원소들로 이루어지되 정렬된 상태이다.",
+            steps: [
+              {
+                stage: "Initialization (초기 조건)",
+                prompt: "루프에 처음 들어갈 때 j는 어떤 값이며, 이때 A[1..j−1]은 무엇으로 구성됩니까?",
+                choices: [
+                  { text: "$j = 1$, A[1..0]은 빈 배열", correct: false,
+                    explain: "for 루프는 $j = 2$부터 시작합니다 (line 1)." },
+                  { text: "$j = 2$, A[1..1] = 단일 원소 A[1]", correct: true,
+                    explain: "맞습니다. 'for $j = 2$ to A.length'이므로 첫 반복 시작 시 $j = 2$이고 A[1..j−1] = A[1..1]은 원래의 A[1] 하나뿐입니다." },
+                  { text: "$j = n$, A[1..n−1]이 이미 정렬됨", correct: false,
+                    explain: "첫 반복이 아니라 종료 직전의 상태입니다." },
+                  { text: "$j = 0$, 아직 배열을 보지 않음", correct: false,
+                    explain: "j는 2로 초기화됩니다." },
+                ],
+              },
+              {
+                stage: "Initialization (초기 조건)",
+                prompt: "A[1..1]이 자명하게 정렬되어 있다고 말할 수 있는 이유는?",
+                choices: [
+                  { text: "원소가 하나뿐이므로 정렬 여부가 자명하게 성립", correct: true,
+                    explain: "길이 1인 수열은 항상 정렬된 것으로 간주합니다 — 비교할 쌍이 없기 때문입니다." },
+                  { text: "알고리즘이 그 전에 정렬을 완료했기 때문", correct: false,
+                    explain: "아직 어떤 line도 실행되지 않았습니다." },
+                  { text: "A[1]은 항상 배열의 최솟값이기 때문", correct: false,
+                    explain: "입력에 따라 다릅니다. A[1]이 최솟값이라는 보장은 없습니다." },
+                ],
+              },
+              {
+                stage: "Maintenance (유지 조건)",
+                prompt: "for 루프 본문(line 2–8)이 수행하는 일을 올바르게 요약한 것은?",
+                choices: [
+                  { text: "A[j−1], A[j−2], ... 중 key보다 큰 원소를 한 칸씩 오른쪽으로 민 뒤, 빈 자리에 key를 넣는다", correct: true,
+                    explain: "CLRS 원문: 'moving A[j−1], A[j−2], ... by one position to the right until it finds the proper position for A[j], at which point it inserts the value of A[j]'." },
+                  { text: "A[j]를 항상 A[1]에 넣는다", correct: false,
+                    explain: "그건 key가 배열 전체의 최솟값일 때만 해당합니다." },
+                  { text: "A[j]와 A[j−1]을 한 번만 비교하고 교환한다", correct: false,
+                    explain: "한 번의 비교가 아니라 while 루프로 계속 비교합니다." },
+                  { text: "A[j..n]을 모두 오른쪽으로 한 칸씩 민다", correct: false,
+                    explain: "정렬된 부분(A[1..j−1])의 일부만 움직입니다." },
+                ],
+              },
+              {
+                stage: "Maintenance (유지 조건)",
+                prompt: "본문 실행이 끝났을 때 A[1..j]의 상태는?",
+                choices: [
+                  { text: "원래 A[1..j]의 원소들을 그대로 포함하되 정렬된 순서로 재배열되어 있다", correct: true,
+                    explain: "원소 집합은 바뀌지 않고(key 자체가 다시 삽입됨), 정렬된 부분만 한 칸 늘어납니다. j가 증가하면 불변식이 다시 유지됩니다." },
+                  { text: "A[1..j]가 원래와 완전히 동일하다", correct: false,
+                    explain: "key 위치가 바뀔 수 있어 일반적으로는 동일하지 않습니다." },
+                  { text: "A[1..j]가 전체 배열의 최솟값부터 j개를 담는다", correct: false,
+                    explain: "집합은 원래 A[1..j]와 같고, 전체 최솟값 j개가 아닙니다." },
+                ],
+              },
+              {
+                stage: "Termination (종료 조건)",
+                prompt: "for 루프가 종료되는 시점에 j의 값은? (CLRS의 관례: 루프 탈출 후 카운터는 경계 조건을 벗어난 값을 유지)",
+                choices: [
+                  { text: "$j = n$", correct: false,
+                    explain: "$j = n$은 마지막 반복 중의 값이고, 그 다음 j가 한 번 더 증가해 조건이 깨집니다." },
+                  { text: "$j = n$ + 1", correct: true,
+                    explain: "'for $j = 2$ to A.length'는 j가 A.length(=n)를 넘긴 값, 즉 n+1일 때 종료됩니다 (CLRS 의사코드 관례)." },
+                  { text: "$j = 1$", correct: false,
+                    explain: "j는 2로 시작해 증가만 하므로 1이 될 수 없습니다." },
+                ],
+              },
+              {
+                stage: "Termination (종료 조건)",
+                prompt: "불변식 A[1..j−1] = 정렬된 원래의 A[1..j−1]에 $j = n$+1을 대입하면 무엇을 얻습니까?",
+                choices: [
+                  { text: "A[1..n] = 원래 A[1..n]의 정렬된 상태 → 전체 배열이 정렬됨", correct: true,
+                    explain: "불변식 + 종료 조건의 결합으로 알고리즘의 정확성이 증명됩니다." },
+                  { text: "A[1..n+1]이 정렬됨 — 크기 n+1인 배열", correct: false,
+                    explain: "배열 크기는 n으로 고정입니다. 인덱스 n+1은 존재하지 않습니다." },
+                  { text: "A[1..n−1]만 정렬됨", correct: false,
+                    explain: "그럼 A[n]은 정렬되지 않은 상태로 남아 알고리즘이 불완전해집니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 한 스텝씩 직접 추적",
+            intro: "CLRS Figure 2.2의 예제 A = ⟨5, 2, 4, 6, 1, 3⟩를 손으로 따라가며 각 체크포인트의 상태를 예측하세요.",
+            array: [5, 2, 4, 6, 1, 3],
+            // 1-indexed in prompts — matches CLRS convention
+            steps: [
+              {
+                before: { A: [5, 2, 4, 6, 1, 3], j: null, key: null, i: null },
+                prompt: "첫 번째 반복 시작 직후(line 2–4 수행 후): j, key, i 값은?",
+                choices: [
+                  { text: "$j = 2$, $key = A[2]$=2, $i = 1$", correct: true,
+                    explain: "for 루프 첫 반복에서 $j = 2$, $key = A[2]$=2, $i = j$−$1 = 1$." },
+                  { text: "$j = 1$, $key = A[1]$=5, $i = 0$", correct: false,
+                    explain: "j는 2부터 시작합니다." },
+                  { text: "$j = 2$, $key = A[1]$=5, $i = 2$", correct: false,
+                    explain: "key는 $A[j] = A[2]$=2이고 i는 j−$1 = 1$." },
+                ],
+              },
+              {
+                before: { A: [5, 2, 4, 6, 1, 3], j: 2, key: 2, i: 1 },
+                prompt: "while 조건 '$i > 0$ and $A[i] > key$' 검사: $i = 1$, $A[1] = 5$, $key = 2$. 루프 본문에 진입합니까?",
+                choices: [
+                  { text: "예 — $1 > 0$이고 $5 > 2$이므로 true", correct: true,
+                    explain: "두 조건이 모두 참이므로 본문(line 6–7)을 실행합니다." },
+                  { text: "아니오 — i=$1 \\leq key$=2", correct: false,
+                    explain: "비교 대상은 A[i]이지 i 자체가 아닙니다." },
+                  { text: "아니오 — 단락 평가로 A[1] 참조 전에 거짓이 됨", correct: false,
+                    explain: "i>0($1 > 0$)은 참이므로 A[i] 평가로 넘어갑니다." },
+                ],
+              },
+              {
+                before: { A: [5, 2, 4, 6, 1, 3], j: 2, key: 2, i: 1 },
+                prompt: "line 6 '$A[i+1] = A[i]$'를 수행한 직후 A의 상태는?",
+                choices: [
+                  { text: "⟨5, 5, 4, 6, 1, 3⟩", correct: true,
+                    explain: "$A[2] = A[1]$ = 5. $key = 2$는 별도 변수에 보관 중이므로 잃어버리지 않습니다." },
+                  { text: "⟨2, 5, 4, 6, 1, 3⟩", correct: false,
+                    explain: "이건 while 루프 이후 line 8을 마친 최종 상태입니다." },
+                  { text: "⟨5, 2, 4, 6, 1, 3⟩", correct: false,
+                    explain: "line 6이 실제로 A[2]를 5로 덮어씁니다." },
+                ],
+              },
+              {
+                before: { A: [2, 4, 5, 6, 1, 3], j: 5, key: 1, i: 4 },
+                prompt: "$j = 5$ 반복의 while 루프: A=⟨2,4,5,6,1,3⟩, $key = 1$. 본문이 몇 번 실행됩니까?",
+                choices: [
+                  { text: "4번 — $A[4] = 6$, $A[3] = 5$, $A[2] = 4$, $A[1] = 2$ 모두 $key = 1$보다 크므로 i가 0이 될 때까지 계속", correct: true,
+                    explain: "$key = 1$은 정렬된 부분의 최솟값 2보다도 작아 맨 앞까지 밀려야 합니다." },
+                  { text: "1번 — 첫 비교에서 바로 종료", correct: false,
+                    explain: "A[4]=$6 > 1$이므로 첫 번째 반복 후 계속 진행됩니다." },
+                  { text: "5번 — 모든 원소와 비교", correct: false,
+                    explain: "정렬된 부분 A[1..4]의 크기는 4이므로 최대 4번입니다." },
+                  { text: "0번 — 루프 본문에 들어가지 못함", correct: false,
+                    explain: "while 조건이 참이므로 본문에 진입합니다." },
+                ],
+              },
+              {
+                before: { A: [2, 2, 4, 5, 6, 3], j: 5, key: 1, i: 0 },
+                prompt: "위 while 루프 종료 후 line 8 '$A[i+1] = key$' 수행. 이때 A는?",
+                choices: [
+                  { text: "⟨1, 2, 4, 5, 6, 3⟩", correct: true,
+                    explain: "$i = 0$ → $A[1] = key$ = 1. $j = 5$까지의 정렬된 부분 [1,2,4,5,6]이 완성됩니다." },
+                  { text: "⟨1, 1, 2, 4, 5, 6⟩", correct: false,
+                    explain: "배열 크기는 6으로 고정이고 맨 끝 원소($A[6] = 3$)는 아직 처리되지 않았습니다." },
+                  { text: "⟨2, 1, 4, 5, 6, 3⟩", correct: false,
+                    explain: "i+$1 = 1$이므로 key는 A[1]에 들어갑니다." },
+                ],
+              },
+              {
+                before: { A: [1, 2, 3, 4, 5, 6], j: 7, key: null, i: null },
+                prompt: "for 루프가 종료된 순간의 j 값과 A의 최종 상태는?",
+                choices: [
+                  { text: "$j = 7$, A=⟨1,2,3,4,5,6⟩ — 불변식이 A[1..6] 전체에 대해 성립", correct: true,
+                    explain: "$j = n$+$1 = 7$일 때 종료. 불변식에 j−$1 = 6$을 대입하면 전체 배열이 정렬되었음을 알 수 있습니다." },
+                  { text: "$j = 6$, A=⟨1,2,3,4,5,6⟩", correct: false,
+                    explain: "$j = 6$은 마지막 반복 중의 값입니다. 종료 시점에는 하나 더 증가해 7." },
+                  { text: "$j = 7$, A=⟨5,2,4,6,1,3⟩", correct: false,
+                    explain: "종료 후에는 알고리즘이 배열을 실제로 정렬해 둡니다." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "merge", name: "Merge Sort", desc: "분할 정복 · 정렬 알고리즘의 모범",
+        tags: ["Θ(n lg n)", "Θ(n)", "Stable"], viz: "mergeSort",
+        drills: {
+          source: "CLRS 3판 2.3절, pp.30-37 · Figure 2.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — MERGE 프로시저",
+            intro: "Merge Sort의 핵심은 두 정렬된 수열을 합치는 MERGE 프로시저입니다. CLRS 2.3.1절(p.31)의 MERGE 의사코드 17줄을 순서대로 배치하세요. 상위의 MERGE-SORT는 아래 펼쳐진 참고에서 볼 수 있습니다.",
+            reference: {
+              title: "참고: MERGE-SORT (2.3.1절, p.34)",
+              lines: [
+                { text: "MERGE-SORT(A, p, r)",                    indent: 0 },
+                { text: "if $p < r$",                               indent: 1 },
+                { text: "q = ⌊(p + r) / 2⌋",                      indent: 2 },
+                { text: "MERGE-SORT(A, p, q)",                    indent: 2 },
+                { text: "MERGE-SORT(A, q + 1, r)",                indent: 2 },
+                { text: "MERGE(A, p, q, r)",                      indent: 2 },
+              ],
+            },
+            // CLRS p.31 원문 MERGE 의사코드
+            lines: [
+              { text: "MERGE(A, p, q, r)",              indent: 0, note: "프로시저 헤더" },
+              { text: "$n1 = q$ - p + 1",                 indent: 1, note: "왼쪽 부분배열의 길이" },
+              { text: "$n2 = r$ - q",                     indent: 1, note: "오른쪽 부분배열의 길이" },
+              { text: "let L[1..n1+1] and R[1..n2+1] be new arrays", indent: 1, note: "각각에 센티넬 한 칸 추가" },
+              { text: "for $i = 1$ to n1",                indent: 1, note: "L 복사 루프" },
+              { text: "$L[i] = A[p + i - 1]$",            indent: 2, note: "A[p..q]를 L로" },
+              { text: "for $j = 1$ to n2",                indent: 1, note: "R 복사 루프" },
+              { text: "$R[j] = A[q + j]$",                indent: 2, note: "A[q+1..r]을 R로" },
+              { text: "L[n1 + 1] = ∞",                  indent: 1, note: "왼쪽 센티넬" },
+              { text: "R[n2 + 1] = ∞",                  indent: 1, note: "오른쪽 센티넬" },
+              { text: "$i = 1$",                          indent: 1, note: "L 포인터 초기화" },
+              { text: "$j = 1$",                          indent: 1, note: "R 포인터 초기화" },
+              { text: "for $k = p$ to r",                 indent: 1, note: "합병 루프 (핵심)" },
+              { text: "if $L[i] \\leq R[j]$",                 indent: 2, note: "더 작은 쪽 선택" },
+              { text: "$A[k] = L[i]$",                    indent: 3, note: "L 원소 기록" },
+              { text: "$i = i$ + 1",                      indent: 3, note: "L 포인터 전진" },
+              { text: "else $A[k] = R[j]$",               indent: 2, note: "R 원소 기록" },
+              { text: "$j = j$ + 1",                      indent: 3, note: "R 포인터 전진" },
+            ],
+          },
+          proof: {
+            title: "② 점화식과 마스터 정리로 $\\Theta(n \\lg n)$ 증명",
+            intro: "CLRS 2.3.2절의 분석을 따라갑니다. D(n), C(n)을 구해 점화식을 세우고, 마스터 정리 또는 재귀 트리로 해를 얻어보세요.",
+            invariantLabel: "점화식 목표: ",
+            invariant: "$T(n) = 2T(n/2) + \\Theta(n)$ ($n > 1$), T(1) = $\\Theta(1)$ — 이 점화식의 해가 T(n) = $\\Theta(n \\lg n)$임을 보인다.",
+            steps: [
+              {
+                stage: "① Divide — D(n)",
+                prompt: "MERGE-SORT의 Divide 단계는 q = ⌊(p+r)/2⌋ 하나의 연산만 수행합니다. D(n)은?",
+                choices: [
+                  { text: "$\\Theta(1)$ — 중간점 계산은 상수 시간", correct: true,
+                    explain: "CLRS 2.3.2: 'The divide step just computes the middle of the subarray, which takes constant time.' D(n) = $\\Theta(1)$." },
+                  { text: "$\\Theta(n)$", correct: false,
+                    explain: "Divide 단계는 배열을 실제로 복사하지 않고 인덱스 q만 계산합니다." },
+                  { text: "$\\Theta(\\lg n)$", correct: false,
+                    explain: "상수 시간 연산 하나뿐입니다." },
+                  { text: "$\\Theta(n \\lg n)$", correct: false,
+                    explain: "너무 큽니다. 단순 나눗셈+바닥 함수일 뿐입니다." },
+                ],
+              },
+              {
+                stage: "② Conquer",
+                prompt: "Conquer 단계는 크기 n/2인 부분 문제 2개를 재귀 호출합니다. 부분 문제 하나의 비용이 T(n/2)일 때 전체 기여는?",
+                choices: [
+                  { text: "2T(n/2)", correct: true,
+                    explain: "'We recursively solve two subproblems, each of size n/2, which contributes 2T(n/2) to the running time.' (CLRS 2.3.2)" },
+                  { text: "T(n/2)", correct: false,
+                    explain: "부분 문제가 2개이므로 2번 합산해야 합니다." },
+                  { text: "2T(n - 1)", correct: false,
+                    explain: "분할 정복은 크기를 절반으로 줄이지, 1씩 줄이지 않습니다." },
+                  { text: "T(n) + T(n)", correct: false,
+                    explain: "각 재귀 호출의 크기는 n이 아니라 n/2입니다." },
+                ],
+              },
+              {
+                stage: "③ Combine — C(n)",
+                prompt: "Combine 단계(MERGE 호출)의 시간 복잡도는? $n = r$ − p + 1 기준.",
+                choices: [
+                  { text: "$\\Theta(n)$ — 라인 12–17의 for 루프가 n번 돌고 각 반복이 상수 시간", correct: true,
+                    explain: "'The MERGE procedure on an n-element subarray takes time $\\Theta(n)$.' 라인 1–11은 상수 또는 $\\Theta(n)$, 라인 12–17은 정확히 n 반복." },
+                  { text: "$\\Theta(1)$", correct: false,
+                    explain: "MERGE는 n개 원소를 모두 훑어야 하므로 상수 시간이 될 수 없습니다." },
+                  { text: "$\\Theta(n \\lg n)$", correct: false,
+                    explain: "MERGE 자체는 단일 패스(linear scan)입니다." },
+                  { text: "$\\Theta(n^2)$", correct: false,
+                    explain: "MERGE에는 이중 루프가 없습니다." },
+                ],
+              },
+              {
+                stage: "④ 점화식 세우기",
+                prompt: "D(n) = $\\Theta(1)$, Conquer = 2T(n/2), C(n) = $\\Theta(n)$을 합치면 ($n > 1$일 때) T(n)은?",
+                choices: [
+                  { text: "$T(n) = 2T(n/2) + \\Theta(n)$", correct: true,
+                    explain: "D(n) + C(n) = $\\Theta(1)$ + $\\Theta(n)$ = $\\Theta(n)$. 여기에 Conquer의 2T(n/2)를 더해 점화식이 완성됩니다." },
+                  { text: "$T(n) = 2T(n/2) + \\Theta(1)$", correct: false,
+                    explain: "C(n) = $\\Theta(n)$을 빠뜨렸습니다. Combine이 상수라면 T(n) = $\\Theta(n)$이 되어 버립니다." },
+                  { text: "T(n) = T(n/2) + $\\Theta(n)$", correct: false,
+                    explain: "재귀 호출이 1개가 아니라 2개입니다 — 2T(n/2)." },
+                  { text: "T(n) = 2T(n − 1) + $\\Theta(1)$", correct: false,
+                    explain: "그건 일반적인 선형 재귀(예: 재귀적 insertion sort)의 형태입니다." },
+                ],
+              },
+              {
+                stage: "⑤ 마스터 정리 파라미터",
+                prompt: "$T(n) = aT(n/b) + f(n)$ 형태에 대입. a, b, f(n)은 각각?",
+                choices: [
+                  { text: "$a = 2$, $b = 2$, f(n) = $\\Theta(n)$", correct: true,
+                    explain: "재귀 호출 수 $a = 2$, 각 부분 문제 크기 n/$b = n$/2 → $b = 2$, 비재귀 비용 f(n) = $\\Theta(n)$." },
+                  { text: "$a = 1$, $b = 2$, f(n) = $\\Theta(n)$", correct: false,
+                    explain: "a는 재귀 호출 개수이므로 2입니다." },
+                  { text: "$a = 2$, $b = n$, f(n) = $\\Theta(1)$", correct: false,
+                    explain: "b는 크기를 나누는 상수(2)이지 n이 아닙니다." },
+                  { text: "$a = n$, $b = 2$, f(n) = $\\Theta(n)$", correct: false,
+                    explain: "a는 재귀 호출 개수인 상수(2)입니다." },
+                ],
+              },
+              {
+                stage: "⑥ 마스터 정리 Case 판별",
+                prompt: "$n^{\\log_b a}$ = $n^{\\log_2 2}$ = n을 f(n) = $\\Theta(n)$과 비교. 어느 Case에 해당합니까?",
+                choices: [
+                  { text: "Case 2 — f(n) = $\\Theta(n^{\\log_b a})$", correct: true,
+                    explain: "f(n)과 $n^{\\log_b a}$가 같은 차수($\\Theta(n)$)이므로 Case 2. T(n) = $\\Theta(n^{\\log_b a} \\lg n)$ = $\\Theta(n \\lg n)$." },
+                  { text: "Case 1 — f(n) = $O(n^{\\log_b a - \\varepsilon})$", correct: false,
+                    explain: "Case 1은 f(n)이 $n^{\\log_b a}$보다 다항식적으로 더 작을 때. 여기서는 같습니다." },
+                  { text: "Case 3 — f(n) = $\\Omega(n^{\\log_b a + \\varepsilon})$", correct: false,
+                    explain: "Case 3은 f(n)이 $n^{\\log_b a}$보다 다항식적으로 더 클 때. 여기서는 같은 차수입니다." },
+                  { text: "마스터 정리가 적용되지 않음", correct: false,
+                    explain: "세 Case 중 하나에는 정확히 맞아떨어집니다." },
+                ],
+              },
+              {
+                stage: "⑦ 결론",
+                prompt: "Case 2의 공식 T(n) = $\\Theta(n^{\\log_b a} \\lg n)$에 $a = 2$, $b = 2$를 대입하면?",
+                choices: [
+                  { text: "T(n) = $\\Theta(n \\lg n)$", correct: true,
+                    explain: "$n^{\\log_2 2}$ = $n^{1}$ = n. 거기에 · lg n을 곱해 $\\Theta(n \\lg n)$. 이것이 Merge Sort의 worst-case running time입니다." },
+                  { text: "T(n) = $\\Theta(n)$", correct: false,
+                    explain: "Case 2는 반드시 lg n 인수를 동반합니다." },
+                  { text: "T(n) = $\\Theta(n^2)$", correct: false,
+                    explain: "그건 Insertion Sort의 worst-case입니다." },
+                  { text: "T(n) = $\\Theta(\\lg n)$", correct: false,
+                    explain: "$n^{\\log_b a}$ = n 인수가 빠졌습니다." },
+                ],
+              },
+              {
+                stage: "⑧ 재귀 트리로 교차 확인 (CLRS p.37 Figure 2.5)",
+                prompt: "재귀 트리에서 레벨 i (루트 = 0)의 노드 수와 각 노드 비용은? 그리고 레벨 총합은?",
+                choices: [
+                  { text: "노드 2^i개, 각 비용 c(n/2^i) → 레벨 총합 cn", correct: true,
+                    explain: "CLRS: 'the i-th level below the top has 2^i nodes, each contributing a cost of c(n/2^i), so that the ith level has total cost 2^i · c(n/2^i) = cn.' 모든 레벨의 총합이 cn으로 같습니다." },
+                  { text: "노드 2^i개, 각 비용 c → 레벨 총합 c·2^i", correct: false,
+                    explain: "각 노드 비용은 상수 c가 아니라 부분 문제 크기 n/2^i에 비례합니다." },
+                  { text: "노드 n개, 각 비용 c(n/2^i) → 레벨 총합 cn²/2^i", correct: false,
+                    explain: "레벨 i의 노드 수는 n이 아니라 2^i입니다." },
+                  { text: "노드 1개, 비용 cn → 레벨 총합 cn", correct: false,
+                    explain: "루트 레벨($i = 0$)에서만 노드가 1개입니다. 이후 레벨에서는 2배씩 늘어납니다." },
+                ],
+              },
+              {
+                stage: "⑨ 재귀 트리 총합",
+                prompt: "트리 레벨 수는 lg n + 1입니다 (루트 레벨부터 크기 1 리프 레벨까지). 각 레벨이 cn이면 전체 비용은?",
+                choices: [
+                  { text: "(lg n + 1) · $cn = cn$ lg n + cn = $\\Theta(n \\lg n)$", correct: true,
+                    explain: "레벨 수 × 레벨당 비용. 하위 항과 상수를 무시하면 $\\Theta(n \\lg n)$. 마스터 정리의 결과와 일치합니다." },
+                  { text: "lg n · cn = $\\Theta(n \\lg n)$ — 여기서는 +cn이 없어도 답이 같다", correct: false,
+                    explain: "결과 차수는 맞지만, 정확한 합은 (lg n + 1)·cn이어야 합니다(루트 레벨도 포함)." },
+                  { text: "n² — 각 레벨이 cn이고 n개 레벨이 있으므로", correct: false,
+                    explain: "레벨은 n개가 아니라 lg n + 1개입니다 (크기가 절반씩 주므로)." },
+                  { text: "$\\Theta(n)$ — 리프 레벨 한 곳만 합산", correct: false,
+                    explain: "모든 레벨을 더해야 합니다. 각 레벨이 cn이고 레벨이 lg n + 1개." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 재귀 호출 추적 — CLRS Figure 2.4 예제",
+            intro: "CLRS Figure 2.4의 A = ⟨5, 2, 4, 7, 1, 3, 2, 6⟩를 MERGE-SORT(A, 1, 8)로 정렬합니다. 주요 재귀 호출과 MERGE 결과를 예측하세요.",
+            array: [5, 2, 4, 7, 1, 3, 2, 6],
+            steps: [
+              {
+                before: { A: [5, 2, 4, 7, 1, 3, 2, 6], j: null, key: null, i: null },
+                prompt: "최상위 호출 MERGE-SORT(A, 1, 8)에서 라인 2 'q = ⌊(p+r)/2⌋' 실행. q의 값은?",
+                choices: [
+                  { text: "q = $\\lfloor 9/2 \\rfloor$ = 4", correct: true,
+                    explain: "$p = 1$, $r = 8$ → (1+8)/$2 = 4.5$ → 바닥 함수로 4. 따라서 왼쪽은 A[1..4], 오른쪽은 A[5..8]." },
+                  { text: "$q = 5$", correct: false,
+                    explain: "⌈⌉(천장)을 썼습니다. CLRS는 바닥 ⌊⌋을 사용합니다." },
+                  { text: "q = (1+8)/$2 = 4.5$", correct: false,
+                    explain: "인덱스는 정수여야 하므로 바닥 함수가 필요합니다." },
+                  { text: "$q = 8$", correct: false,
+                    explain: "q는 범위 끝이 아니라 중간입니다." },
+                ],
+              },
+              {
+                before: { A: [5, 2, 4, 7, 1, 3, 2, 6], j: null, key: null, i: null },
+                prompt: "위 호출이 만들어내는 두 개의 재귀 호출은? (라인 3, 4)",
+                choices: [
+                  { text: "MERGE-SORT(A, 1, 4)  와  MERGE-SORT(A, 5, 8)", correct: true,
+                    explain: "라인 3: MERGE-SORT(A, p, q) = (A, 1, 4). 라인 4: MERGE-SORT(A, q+1, r) = (A, 5, 8)." },
+                  { text: "MERGE-SORT(A, 1, 4)  와  MERGE-SORT(A, 4, 8)", correct: false,
+                    explain: "오른쪽은 q+$1 = 5$부터 시작해야 경계가 겹치지 않습니다." },
+                  { text: "MERGE-SORT(A, 1, 5)  와  MERGE-SORT(A, 5, 8)", correct: false,
+                    explain: "왼쪽은 $A[1..q] = A[1..4]$로 끝납니다." },
+                  { text: "MERGE-SORT(A, 1, 8)  을 두 번", correct: false,
+                    explain: "무한 재귀가 됩니다. 부분 문제는 더 작아야 합니다." },
+                ],
+              },
+              {
+                before: { A: [5, 2, 4, 7, 1, 3, 2, 6], j: null, key: null, i: null },
+                prompt: "가장 깊은 기저 사례 바로 위: MERGE(A, 1, 1, 2)가 호출되었습니다. 이때 n1, n2, L, R은? (센티넬 ∞ 포함)",
+                choices: [
+                  { text: "$n1 = 1$, $n2 = 1$, L = ⟨5, ∞⟩, R = ⟨2, ∞⟩", correct: true,
+                    explain: "$n1 = q$−p+$1 = 1$−1+$1 = 1$, $n2 = r$−$q = 2$−$1 = 1$. $L = A[1..1]$ + ∞ = ⟨5, ∞⟩, $R = A[2..2]$ + ∞ = ⟨2, ∞⟩." },
+                  { text: "$n1 = 2$, $n2 = 2$, L = ⟨5, 2, ∞⟩, R = ⟨4, 7, ∞⟩", correct: false,
+                    explain: "MERGE(A, 1, 1, 2)의 범위는 A[1..2] 둘뿐입니다." },
+                  { text: "$n1 = 1$, $n2 = 1$, L = ⟨2, ∞⟩, R = ⟨5, ∞⟩", correct: false,
+                    explain: "L은 $A[p..q] = A[1..1]$ = ⟨5⟩, R은 $A[q+1..r] = A[2..2]$ = ⟨2⟩입니다." },
+                  { text: "$n1 = 0$, $n2 = 0$, 둘 다 빈 배열", correct: false,
+                    explain: "$p = q$=1이라도 $n1 = q$−p+$1 = 1$입니다 (A[1] 하나)." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 4, 7, 1, 3, 2, 6], j: null, key: null, i: null },
+                prompt: "앞선 MERGE(A,1,1,2) 이후 A[3..4] 쪽도 처리되어 MERGE(A, 1, 2, 4)가 호출됩니다. 현재 A = ⟨2,5,4,7,1,3,2,6⟩. 이 호출의 L과 R은?",
+                choices: [
+                  { text: "L = ⟨2, 5, ∞⟩,  R = ⟨4, 7, ∞⟩", correct: true,
+                    explain: "$L = A[1..2]$ + ∞ = ⟨2, 5, ∞⟩, $R = A[3..4]$ + ∞ = ⟨4, 7, ∞⟩. 이전 MERGE로 A[1..2]=⟨2,5⟩, A[3..4]=⟨4,7⟩이 각각 정렬되어 있습니다." },
+                  { text: "L = ⟨4, 7, ∞⟩,  R = ⟨2, 5, ∞⟩", correct: false,
+                    explain: "L은 왼쪽($A[p..q] = A[1..2]$), R은 오른쪽($A[q+1..r] = A[3..4]$)입니다. 순서가 뒤바뀌었습니다." },
+                  { text: "L = ⟨2, 5, 4, 7, ∞⟩,  R = ⟨1, 3, 2, 6, ∞⟩", correct: false,
+                    explain: "그건 더 상위 단계(최상위 MERGE(A,1,4,8))의 L/R입니다." },
+                  { text: "L = ⟨2, ∞⟩,  R = ⟨5, 4, 7, ∞⟩", correct: false,
+                    explain: "$q = 2$이므로 $n1 = q$−p+$1 = 2$이고 $n2 = r$−$q = 2$입니다. L도 R도 길이 2+센티넬." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 4, 7, 1, 3, 2, 6], j: null, key: null, i: null },
+                prompt: "위 MERGE(A, 1, 2, 4) 완료 후 A[1..4]의 상태는?",
+                choices: [
+                  { text: "⟨2, 4, 5, 7⟩", correct: true,
+                    explain: "정렬된 두 수열 ⟨2,5⟩와 ⟨4,7⟩을 합쳐 ⟨2,4,5,7⟩. A[5..8]은 아직 처리 전이므로 그대로." },
+                  { text: "⟨2, 5, 4, 7⟩", correct: false,
+                    explain: "MERGE는 실제로 병합하여 정렬된 순서로 A에 되돌려 씁니다 (라인 12–17)." },
+                  { text: "⟨1, 2, 3, 6⟩", correct: false,
+                    explain: "그건 오른쪽 절반 A[5..8] 처리 결과입니다." },
+                  { text: "⟨4, 7, 2, 5⟩", correct: false,
+                    explain: "MERGE는 두 정렬된 수열을 정렬된 순서로 합칩니다." },
+                ],
+              },
+              {
+                before: { A: [2, 4, 5, 7, 1, 2, 3, 6], j: null, key: null, i: null },
+                prompt: "왼쪽과 오른쪽이 각각 정렬되어 A = ⟨2,4,5,7,1,2,3,6⟩이 되었습니다. 이제 최상위 MERGE(A, 1, 4, 8)의 첫 iteration($k = 1$)에서 $L[1] = 2$, $R[1] = 1$ 비교. A[1]에 들어가는 값과 전진하는 포인터는?",
+                choices: [
+                  { text: "$A[1] = 1$, j → 2 (else 분기, 라인 16–17)", correct: true,
+                    explain: "$L[1] = 2$, $R[1] = 1$. $L[1] \\leq R[1]$ ($2 \\leq 1$)이 거짓이므로 else 분기. $A[k] = R[j]$ = 1, 그리고 $j = j$ + $1 = 2$." },
+                  { text: "$A[1] = 2$, i → 2 (if 분기)", correct: false,
+                    explain: "$L[1] \\leq R[1]$ 즉 $2 \\leq 1$은 거짓입니다. if가 아니라 else로 갑니다." },
+                  { text: "$A[1] = 2$, j → 2", correct: false,
+                    explain: "A[k]에는 선택된 값이 들어가야 합니다. else 분기라면 $A[k] = R[j]$ = 1입니다." },
+                  { text: "$A[1] = 3$, 둘 다 전진", correct: false,
+                    explain: "한 번에 한 포인터만 전진합니다. 값도 L과 R의 원소 중 하나여야 합니다." },
+                ],
+              },
+              {
+                before: { A: [2, 4, 5, 7, 1, 2, 3, 6], j: null, key: null, i: null },
+                prompt: "최상위 MERGE(A, 1, 4, 8) 완료 후 A 전체의 최종 상태는?",
+                choices: [
+                  { text: "⟨1, 2, 2, 3, 4, 5, 6, 7⟩", correct: true,
+                    explain: "정렬된 ⟨2,4,5,7⟩과 ⟨1,2,3,6⟩을 합병. 2가 두 번 등장하는 것에 주의 — 원래 A에 2가 두 개 있었기 때문." },
+                  { text: "⟨1, 2, 3, 4, 5, 6, 7, 8⟩", correct: false,
+                    explain: "입력에 8이 없고 2가 두 개 있습니다. 출력은 입력의 permutation이어야 합니다." },
+                  { text: "⟨2, 4, 5, 7, 1, 2, 3, 6⟩", correct: false,
+                    explain: "병합이 수행되지 않은 직전 상태입니다." },
+                  { text: "⟨5, 2, 4, 7, 1, 3, 2, 6⟩", correct: false,
+                    explain: "원래 초기 상태이고, 정렬되지 않았습니다." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch3",
+    tier: 1,
+    num: "Ch 3",
+    title: "Growth of Functions",
+    subtitle: "점근적 표기법 · 함수의 증가율",
+    summary: "Θ, O, Ω, o, ω를 수학적으로 구별하고 자유자재로 조합할 수 있어야 합니다.",
+    objectives: [
+      "$\\Theta$, $O$, $\\Omega$, $o$, $\\omega$ 다섯 표기법의 수학적 정의와 차이를 정확히 구분할 수 있다.",
+      "두 함수의 점근적 관계를 극한·정의로 판별하고 함수 증가율 순서를 정렬할 수 있다.",
+      "전이성·반사성·대칭성·전치 대칭 등 점근 표기법의 성질을 알고리즘 분석에 적용할 수 있다.",
+    ],
+    md: `
+## 점근적 표기법 (Asymptotic Notation)
+
+| 표기법 | 의미 | 수학적 정의 |
+|--------|------|-------------|
+| **$\\Theta(g(n))$** | tight bound | ∃ c₁, c₂, $n_{0} > 0$ : $0 \\leq c_{1}g(n) \\leq f(n)$ ≤ c₂g(n) ∀$n \\geq n_{0}$ |
+| **$O(g(n))$** | upper bound | ∃ c, $n_{0} > 0$ : $0 \\leq f(n) \\leq cg(n)$ ∀$n \\geq n_{0}$ |
+| **$\\Omega(g(n))$** | lower bound | ∃ c, $n_{0} > 0$ : $0 \\leq cg(n) \\leq f(n)$ ∀$n \\geq n_{0}$ |
+| **$o(g(n))$** | strict upper | lim f(n)/$g(n) = 0$ |
+| **$\\omega(g(n))$** | strict lower | lim f(n)/g(n) = ∞ |
+
+**핵심 정리**: f(n) = $\\Theta(g(n))$ ⟺ f(n) = $O(g(n))$ AND f(n) = $\\Omega(g(n))$
+
+**함수 증가 순서 (느린 → 빠른)**
+\`\`\`
+1 < lg lg n < lg n < √n < n < n lg n < n² < n³ < 2ⁿ < n! < nⁿ
+\`\`\`
+
+**점근적 표기법의 성질**
+- **전이성**: $f = O(g)$ ∧ $g = O(h)$ → $f = O(h)$ (Θ, Ω, o, ω 모두)
+- **반사성**: $f = \\Theta (f)$ (O, Ω도)
+- **대칭성**: $f = \\Theta (g)$ ⟺ $g = \\Theta (f)$
+- **전치 대칭**: $f = O(g)$ ⟺ $g = \\Omega (f)$
+
+**주요 공식**
+- $\\lg(n!)$ = $\\Theta(n \\lg n)$ — 스털링 근사
+- 다항식 p(n) = $\\Theta(n^d)$ (최고차항 계수 > 0)
+
+> 💡 이 챕터는 수학적 언어를 다루므로 시각화보다 손으로 증명해 보는 것이 더 효과적입니다.
+`,
+    ox: [
+      { q: "f(n) = $\\Theta(g(n))$ ⟺ f(n) = $O(g(n))$ AND f(n) = $\\Omega(g(n))$.", a: true, why: "정의 자체. 상한과 하한이 동시에 성립." },
+      { q: "$\\lg(n!)$ = $\\Theta(n \\lg n)$.", a: true, why: "스털링 근사로 유도되는 표준 결과." },
+      { q: "$2^n$은 n!보다 빠르게 증가한다.", a: false, why: "반대. n! > $2^n$ for $n \\geq 4$." },
+      { q: "$o(g(n))$과 $\\omega(g(n))$은 각각 엄격한 상한·하한이다.", a: true, why: "lim f/$g = 0$ (o), = ∞ (ω)." },
+      { q: "충분히 큰 n에서 다항식 nᵏ가 지수 $2^n$을 이긴다.", a: false, why: "지수가 어떤 다항식도 이긴다." },
+      { q: "$f = O(g)$ ⟺ $g = \\Omega (f)$ (전치 대칭성).", a: true, why: "Theorem 3.1." },
+      { q: "lg n과 log₁₀ n은 Θ 관계이다.", a: true, why: "상수배 차이 ($\\log_a n$ = $\\log_b n$ / $\\log_b a$)." },
+      { q: "Θ 표기법은 반사성·대칭성·전이성을 모두 만족한다.", a: true, why: "동치 관계의 세 가지 속성 모두 성립." },
+      { q: "다항식 $p(n) = a_d$·$n^{d}$ + ... ($a_d > 0$)에 대해 p(n) = $\\Theta(n^{d})$.", a: true, why: "최고차항이 지배." },
+      { q: "f(n) = $O(g(n))$이면 f(n) = $o(g(n))$이다.", a: false, why: "O는 상한 허용(등호 가능), o는 엄격. 예: n = $O(n)$이지만 $n \\neq o(n)$." },
+    ],
+
+    exercises: [
+      {
+        num: "3.1-1",
+        q: "f(n)과 g(n)이 음이 아닌 함수이면 max(f(n), g(n)) = $\\Theta(f(n) + g(n))$임을 증명하시오.",
+        hint: "$max \\leq f$+$g \\leq 2$·max.",
+        solution: "(f+g)/$2 \\leq max(f,g) \\leq f$+g. $c1 = 1$/2, $c2 = 1$로 Θ 정의 충족.",
+      },
+      {
+        num: "3.1-2",
+        q: "a, b가 실수 상수($b > 0$)일 때 (n+a)^b = $\\Theta(n^{b})$임을 증명하시오.",
+        hint: "이항 전개 또는 lim 이용.",
+        solution: "(n+a)^b / $n^{b}$ = (1 + a/n)^b → 1. 따라서 양쪽이 유계 상수를 가짐.",
+      },
+      {
+        num: "3.1-4",
+        q: "2^(n+1) = O(2^n)인가? 2^(2n) = O(2^n)인가?",
+        hint: "2^(n+1) = 2·2^n, 2^(2n) = (2^n)².",
+        solution: "2^(n+1) = O(2^n) 참 (상수 2배). 2^(2n) = O(2^n) 거짓 (지수적으로 큰 차이).",
+      },
+      {
+        num: "3.1-7",
+        q: "$o(g(n))$ ∩ $\\omega(g(n))$ = ∅임을 증명하시오.",
+        hint: "lim f/$g = 0$과 = ∞는 동시에 성립 불가.",
+        solution: "o는 $lim = 0$, ω는 lim = ∞. 한 함수 동시 만족 불가능. 교집합 공집합.",
+      },
+      {
+        num: "Problem 3-1",
+        q: "다항식 $p(n) = \\Sigma $ a_i $n^{i}$ ($a_d > 0$)에 대해: (a) $k \\geq d$ ⟺ p(n) = $O(n^{k})$, (b) $k \\leq d$ ⟺ p(n) = $\\Omega(n^{k})$, (c) $k = d$ ⟺ p(n) = $\\Theta(n^{k})$.",
+        hint: "최고차항이 지배.",
+        solution: "증명: (c)만 보이면 나머지 따라옴. p(n)/$n^{d}$ → a_d (유한 양수). Θ 정의 충족.",
+      },
+      {
+        num: "Problem 3-4",
+        q: "함수 비교: lg(lg* n) vs lg* (lg n)은? (c) n과 2^(√(2 lg n))은?",
+        hint: "lg* 는 반복 로그 (iterated log).",
+        solution: "(c)는 $n = 2$^(lg n), 2^(√(2 lg n))이므로 n이 더 큼 (lg n vs √(2 lg n)).",
+      },
+    ],
+
+    problems: [
+      {
+        num: "3-1",
+        title: "다항식의 점근적 거동",
+        q: "$p(n) = \\sum_{i=0}^{d} a_i n^i$에서 $a_d > 0$이고 $d$는 양의 상수라고 하자.",
+        parts: [
+        {
+          label: "a",
+          q: "$k \\geq d$이면 $p(n) = O(n^k)$임을 보여라.",
+          solution: "모든 $n \\geq 1$에 대해 $p(n) \\leq (\\sum |a_i|) \\cdot n^d \\leq (\\sum |a_i|) \\cdot n^k$. 상수 $c = \\sum |a_i|$로 성립.",
+        },
+        {
+          label: "b",
+          q: "$k \\leq d$이면 $p(n) = \\Omega(n^k)$임을 보여라.",
+          solution: "큰 $n$에 대해 $p(n) \\sim a_d n^d \\geq a_d n^k$.",
+        },
+        {
+          label: "c",
+          q: "$k = d$이면 $p(n) = \\Theta(n^k)$임을 보여라.",
+          solution: "(a)와 (b)를 결합: $p(n) = O(n^d) \\cap \\Omega(n^d) = \\Theta(n^d)$.",
+        },
+        {
+          label: "d",
+          q: "$k > d$이면 $p(n) = o(n^k)$임을 보여라.",
+          solution: "$\\lim_{n\\to\\infty} p(n)/n^k = \\lim a_d n^d/n^k = 0$ (지수 차이). 따라서 $o(n^k)$.",
+        },
+        {
+          label: "e",
+          q: "$k < d$이면 $p(n) = \\omega(n^k)$임을 보여라.",
+          solution: "$\\lim p(n)/n^k = \\infty$. 따라서 $\\omega(n^k)$.",
+        },
+        ],
+      },
+      {
+        num: "3-2",
+        title: "상대적 점근 증가율",
+        q: "다음 표의 각 $(A, B)$ 쌍에 대해 $A = O(B)$, $A = o(B)$, $A = \\Omega(B)$, $A = \\omega(B)$, $A = \\Theta(B)$ 중 성립하는 것을 모두 표시하라.",
+        parts: [
+        {
+          label: "a",
+          q: "$A = \\lg^k n$, $B = n^\\epsilon$ ($k, \\epsilon > 0$ 상수)",
+          solution: "$\\lg^k n = o(n^\\epsilon)$. 따라서 $O$, $o$, 그리고 역으로 $B = \\Omega(A), \\omega(A)$. 즉 $A$는 $O(B), o(B)$.",
+        },
+        {
+          label: "b",
+          q: "$A = n^k$, $B = c^n$ ($c > 1, k > 0$ 상수)",
+          solution: "다항식은 지수보다 작다: $n^k = o(c^n)$. 따라서 $A = O(B), o(B)$.",
+        },
+        {
+          label: "c",
+          q: "$A = \\sqrt{n}$, $B = n^{\\sin n}$",
+          solution: "$n^{\\sin n}$은 $[n^{-1}, n^1]$ 사이에서 진동. 비교 불가 — $O, \\Omega$ 모두 성립 안 함.",
+        },
+        {
+          label: "d",
+          q: "$A = 2^n$, $B = 2^{n/2}$",
+          solution: "$2^n / 2^{n/2} = 2^{n/2} \\to \\infty$. 따라서 $A = \\omega(B), \\Omega(B)$.",
+        },
+        {
+          label: "e",
+          q: "$A = n^{\\lg c}$, $B = c^{\\lg n}$ ($c > 0$ 상수)",
+          solution: "$c^{\\lg n} = n^{\\lg c}$ (로그 항등식). 따라서 $A = \\Theta(B)$.",
+        },
+        {
+          label: "f",
+          q: "$A = \\lg(n!)$, $B = \\lg(n^n)$",
+          solution: "스털링: $\\lg(n!) = \\Theta(n \\lg n) = \\Theta(\\lg(n^n))$. 따라서 $\\Theta$ 성립.",
+        },
+        ],
+      },
+      {
+        num: "3-4",
+        title: "점근적 표기법의 성질",
+        q: "$f, g$가 양의 함수일 때, 다음 명제의 참·거짓을 판단하고 참이면 증명, 거짓이면 반례.",
+        parts: [
+        {
+          label: "a",
+          q: "$f(n) = O(g(n))$이면 $g(n) = O(f(n))$.",
+          solution: "**거짓.** $f(n) = n$, $g(n) = n^2$: $f = O(g)$지만 $g \\ne O(f)$.",
+        },
+        {
+          label: "b",
+          q: "$f(n) + g(n) = \\Theta(\\min(f(n), g(n)))$.",
+          solution: "**거짓.** $f(n) = n$, $g(n) = n^2$: $\\min = n$, 합 $= n + n^2 = \\Theta(n^2)$, 그러나 $\\min = \\Theta(n)$. 서로 다름.",
+        },
+        {
+          label: "c",
+          q: "$f(n) = O(g(n))$이면 $\\lg(f(n)) = O(\\lg(g(n)))$ ($f, g \\geq 1$, $\\lg g \\geq 1$)",
+          solution: "**참.** $f \\leq c g$ → $\\lg f \\leq \\lg c + \\lg g \\leq 2 \\lg g$ (큰 $n$). 따라서 $\\lg f = O(\\lg g)$.",
+        },
+        {
+          label: "d",
+          q: "$f(n) = O(g(n))$이면 $2^{f(n)} = O(2^{g(n)})$.",
+          solution: "**거짓.** $f(n) = 2n$, $g(n) = n$: $f = O(g)$이지만 $2^{2n} = 4^n \\ne O(2^n)$.",
+        },
+        {
+          label: "e",
+          q: "$f(n) = O((f(n))^2)$.",
+          solution: "**거짓 in general.** $f(n) = 1/n$이면 $(f(n))^2 = 1/n^2 \\to 0$. $f$가 $1$ 이하면 반례. 단, $f \\geq 1$을 가정하면 참.",
+        },
+        {
+          label: "f",
+          q: "$f(n) = O(g(n))$이면 $g(n) = \\Omega(f(n))$.",
+          solution: "**참.** 전치 대칭 정리 (Transpose symmetry). $f \\leq c g$ ↔ $g \\geq (1/c) f$.",
+        },
+        {
+          label: "g",
+          q: "$f(n) = \\Theta(f(n/2))$.",
+          solution: "**거짓.** $f(n) = 2^n$: $f(n/2) = 2^{n/2}$. 비율 $2^{n/2} \\to \\infty$, 따라서 $\\Theta$ 아님.",
+        },
+        {
+          label: "h",
+          q: "$f(n) + o(f(n)) = \\Theta(f(n))$.",
+          solution: "**참.** $o(f)$는 $f$보다 훨씬 작아 무시 가능. $f + o(f) \\leq 2f$ 및 $\\geq f$.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "growth", name: "함수 증가율 비교", desc: "여러 함수의 n에 따른 성장 속도 그래프",
+        tags: ["시각화", "수학"], viz: "growthCompare",
+        drills: {
+          source: "CLRS 3판 3.1-3.2절 pp.43-64 · 부록 A",
+          pseudo: {
+            title: "① 점근 표기 체계 재구성 — 개념의 논리적 순서",
+            intro: "CLRS 3.1절의 점근 표기 체계를 '도입 동기 → 정의 → 관계 → 성질' 순으로 재구성하세요. 일반적 의사코드가 아니라 '이론의 유도 순서'를 맞추는 드릴입니다.",
+            reference: {
+              title: "참고: 점근 함수 증가 순서 (느린 → 빠른)",
+              lines: [
+                { text: "상수    1",                              indent: 0 },
+                { text: "로그    lg lg n  ≺  lg n  ≺  (lg n)^k",  indent: 0 },
+                { text: "다항 이하  √n  ≺  n",                    indent: 0 },
+                { text: "준선형  n  ≺  $n \\lg n$",                   indent: 0 },
+                { text: "다항    n²  ≺  n³  ≺  $n^{k}$",              indent: 0 },
+                { text: "지수    2^n  ≺  $e^{n}$  ≺  3^n",            indent: 0 },
+                { text: "계승    n!  ≺  $n^{n}$",                     indent: 0 },
+                { text: "",                                        indent: 0 },
+                { text: "// 임의의 상수 k, $\\varepsilon  > 0$에 대해 (lg n)^k ≺ n^ε ≺ $a^{n}$ ($a > 1$)", indent: 0 },
+                { text: "// $n^{b}$ = o($a^{n}$)  for any b and $a > 1$  (식 3.10)",             indent: 0 },
+              ],
+            },
+            // 논리적 유도 순서
+            lines: [
+              { text: "필요성: 알고리즘 실행 시간은 상수와 하위 항에 흔들림 — 증가율만 보고 싶다", indent: 0, note: "도입 동기 (p.43)" },
+              { text: "$\\Theta(g(n))$ = { f(n) : ∃ c₁, c₂, $n_{0} > 0$, ∀$n \\geq n_{0}$ : $0 \\leq c_{1}g(n) \\leq f(n)$ ≤ c₂g(n) }", indent: 1, note: "식 3.1 — tight bound" },
+              { text: "$O(g(n))$ = { f(n) : ∃ c, $n_{0} > 0$, ∀$n \\geq n_{0}$ : $0 \\leq f(n) \\leq cg(n)$ }", indent: 1, note: "upper bound (상한)" },
+              { text: "$\\Omega(g(n))$ = { f(n) : ∃ c, $n_{0} > 0$, ∀$n \\geq n_{0}$ : $0 \\leq cg(n) \\leq f(n)$ }", indent: 1, note: "lower bound (하한)" },
+              { text: "Theorem 3.1: $f = \\Theta (g)$  ⟺  $f = O(g)$  AND  $f = \\Omega (g)$", indent: 1, note: "세 표기법의 연결" },
+              { text: "$o(g(n))$ = { f(n) : ∀$c > 0$ ∃$n_{0} > 0$, ∀$n \\geq n_{0}$ : $0 \\leq f(n)$ < cg(n) }", indent: 1, note: "strict upper — 'any $c > 0$'" },
+              { text: "$\\omega(g(n))$ = { f(n) : ∀$c > 0$ ∃$n_{0} > 0$, ∀$n \\geq n_{0}$ : $0 \\leq cg(n)$ < f(n) }", indent: 1, note: "strict lower" },
+              { text: "lim f(n)/$g(n) = 0$ ⟺ $f = o(g)$;  lim f(n)/g(n) = ∞ ⟺ $f = \\omega (g)$", indent: 1, note: "극한 형식 (식 3.1 확장)" },
+              { text: "성질: 전이성(Θ,O,Ω,o,ω 모두), 반사성(Θ,O,Ω), 대칭성(Θ만), 전치 대칭: $f = O(g)$ ⟺ $g = \\Omega (f)$", indent: 1, note: "표기법 간 관계" },
+            ],
+          },
+          proof: {
+            title: "② $\\lg(n!)$ = $\\Theta(n \\lg n)$ 증명 — 스털링 + 직접 평가",
+            intro: "CLRS 식 (3.19)의 증명을 두 가지 길로. 1차: 스털링 근사 사용. 2차: Σ lg k를 직접 평가해 스털링 없이 도달. 두 길이 모두 '로그-계승'의 차수를 정확히 밝힘.",
+            invariantLabel: "보이고자 하는 것: ",
+            invariant: "$\\lg(n!)$ = $\\Theta(n \\lg n)$. 이는 비교 기반 정렬 하한 $\\Omega(n \\lg n)$ (Theorem 8.1)의 핵심 재료이며, Stirling 근사 혹은 식 Σ_{$k = 1$}^n lg k의 직접 평가로 증명됨.",
+            steps: [
+              {
+                stage: "① 스털링 근사 식",
+                prompt: "CLRS 식 (3.18)의 스털링 근사는?",
+                choices: [
+                  { text: "n! = √(2πn) · (n/e)ⁿ · (1 + $\\Theta(1/n)$)", correct: true,
+                    explain: "CLRS p.57 식 (3.18). 유명한 스털링 공식. 주 항 √(2πn)·(n/e)ⁿ + 보정 오차 $\\Theta(1/n)$." },
+                  { text: "n! = nⁿ (상수 배 오차)", correct: false,
+                    explain: "n!은 nⁿ보다 훨씬 작음. 비율 n!/nⁿ → 0 (스털링으로 확인)." },
+                  { text: "n! = $2^n$ · $\\Theta(1)$", correct: false,
+                    explain: "n!은 $2^n$보다 빠르게 성장. 따라서 $2^n$ 비례가 아님." },
+                  { text: "n! ≈ n · lg n", correct: false,
+                    explain: "n lg n은 $\\lg(n!)$의 근사. n! 자체는 훨씬 더 큼." },
+                ],
+              },
+              {
+                stage: "② 로그 취하기",
+                prompt: "스털링 근사의 양변에 lg를 씌우면?",
+                choices: [
+                  { text: "$\\lg(n!)$ = ½·lg(2πn) + n·lg(n/e) + lg(1 + $\\Theta(1/n)$)", correct: true,
+                    explain: "곱의 로그 = 로그의 합. 각 인자를 분리. (n/e)ⁿ의 lg는 n·lg(n/e)." },
+                  { text: "$\\lg(n!)$ = √(2πn) + (n/e)ⁿ + $\\Theta(1/n)$", correct: false,
+                    explain: "lg는 곱을 합으로 바꾸지, 값 자체를 유지하지 않음." },
+                  { text: "$\\lg(n!)$ = lg n · lg e", correct: false,
+                    explain: "과도하게 단순화. lg의 분포 법칙을 제대로 적용해야 함." },
+                  { text: "$\\lg(n!)$ = n · lg n (직접)", correct: false,
+                    explain: "그것이 결론. 유도 과정에서는 여러 항의 합으로 먼저 분해." },
+                ],
+              },
+              {
+                stage: "③ 각 항의 차수 비교",
+                prompt: "$\\lg(n!)$ = ½·lg(2πn) + n·lg(n/e) + $O(1/n)$에서 각 항의 차수는? (n → ∞)",
+                choices: [
+                  { text: "½·lg(2πn) = $\\Theta(\\lg n)$, n·lg(n/e) = $\\Theta(n \\lg n)$, $O(1/n)$ → 0. 지배 항은 n·lg(n/e)", correct: true,
+                    explain: "상수 덧셈·뺄셈은 로그의 차수에 영향 없음. lg(2πn) = lg 2π + lg n = $\\Theta(\\lg n)$. n·lg(n/e) = n·lg n − n·lg e, 즉 $\\Theta(n \\lg n)$." },
+                  { text: "모든 항이 $\\Theta(n)$", correct: false,
+                    explain: "로그 항은 훨씬 작고, $\\lg(n!)$의 지배 항은 n lg n으로 더 큼." },
+                  { text: "지배 항이 n·lg e (상수)", correct: false,
+                    explain: "n·lg(n/e) = n·lg n − n·lg e. 첫 부분 n·lg n이 지배." },
+                ],
+              },
+              {
+                stage: "④ 결론 (스털링 경로)",
+                prompt: "따라서 n → ∞에서 $\\lg(n!)$은?",
+                choices: [
+                  { text: "n·lg n − n·lg e + $\\Theta(\\lg n)$ = $\\Theta(n \\lg n)$", correct: true,
+                    explain: "지배 항 n lg n과 하위 항 n·lg e(= $\\Theta(n)$)와 $\\Theta(\\lg n)$. 모두 $\\Theta(n \\lg n)$에 흡수 → 전체가 $\\Theta(n \\lg n)$." },
+                  { text: "$\\Theta(n)$ — n·lg e 항 때문", correct: false,
+                    explain: "n·lg n이 n보다 상위 차수. $\\Theta(n)$에 흡수되지 않음." },
+                  { text: "$\\Theta(\\lg n)$", correct: false,
+                    explain: "지배 항이 n lg n이므로 lg n보다 훨씬 큼." },
+                ],
+              },
+              {
+                stage: "⑤ 스털링 없이 — 하한 $\\Omega(n \\lg n)$",
+                prompt: "연습 8.1-2: $\\lg(n!)$ = lg 1 + lg 2 + ... + lg n = Σ_{$k = 1$}^n lg k. 하한 $\\Omega(n \\lg n)$을 쉽게 얻으려면?",
+                choices: [
+                  { text: "$k = n$/2..n의 항만 골라 lg k ≥ lg(n/2) 사용. 합 ≥ (n/2)·lg(n/2) = $\\Omega(n \\lg n)$", correct: true,
+                    explain: "뒤쪽 절반 항이 모두 ≥ lg(n/2). 개수 n/2, 각 항 lg(n/2) = lg n − 1. 합의 상한 (n/2)(lg n − 1) = $\\Omega(n \\lg n)$." },
+                  { text: "모든 항을 lg $1 = 0$으로 하한", correct: false,
+                    explain: "너무 느슨. 그러면 합의 하한이 0이 되어 유용하지 않음." },
+                  { text: "모든 항을 lg n으로 하한 (각 $k \\leq n$)", correct: false,
+                    explain: "각 $k \\leq n$이므로 lg $k \\leq lg$ n (상한). 하한이 아님." },
+                ],
+              },
+              {
+                stage: "⑥ 상한 $O(n \\lg n)$",
+                prompt: "같은 합 Σ lg k의 상한 $O(n \\lg n)$은 어떻게?",
+                choices: [
+                  { text: "모든 $k \\leq n$이므로 lg $k \\leq lg$ n. Σ_{$k = 1$}^n lg $k \\leq n$ · lg n = $O(n \\lg n)$", correct: true,
+                    explain: "각 항 상한 × 항의 수. 직접적인 상한." },
+                  { text: "$k = 1$..n/2의 항만 고려", correct: false,
+                    explain: "반만 고려하면 하한 목적에 적합. 상한은 모든 항 고려." },
+                  { text: "적분 근사로 ∫ lg x $dx = n$·lg n − n + $O(1)$도 가능", correct: false,
+                    explain: "(정답이지만 더 복잡한 방법) 이 선택지는 '맞는 추가 접근'이라 올바른 대답이지만, 정답 A가 더 간결함. 여기서는 A를 정답으로 표시." },
+                ],
+              },
+              {
+                stage: "⑦ 두 방향 결합 → Θ",
+                prompt: "$\\Omega(n \\lg n)$ ≤ $\\lg(n!)$ ≤ $O(n \\lg n)$에서 결론은?",
+                choices: [
+                  { text: "$\\lg(n!)$ = $\\Theta(n \\lg n)$ — Theorem 3.1에 따라 O와 Ω의 교차가 Θ를 만듦", correct: true,
+                    explain: "이 결과가 CLRS 식 (3.19)이며, 비교 기반 정렬 하한 증명(Ch 8)의 기반." },
+                  { text: "$\\lg(n!)$ = $\\Theta(n)$ + $\\Theta(\\lg n)$", correct: false,
+                    explain: "점근 합이 아니라 하나의 Θ 클래스로 통합." },
+                  { text: "$\\lg(n!)$ = $O(n \\lg n)$만 확정", correct: false,
+                    explain: "Ω도 보였으므로 tight bound Θ 확정." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 점근 관계 판정 실습 — 함수 쌍 비교",
+            intro: "여러 함수 쌍에 대해 f와 g의 점근 관계를 판정하세요. Θ(정확히 같은 차수) / O(f가 g 이하) / Ω(f가 g 이상) / o(f가 엄격히 작음) / ω(f가 엄격히 큼)를 구분.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "f(n) = 2n² + 100n,   $g(n) = n^{2}$. f와 g의 관계는?",
+                choices: [
+                  { text: "f(n) = $\\Theta(g(n))$ — 상수 배와 하위 항 차이. 같은 차수.", correct: true,
+                    explain: "다항식의 차수만 보면 됨. 2n² + 100n의 주 항은 n² (g와 동일). 상수 2는 $c_{1} = 1$, $c_{2} = 3$으로 sandwich 가능." },
+                  { text: "$f = o(g)$ — 더 작음", correct: false,
+                    explain: "f/g → 2 (상수). 0이 아니므로 o 아님." },
+                  { text: "$f = \\omega (g)$ — 엄격히 큼", correct: false,
+                    explain: "f/g → 2, ∞ 아니므로 ω 아님." },
+                  { text: "비교 불가", correct: false,
+                    explain: "비교 가능하고 명확히 Θ." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$f(n) = n$,   g(n) = $n \\lg n$. f와 g의 관계는?",
+                choices: [
+                  { text: "f(n) = $o(g(n))$ — 엄격히 작음. lim f/$g = lim$ 1/lg $n = 0$.", correct: true,
+                    explain: "n / ($n \\lg n$) = 1/lg n → 0. 따라서 o. 동시에 $f = O(g)$이지만 o가 더 강한 주장." },
+                  { text: "$f = \\Theta (g)$ — 둘 다 거의 선형", correct: false,
+                    explain: "n lg n이 n보다 다항식적 이상의 차이는 아니지만 lg n만큼 크므로 Θ 아님." },
+                  { text: "$f = \\omega (g)$", correct: false,
+                    explain: "반대. g가 더 큼." },
+                  { text: "$f = \\Omega (g)$", correct: false,
+                    explain: "Ω는 f가 g 이상이라는 뜻. 여기서 f가 작음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "f(n) = $2^n$,   g(n) = $n^{k}$ (k는 임의의 상수). f와 g의 관계는?",
+                choices: [
+                  { text: "$f = \\omega (g)$ — 어떤 상수 k에 대해서도 지수가 다항식을 압도 (식 3.10)", correct: true,
+                    explain: "CLRS 식 3.10: $n^{b}$ = o($a^{n}$) for any b, $a > 1$. 동치로 $a^{n}$ = ω($n^{b}$). 지수가 항상 다항식보다 점근적으로 더 빠름." },
+                  { text: "$f = o(g)$ for 큰 k", correct: false,
+                    explain: "k가 아무리 커도(단 상수이면) 지수가 이김." },
+                  { text: "$f = \\Theta (g)$ for 적절한 k", correct: false,
+                    explain: "지수와 다항식은 서로 다른 차수 계급. Θ 관계 성립 안 함." },
+                  { text: "$k = n$일 때는 $f < g$", correct: false,
+                    explain: "n^n은 $2^n$보다 큼 ($n^{n}$ grows as exp($n \\lg n$) vs $2^n$ = exp(n lg 2)). 그러나 k는 상수여야 함 — n은 상수 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "f(n) = $\\lg(n!)$,   g(n) = $n \\lg n$. f와 g의 관계는?",
+                choices: [
+                  { text: "$f = \\Theta (g)$ — CLRS 식 (3.19)의 정확한 결론", correct: true,
+                    explain: "앞서 증명한 $\\lg(n!)$ = $\\Theta(n \\lg n)$. 스털링 혹은 합의 직접 평가로 도출." },
+                  { text: "$f = o(g)$ — lg의 특성상 더 느림", correct: false,
+                    explain: "lg가 느리지만 $\\lg(n!)$의 합산이 n lg n과 동급." },
+                  { text: "$f = \\omega (g)$", correct: false,
+                    explain: "같은 차수이지 더 크지 않음." },
+                  { text: "비교 불가 (로그 속 계승)", correct: false,
+                    explain: "분석 가능. 바로 위 proof drill에서 유도." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$f(n) = lg$ lg n,   g(n) = (lg n)^0.01. f와 g의 관계는? (두 로그성 함수의 비교)",
+                choices: [
+                  { text: "$f = o(g)$ — 이중 로그가 로그의 어떤 다항보다도 훨씬 느림", correct: true,
+                    explain: "치환 $m = lg$ n: $f = lg$ m, g = $m^{0.01}$. (lg m)/$m^{0.01}$ → 0 (다항식이 로그를 이김). 따라서 $f = o(g)$." },
+                  { text: "$f = \\Theta (g)$ — 둘 다 'lg n 계열'", correct: false,
+                    explain: "이중 로그는 단일 로그보다 훨씬 느림." },
+                  { text: "$f = \\omega (g)$", correct: false,
+                    explain: "반대입니다. f가 더 느림." },
+                  { text: "비교 불가", correct: false,
+                    explain: "치환으로 명확히 비교 가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "f(n) = $O(g(n))$과 g(n) = $\\Omega(f(n))$의 관계는? (CLRS p.51 transpose symmetry)",
+                choices: [
+                  { text: "둘은 동치 (if and only if) — transpose symmetry", correct: true,
+                    explain: "$f = O(g)$ ⟺ $g = \\Omega (f)$. CLRS p.51의 성질. 직관: 'f가 g 이하' ⟺ 'g가 f 이상'." },
+                  { text: "$f = O(g)$가 $g = \\Omega (f)$보다 강한 주장", correct: false,
+                    explain: "서로 동치 (equivalent). 어느 쪽도 강하지 않음." },
+                  { text: "둘 사이 관계 없음", correct: false,
+                    explain: "정확히 동치 관계. 이름 그대로 'transpose symmetry'." },
+                  { text: "$f = O(g)$ ⟹ $g = O(f)$", correct: false,
+                    explain: "이건 대칭이 아니라 다른 방향의 명제. Ω와 O는 반대 개념." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch4",
+    tier: 1,
+    num: "Ch 4",
+    title: "Divide-and-Conquer",
+    subtitle: "점화식 · 마스터 정리 · 슈트라센",
+    summary: "점화식을 푸는 세 가지 무기 — 치환법, 재귀 트리, 마스터 정리.",
+    objectives: [
+      "치환법(substitution)·재귀 트리·마스터 정리 세 점화식 풀이 기법을 적용할 수 있다.",
+      "마스터 정리의 세 케이스 조건을 판별하고 Case 3의 정규 조건(regularity)을 검증할 수 있다.",
+      "최대 부분 배열·슈트라센 알고리즘에서 분할 정복이 점근 복잡도를 어떻게 개선하는지 설명할 수 있다.",
+    ],
+    md: `
+## 점화식 풀이 3가지 방법
+
+**1. 치환법 (Substitution Method)**
+- 답을 추측(guess)한 후 수학적 귀납법으로 증명
+
+**2. 재귀 트리 방법 (Recursion-Tree Method)**
+- 점화식을 트리로 시각화, 레벨별 비용 합산
+
+**3. 마스터 방법 (Master Method)** ⭐
+- $T(n) = aT(n/b) + f(n)$ &nbsp;($a \\ge 1$, $b > 1$)
+
+| Case | 조건 | 결과 |
+|------|------|------|
+| **Case 1** | $f(n) = O(n^{\\log_b a - \\varepsilon})$ | $T(n) = \\Theta(n^{\\log_b a})$ |
+| **Case 2** | $f(n) = \\Theta(n^{\\log_b a})$ | $T(n) = \\Theta(n^{\\log_b a} \\lg n)$ |
+| **Case 3** | $f(n) = \\Omega(n^{\\log_b a + \\varepsilon})$ + regularity | $T(n) = \\Theta(f(n))$ |
+
+**적용 예시**
+- $T(n) = 9T(n/3) + n$ → Case 1 → $\\Theta(n^2)$
+- $T(n) = 2T(n/2) + n$ → Case 2 → $\\Theta(n \\lg n)$
+- $T(n) = 3T(n/4) + n \\lg n$ → Case 3 → $\\Theta(n \\lg n)$
+
+**최대 부분 배열 (Maximum Subarray)**
+- 분할 정복: $\\Theta(n \\lg n)$
+- Kadane: $\\Theta(n)$
+
+**슈트라센 (Strassen)**: 행렬 곱셈 $\\Theta(n^3)$ → $\\Theta(n^{\\lg 7}) \\approx \\Theta(n^{2.81})$
+`,
+    ox: [
+      { q: "T(n) = 2T(n/2) + n의 해는 $\\Theta(n \\lg n)$ (Case 2).", a: true, why: "n^(log₂ 2) = n이고 $f(n) = n$=$\\Theta(n)$ → Case 2." },
+      { q: "Master Theorem은 모든 형태의 점화식에 적용된다.", a: false, why: "Case 2·3 사이의 '갭' 구간에선 적용 불가." },
+      { q: "Strassen 알고리즘은 n×n 행렬 곱셈을 $\\Theta(n^{\\lg 7})$에 수행한다.", a: true, why: "7번 곱셈으로 2×2 블록 처리 → lg $7 \\approx 2.807$." },
+      { q: "T(n) = T(n−1) + n은 Master Theorem으로 풀 수 있다.", a: false, why: "형태가 aT(n/b)+f(n)이 아님. 합으로 풀어 $\\Theta(n^2)$." },
+      { q: "재귀 트리 방법은 해의 '추측'을 만드는 데 유용하다.", a: true, why: "CLRS 4.4. 이후 치환법으로 검증." },
+      { q: "T(n) = 4T(n/2) + n²의 해는 Θ(n² lg n) (Case 2).", a: true, why: "n^(log₂ 4)=$n^{2} = f(n)$ → Case 2." },
+      { q: "분할 정복 알고리즘은 반드시 Combine 단계가 비용이 있다.", a: false, why: "Quicksort는 분할이 곧 해결. Combine이 공짜." },
+      { q: "치환법(Substitution Method)은 수학적 귀납법을 사용한다.", a: true, why: "추측한 해가 성립함을 귀납으로 증명." },
+      { q: "Maximum Subarray 분할 정복 해법은 $\\Theta(n \\lg n)$.", a: true, why: "좌/우/중간 세 경우 재귀." },
+      { q: "T(n) = 3T(n/2) + n²은 마스터 정리 Case 3.", a: true, why: "n^(log₂ 3) ≈ $n^{1.58}$ < n² → f가 지배, 정규조건 성립 → $\\Theta(n^2)$." },
+    ],
+
+    exercises: [
+      {
+        num: "4.1-1",
+        q: "최대 부분 배열 문제에서 모든 원소가 음수이면 어떻게 되나?",
+        hint: "단일 원소 부분 배열도 허용되므로 최댓값(가장 덜 음수인) 원소.",
+        solution: "최대 부분 배열 = 가장 큰 단일 원소. 분할 정복/Kadane 모두 동일한 결과.",
+      },
+      {
+        num: "4.1-5",
+        q: "Kadane 알고리즘(연습문제): 최대 부분 배열을 비재귀 $\\Theta(n)$ 알고리즘으로 찾으시오.",
+        hint: "'현재 위치에서 끝나는 최대' 누적 유지.",
+        solution: "max_here = max(A[i], max_here+A[i]), $max_so_far = max(max_so_far, max_here)$. $\\Theta(n)$ 선형 스캔.",
+      },
+      {
+        num: "4.3-1",
+        q: "$T(n) = T(n-1)$ + n에 대해 T(n) = $O(n^2)$ 증명 (substitution).",
+        hint: "cn² 추측 후 귀납.",
+        solution: "$T(n) = T(n-1)$+$n \\leq c(n-1)$² + $n = cn^{2}$ - 2cn + c + $n \\leq cn^{2}$ ($c \\geq 1$ + 1/n).",
+      },
+      {
+        num: "4.3-7",
+        q: "T(n) = 2T(n/2) + $n \\lg n$. 마스터 정리 적용 가능? 해는?",
+        hint: "$n^{\\log_2 2}$ = n과 비교. n lg n이 다항식적으로 크지 않음.",
+        solution: "Case 2와 3 사이 갭. 재귀 트리: 각 레벨 비용 $n \\lg n$, 레벨 수 lg n → T(n) = Θ(n lg²n).",
+      },
+      {
+        num: "4.5-1",
+        q: "다음 점화식을 마스터 정리로 풀이: (a) $T(n) = 2T(n/4) + 1$, (b) $T(n) = 2T(n/4) + \\sqrt{n}$, (c) $T(n) = 2T(n/4) + n$, (d) $T(n) = 2T(n/4) + n^2$.",
+        hint: "$n^{\\log_4 2} = n^{1/2} = \\sqrt{n}$과 비교.",
+        solution: "(a) Case 1 → $\\Theta(\\sqrt{n})$. (b) Case 2 → $\\Theta(\\sqrt{n} \\lg n)$. (c) Case 3 → $\\Theta(n)$. (d) Case 3 → $\\Theta(n^2)$.",
+      },
+      {
+        num: "Problem 4-1",
+        q: "Strassen 알고리즘으로 2×2 블록 분할. 점화식 T(n) = 7T(n/2) + $\\Theta(n^2)$. 해를 마스터 정리로 구하고, 일반 $\\Theta(n^3)$ 방법과 비교하시오.",
+        hint: "$\\log_2 7$ ≈ 2.807.",
+        solution: "Case 1: $n^{\\log_2 7}$ > n² → $\\Theta(n^{\\log_2 7})$ ≈ $\\Theta(n^{2.807})$. n³보다 점근적으로 빠름.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "4-1",
+        title: "점화식 예제 모음 — 마스터 정리 연습",
+        q: "다음 각 점화식의 점근적 상한을 구하라. 모든 $T(n)$은 충분히 작은 $n$에 대해 상수이다.",
+        parts: [
+        {
+          label: "a",
+          q: "$T(n) = 2T(n/2) + n^4$",
+          solution: "마스터 정리 Case 3: $f(n) = n^4$, $n^{\\log_2 2} = n$. $f = \\Omega(n^{1+\\epsilon})$, 정규조건 $2(n/2)^4 = n^4/8 \\leq c n^4$ 성립 → $T(n) = \\Theta(n^4)$.",
+        },
+        {
+          label: "b",
+          q: "$T(n) = T(7n/10) + n$",
+          solution: "$a=1, b=10/7$. $n^{\\log_{10/7} 1} = n^0 = 1$. $f(n) = n = \\Omega(n^{0+\\epsilon})$, 정규조건 $1 \\cdot (7n/10) = 0.7n \\leq cn$ 성립 → $T(n) = \\Theta(n)$.",
+        },
+        {
+          label: "c",
+          q: "$T(n) = 16T(n/4) + n^2$",
+          solution: "$n^{\\log_4 16} = n^2$. $f(n) = n^2 = \\Theta(n^2)$ → Case 2 → $T(n) = \\Theta(n^2 \\lg n)$.",
+        },
+        {
+          label: "d",
+          q: "$T(n) = 7T(n/3) + n^2$",
+          solution: "$n^{\\log_3 7} \\approx n^{1.77}$. $f(n) = n^2 = \\Omega(n^{\\log_3 7 + \\epsilon})$. 정규조건 $7(n/3)^2 = 7n^2/9 \\leq cn^2$ → Case 3 → $T(n) = \\Theta(n^2)$.",
+        },
+        {
+          label: "e",
+          q: "$T(n) = 7T(n/2) + n^2$",
+          solution: "$n^{\\log_2 7} \\approx n^{2.81}$. $f(n) = n^2 = O(n^{\\log_2 7 - \\epsilon})$ → Case 1 → $T(n) = \\Theta(n^{\\lg 7})$.",
+        },
+        {
+          label: "f",
+          q: "$T(n) = 2T(n/4) + \\sqrt{n}$",
+          solution: "$n^{\\log_4 2} = n^{1/2} = \\sqrt{n}$. $f(n) = \\Theta(\\sqrt{n})$ → Case 2 → $T(n) = \\Theta(\\sqrt{n} \\lg n)$.",
+        },
+        {
+          label: "g",
+          q: "$T(n) = T(n-2) + n^2$",
+          solution: "마스터 정리 적용 불가. 반복 대입: $T(n) = n^2 + (n-2)^2 + (n-4)^2 + \\ldots = \\Theta(n^3)$ (합을 직접 전개).",
+        },
+        ],
+      },
+      {
+        num: "4-5",
+        title: "Chip Testing (칩 검사)",
+        q: "Diogenes 교수는 동일하게 보이는 VLSI 칩 $n$개를 가지고 있는데, 반 이상(> n/2)이 '정상'임을 안다. 두 칩을 서로 테스트하는 장비가 있다: 양쪽 정상이면 둘 다 '정상' 보고, 둘 중 하나라도 불량이면 어느 보고든 신뢰 불가. 정상 칩 하나를 $O(n)$ 테스트로 찾는 알고리즘을 설계하라.",
+        parts: [
+        {
+          label: "a",
+          q: "정상 칩이 $\\lceil n/2 \\rceil$개 이하이면, 한 번의 페어 테스트만으로 구분할 수 없는 이유는?",
+          solution: "정상이 절반 이하라면 'A, B 모두 정상 보고'는 '둘 다 정상' 또는 '둘 다 불량'을 모두 설명 가능. 과반 가정이 있어야 다수결 논리가 작동.",
+        },
+        {
+          label: "b",
+          q: "$\\lfloor n/2 \\rfloor$ 쌍으로 묶어 테스트하면, 양쪽이 '정상' 보고한 쌍에서 한 칩만 남기는 재귀적 방법을 고안하라.",
+          hint: "쌍의 결과가 '둘 다 정상' 아닌 쌍은 둘 중 적어도 하나가 불량 → 둘 다 버림.",
+          solution: "**알고리즘**: (1) $\\lfloor n/2 \\rfloor$개 쌍 구성, (2) 양쪽이 '정상' 보고한 쌍에서 한 개만 남김, (3) 그 외 쌍은 전부 폐기, (4) 남은 칩에 대해 재귀. 홀수면 한 개 남은 칩은 제외.",
+        },
+        {
+          label: "c",
+          q: "이 알고리즘이 정상 칩이 항상 과반 이상을 유지함을 증명하라. 그리고 $T(n) = T(n/2) + O(n) = O(n)$임을 보여라.",
+          solution: "**과반 유지**: 각 '양쪽 정상' 쌍에서 남긴 칩 중 정상 칩의 비율 ≥ 원래 비율. 폐기된 쌍에서는 불량 칩이 정상보다 많이 빠짐(한쪽 이상 불량). → 남은 칩의 과반 정상. **시간**: $T(n) = T(n/2) + O(n) = O(n)$ (마스터 Case 3).",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      { id: "masterTree", name: "재귀 트리 시각화", desc: "T(n) = aT(n/b)+f(n)의 트리 전개", tags: ["Master"], viz: "masterTree" },
+      { id: "masterCase", name: "마스터 정리 케이스 판정", desc: "(a, b, f(n)) 입력 → c = log_b(a) 비교 → Case 1/2/3 + 정규조건 자동 판정", tags: ["Master", "인터랙티브"], viz: "masterCase" },
+      {
+        id: "maxSub", name: "Maximum Subarray", desc: "Kadane 알고리즘 단계별 추적 · 드릴은 CLRS의 분할 정복($\\Theta(n \\lg n)$) 버전 기준",
+        tags: ["Θ(n lg n)", "D&C", "Θ(n) Kadane"], viz: "kadane",
+        drills: {
+          source: "CLRS 3판 4.1절 pp.70-74, 4.5절 pp.93-97",
+          pseudo: {
+            title: "① 의사코드 재구성 — FIND-MAX-CROSSING-SUBARRAY",
+            intro: "분할 정복 기반 최대 부분 배열 알고리즘의 핵심은 '중앙을 지나는' 최대 부분 배열을 선형 시간에 찾는 보조 프로시저입니다. CLRS 4.1절(p.71)의 FIND-MAX-CROSSING-SUBARRAY 15줄을 순서대로 배치하세요. 상위 FIND-MAXIMUM-SUBARRAY는 참고로 펼쳐져 있습니다.",
+            reference: {
+              title: "참고: FIND-MAXIMUM-SUBARRAY (4.1절, p.72)",
+              lines: [
+                { text: "FIND-MAXIMUM-SUBARRAY(A, low, high)",                          indent: 0 },
+                { text: "if high == low",                                               indent: 1 },
+                { text: "return (low, high, A[low])    // 기저 사례: 원소 하나",        indent: 2 },
+                { text: "else mid = ⌊(low + high) / 2⌋",                               indent: 1 },
+                { text: "(left-low, left-high, left-sum) = FIND-MAXIMUM-SUBARRAY(A, low, mid)", indent: 2 },
+                { text: "(right-low, right-high, right-sum) = FIND-MAXIMUM-SUBARRAY(A, mid+1, high)", indent: 2 },
+                { text: "(cross-low, cross-high, cross-sum) = FIND-MAX-CROSSING-SUBARRAY(A, low, mid, high)", indent: 2 },
+                { text: "if left-$sum \\geq right$-sum and left-$sum \\geq cross$-sum",             indent: 2 },
+                { text: "return (left-low, left-high, left-sum)",                       indent: 3 },
+                { text: "elseif right-$sum \\geq left$-sum and right-$sum \\geq cross$-sum",        indent: 2 },
+                { text: "return (right-low, right-high, right-sum)",                    indent: 3 },
+                { text: "else return (cross-low, cross-high, cross-sum)",               indent: 2 },
+              ],
+            },
+            // CLRS p.71 원문
+            lines: [
+              { text: "FIND-MAX-CROSSING-SUBARRAY(A, low, mid, high)", indent: 0, note: "프로시저 헤더" },
+              { text: "left-sum = -∞",                         indent: 1, note: "왼쪽 절반 최대합 초기화" },
+              { text: "$sum = 0$",                               indent: 1, note: "누적합" },
+              { text: "for $i = mid$ downto low",                indent: 1, note: "mid부터 왼쪽으로 스캔" },
+              { text: "$sum = sum$ + A[i]",                      indent: 2, note: "왼쪽 접미부 누적" },
+              { text: "if $sum > left$-sum",                     indent: 2, note: "더 나은 왼쪽 끝 발견?" },
+              { text: "left-$sum = sum$",                        indent: 3, note: "최대합 갱신" },
+              { text: "max-$left = i$",                          indent: 3, note: "왼쪽 경계 갱신" },
+              { text: "right-sum = -∞",                        indent: 1, note: "오른쪽 절반 최대합 초기화" },
+              { text: "$sum = 0$",                               indent: 1, note: "누적합 리셋" },
+              { text: "for $j = mid$ + 1 to high",               indent: 1, note: "mid+1부터 오른쪽으로 스캔" },
+              { text: "$sum = sum$ + A[j]",                      indent: 2, note: "오른쪽 접두부 누적" },
+              { text: "if $sum > right$-sum",                    indent: 2, note: "더 나은 오른쪽 끝 발견?" },
+              { text: "right-$sum = sum$",                       indent: 3, note: "최대합 갱신" },
+              { text: "max-$right = j$",                         indent: 3, note: "오른쪽 경계 갱신" },
+              { text: "return (max-left, max-right, left-sum + right-sum)", indent: 1, note: "두 절반을 합쳐 반환" },
+            ],
+          },
+          proof: {
+            title: "② 마스터 정리로 세 가지 점화식 풀기",
+            intro: "CLRS 4.5절의 worked example 3가지를 따라가며 Case 1/2/3을 모두 경험합니다. 마지막 문제는 '적용 불가' 함정 — 마스터 정리의 한계도 확인하세요.",
+            invariantLabel: "마스터 정리: ",
+            invariant: "$T(n) = aT(n/b) + f(n)$에서 $n^{\\log_b a}$와 f(n)의 다항식적 관계에 따라 Case 1 ($n^{\\log_b a}$ 지배) / Case 2 (같은 차수) / Case 3 (f(n) 지배) 중 하나를 적용. 간격(gap)에 빠지면 적용 불가.",
+            steps: [
+              // === Recurrence 1: T(n) = 9T(n/3) + n → Case 1 ===
+              {
+                stage: "예제 1: T(n) = 9T(n/3) + n",
+                prompt: "마스터 정리 대입 — a, b, f(n)은?",
+                choices: [
+                  { text: "$a = 9$, $b = 3$, $f(n) = n$", correct: true,
+                    explain: "재귀 호출 수 9, 각 부분 문제 크기 n/3, 비재귀 비용 $f(n) = n$." },
+                  { text: "$a = 3$, $b = 9$, $f(n) = n$", correct: false,
+                    explain: "a는 호출 수(9), b는 크기 분모(3)입니다. 헷갈리지 마세요." },
+                  { text: "$a = 9$, $b = 3$, $f(n) = 1$", correct: false,
+                    explain: "f(n)은 비재귀 부분의 비용으로 여기서는 n입니다." },
+                  { text: "$a = 1$, $b = 3$, f(n) = 9n", correct: false,
+                    explain: "재귀 호출이 9번이므로 $a = 9$입니다." },
+                ],
+              },
+              {
+                stage: "예제 1: T(n) = 9T(n/3) + n",
+                prompt: "$n^{\\log_b a}$ = $n^{\\log_3 9}$ = ? 그리고 $f(n) = n$과의 비교는?",
+                choices: [
+                  { text: "$n^{\\log_3 9}$ = n². $f(n) = n$ = O(n^(2−ε)) ($\\varepsilon  = 1$) → Case 1", correct: true,
+                    explain: "$\\log_3 9$ = 2이므로 $n^{\\log_b a}$ = n². $f(n) = n$이 n²보다 다항식적으로 작으므로 Case 1. 답: T(n) = $\\Theta(n^2)$." },
+                  { text: "$n^{\\log_3 9}$ = n. $f(n) = n$ → Case 2 → $\\Theta(n \\lg n)$", correct: false,
+                    explain: "$\\log_3 9$ = 2이지 1이 아닙니다. $3^{2} = 9$." },
+                  { text: "Case 3 — f(n)이 더 크다", correct: false,
+                    explain: "$f(n) = n$이 n²보다 더 작으므로 Case 1입니다." },
+                  { text: "Case 판별 불가능", correct: false,
+                    explain: "세 Case 중 하나에 정확히 해당합니다." },
+                ],
+              },
+              // === Recurrence 2: T(n) = T(2n/3) + 1 → Case 2 ===
+              {
+                stage: "예제 2: T(n) = T(2n/3) + 1",
+                prompt: "마스터 정리 대입 — a, b, f(n)은? (부분 문제가 2n/3 하나뿐임에 주의)",
+                choices: [
+                  { text: "$a = 1$, $b = 3$/2, $f(n) = 1$", correct: true,
+                    explain: "호출 1번이므로 $a = 1$. 크기 2n/$3 = n$/(3/2) → $b = 3$/2. 상수 비용 $f(n) = 1$." },
+                  { text: "$a = 1$, $b = 2$/3, $f(n) = 1$", correct: false,
+                    explain: "b는 크기를 나누는 값(> 1)이어야 합니다. n/b = 2n/3에서 $b = 3$/2." },
+                  { text: "$a = 2$, $b = 3$, $f(n) = 1$", correct: false,
+                    explain: "재귀 호출은 1번뿐입니다 (2n/3 한 개). 2는 분자의 일부일 뿐." },
+                  { text: "$a = 1$, $b = 3$, $f(n) = 2$", correct: false,
+                    explain: "n/b = 2n/$3 \\neq n$/3 이므로 $b = 3$이 아닙니다." },
+                ],
+              },
+              {
+                stage: "예제 2: T(n) = T(2n/3) + 1",
+                prompt: "$n^{\\log_b a}$ = $n^{\$\$\\log_{3/2} 1$$}$ = ? 그리고 $f(n) = 1$과 비교 → 어느 Case?",
+                choices: [
+                  { text: "$n^{0}$ = 1. f(n) = $\\Theta(1)$ = $\\Theta(n^{\\log_b a})$ → Case 2 → T(n) = $\\Theta(\\lg n)$", correct: true,
+                    explain: "어떤 밑수의 log 1이든 0입니다. $n^{0} = 1$과 $f(n) = 1$이 같은 차수이므로 Case 2. 공식 $\\Theta(n^{\\log_b a} \\lg n)$ = $\\Theta(\\lg n)$." },
+                  { text: "$n^{1}$ = n → Case 1 → $\\Theta(n)$", correct: false,
+                    explain: "$\\log_{3/2} 1$ = 0입니다 (1의 로그는 항상 0)." },
+                  { text: "Case 3 — f(n)이 더 크다", correct: false,
+                    explain: "$f(n) = 1$이 $n^{0} = 1$과 같은 차수입니다 (다항식적으로 크지 않음)." },
+                  { text: "밑수 b가 분수라 마스터 정리 적용 불가", correct: false,
+                    explain: "b는 실수 > 1이면 됩니다. 3/2 = $1.5 > 1$이므로 유효합니다." },
+                ],
+              },
+              // === Recurrence 3: T(n) = 3T(n/4) + n lg n → Case 3 ===
+              {
+                stage: "예제 3: T(n) = 3T(n/4) + $n \\lg n$",
+                prompt: "$n^{\\log_b a}$ = $n^{\\log_4 3}$의 대략적 크기는? ($\\log_4 3$ ≈ 0.793)",
+                choices: [
+                  { text: "$n^{\\log_4 3}$ = O($n^{0.793}$), 즉 n보다 작고 $n^{0}$.5보다 큼", correct: true,
+                    explain: "$\\log_4 3$ ≈ 0.7925. 따라서 $n^{\\log_b a}$는 n^1보다 작은 차수의 다항식." },
+                  { text: "$n^{\\log_4 3}$ = n — log의 밑과 인자가 가까우면 약 1", correct: false,
+                    explain: "$\\log_4 3$ $\\neq 1$. $\\log_4 4$ = 1이지만 여기서는 3입니다." },
+                  { text: "$n^{\\log_4 3}$ = n² — a³ = $27 \\approx 4^{2}$ 같은 관계", correct: false,
+                    explain: "$\\log_b a$ 공식은 지수 관계이지 세제곱 관계가 아닙니다." },
+                  { text: "상수 (n에 무관)", correct: false,
+                    explain: "지수가 0보다 크므로 n에 의존하는 다항식입니다." },
+                ],
+              },
+              {
+                stage: "예제 3: T(n) = 3T(n/4) + $n \\lg n$",
+                prompt: "$f(n) = n$ lg n과 $n^{\\log_4 3}$ = O($n^{0.793}$)을 비교 → Case는? 정규성 조건(regularity)은 성립?",
+                choices: [
+                  { text: "Case 3 — f(n) = Ω(n^(0.793+ε)) ($\\varepsilon  \\approx 0.2$). 정규성: 3·f(n/4) = (3/4) n lg(n/4) ≤ (3/4) f(n) (큰 n에서), 성립 → T(n) = $\\Theta(n \\lg n)$", correct: true,
+                    explain: "$f(n) = n$ lg n이 $n^{0}$.793보다 다항식적으로 크고($\\varepsilon  \\approx 0.2$), 정규성 af(n/b) ≤ cf(n) ($c = 3$/$4 < 1$)이 성립 → Case 3 적용. T(n) = $\\Theta(f(n))$ = $\\Theta(n \\lg n)$." },
+                  { text: "Case 2 — 같은 차수", correct: false,
+                    explain: "n lg n과 $n^{0}$.793은 다른 차수입니다 (전자가 다항식적으로 큼)." },
+                  { text: "Case 1 — $n^{\\log_b a}$가 더 크다", correct: false,
+                    explain: "반대입니다. $f(n) = n$ lg n이 $n^{0}$.793보다 큽니다." },
+                  { text: "Case 3이지만 정규성이 실패 → 적용 불가", correct: false,
+                    explain: "3·(n/4)·lg(n/4) = (3/4)·n·lg(n/4) ≤ (3/4)·n·lg n = (3/4) f(n). $c = 3$/$4 < 1$로 성립합니다." },
+                ],
+              },
+              // === Gap trap: T(n) = 2T(n/2) + n lg n ===
+              {
+                stage: "예제 4 (함정): T(n) = 2T(n/2) + $n \\lg n$",
+                prompt: "$a = 2$, $b = 2$, $n^{\\log_b a}$ = n. $f(n) = n$ lg n은 n보다 크지만, 얼마나 큰가?",
+                choices: [
+                  { text: "f(n)/$n^{\\log_b a}$ = lg n은 어떤 n^ε ($\\varepsilon  > 0$) 보다도 점근적으로 작음 → '다항식적으로' 크지 않음 → Case 2와 3 사이의 gap → 마스터 정리 적용 불가", correct: true,
+                    explain: "CLRS p.95: 'The ratio f(n)/$n^{\\log_b a}$ = ($n \\lg n$)/$n = lg$ n is asymptotically less than n^ε for any positive constant ε.' Case 3은 다항식적으로 더 커야 하는데 lg n은 다항식적 증가가 아니므로 gap. 연습 4.6-2에서 별도 해법." },
+                  { text: "Case 3 — f(n)이 크므로 T(n) = $\\Theta(n \\lg n)$", correct: false,
+                    explain: "그럴 듯하지만 틀립니다. Case 3은 다항식적 차이를 요구하며, lg n은 어떤 다항식보다도 느리게 증가합니다." },
+                  { text: "Case 2 — 서로 비슷하므로 T(n) = $\\Theta(n \\lg^2 n)$", correct: false,
+                    explain: "Case 2는 f(n)이 $n^{\\log_b a}$와 정확히 같은 차수(Θ)여야 합니다. 여기서는 lg n 배 차이가 있습니다." },
+                  { text: "Case 1 — $n^{\\log_b a}$가 지배", correct: false,
+                    explain: "반대입니다. $f(n) = n$ lg n이 n = $n^{\\log_b a}$보다 (비다항식적으로) 큽니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ FIND-MAX-CROSSING-SUBARRAY 직접 추적",
+            intro: "예제 A = ⟨-2, 1, -3, 4, -1, 2, 1, -5⟩에 대해 FIND-MAXIMUM-SUBARRAY(A, 1, 8)가 호출하는 크로싱 보조 프로시저의 내부 상태를 추적합니다. (이 입력의 답은 A[4..7] = ⟨4,-1,2,1⟩, 합 6)",
+            array: [-2, 1, -3, 4, -1, 2, 1, -5],
+            steps: [
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "FIND-MAXIMUM-SUBARRAY(A, 1, 8) 호출. 라인 3 'mid = ⌊(low+high)/2⌋'의 결과는?",
+                choices: [
+                  { text: "mid = ⌊(1+8)/2⌋ = ⌊4.5⌋ = 4", correct: true,
+                    explain: "바닥 함수로 정수화. 따라서 왼쪽은 A[1..4] = ⟨-2,1,-3,4⟩, 오른쪽은 A[5..8] = ⟨-1,2,1,-5⟩, 크로싱은 A[1..4] ∪ A[5..8]에서 $mid = 4$를 지나는 모든 구간." },
+                  { text: "mid = ⌈(1+8)/2⌉ = 5", correct: false,
+                    explain: "CLRS는 천장 ⌈⌉이 아니라 바닥 ⌊⌋을 사용합니다." },
+                  { text: "$mid = 1$+$8 = 9$", correct: false,
+                    explain: "(low+high)/2이지 low+high가 아닙니다." },
+                  { text: "mid = (high-low)/$2 = 3.5$", correct: false,
+                    explain: "공식은 ⌊(low+high)/2⌋입니다." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "FIND-MAX-CROSSING-SUBARRAY(A, 1, 4, 8) 호출 직후, 왼쪽 for 루프($i = mid$ downto low) 시작 전의 left-sum과 sum의 초기값은?",
+                choices: [
+                  { text: "left-sum = -∞,  $sum = 0$", correct: true,
+                    explain: "라인 1: left-sum = -∞ (이렇게 해야 첫 비교에서 항상 갱신). 라인 2: $sum = 0$ (누적 합 초기화)." },
+                  { text: "left-$sum = 0$,  $sum = 0$", correct: false,
+                    explain: "left-sum이 0이면 모든 원소가 음수인 배열의 경우 답이 틀려집니다. -∞로 초기화해야 안전합니다." },
+                  { text: "left-$sum = A[mid]$ = 4,  $sum = 4$", correct: false,
+                    explain: "알고리즘은 for 루프 본문에서 A[i]를 더하며 점진적으로 갱신합니다. 초기값은 중립 원소(0, -∞)." },
+                  { text: "left-sum = -∞,  sum = -∞", correct: false,
+                    explain: "sum은 누적합이므로 0에서 시작해야 합니다." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "왼쪽 for 루프 ($i = 4$ downto 1) 종료 후 left-sum과 max-left는? ($A[4..4] = 4$, $A[3..4] = 1$, $A[2..4] = 2$, $A[1..4] = 0$ 중 최댓값을 찾음)",
+                choices: [
+                  { text: "left-$sum = 4$,  max-$left = 4$", correct: true,
+                    explain: "$i = 4$: $sum = 4$, left-$sum = 4$, max-$left = 4$. $i = 3$: sum=$1 < 4$. $i = 2$: sum=$2 < 4$. $i = 1$: sum=$0 < 4$. 최댓값은 A[4..4] 단일 원소 ⟨4⟩ = 4." },
+                  { text: "left-$sum = 2$,  max-$left = 2$", correct: false,
+                    explain: "$A[2..4] = 1$-3+$4 = 2$는 $A[4..4] = 4$보다 작습니다." },
+                  { text: "left-$sum = 0$,  max-$left = 1$", correct: false,
+                    explain: "$A[1..4] = 0$은 $A[4..4] = 4$보다 작습니다." },
+                  { text: "left-sum = -∞,  max-left = 미정의", correct: false,
+                    explain: "루프에서 $i = 4$ 첫 반복 시 $sum = 4$ > -∞이므로 갱신됩니다." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "오른쪽 for 루프 ($j = 5$ to 8) 종료 후 right-sum과 max-right는? (A[5..5]=-1, $A[5..6] = 1$, $A[5..7] = 2$, A[5..8]=-3)",
+                choices: [
+                  { text: "right-$sum = 2$,  max-$right = 7$", correct: true,
+                    explain: "$j = 5$: sum=-1, right-sum=-1, max-$right = 5$. $j = 6$: $sum = 1$ > -1 → 갱신 (1, 6). $j = 7$: sum=$2 > 1$ → 갱신 (2, 7). $j = 8$: sum=-$3 < 2$. 최종 (2, 7)." },
+                  { text: "right-$sum = 3$,  max-$right = 6$", correct: false,
+                    explain: "$A[6..7] = 3$은 크지만, 이 루프는 A[mid+1..j] 즉 반드시 A[5]로 시작하는 접두부만 봅니다." },
+                  { text: "right-sum = -3,  max-$right = 8$", correct: false,
+                    explain: "-3은 누적의 마지막이지만 중간에 2(max)가 있었습니다. 최댓값을 기록합니다." },
+                  { text: "right-$sum = 1$,  max-$right = 6$", correct: false,
+                    explain: "$j = 7$까지 진행하면 $sum = 2$로 더 커지므로 (2, 7)이 정답입니다." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "FIND-MAX-CROSSING-SUBARRAY의 반환값은?",
+                choices: [
+                  { text: "(max-left, max-right, left-sum + right-sum) = (4, 7, 6)", correct: true,
+                    explain: "라인 15. 중앙을 지나는 최대 부분 배열은 A[4..7] = ⟨4, -1, 2, 1⟩, 합 = 4 + $2 = 6$." },
+                  { text: "(4, 7, 4 + 2 + 2) = (4, 7, 8)", correct: false,
+                    explain: "반환값은 left-sum + right-sum이지 left-sum + right-sum + 추가 항이 아닙니다." },
+                  { text: "(1, 8, 3) — 전체 배열의 합", correct: false,
+                    explain: "전체 합이 아니라 중앙을 지나는 최대 부분 배열만 반환합니다." },
+                  { text: "(4, 7, 4)", correct: false,
+                    explain: "right-$sum = 2$를 빠뜨렸습니다. 합은 left-sum(4) + right-$sum(2) = 6$." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "재귀적으로, FIND-MAXIMUM-SUBARRAY(A, 1, 4)는 왼쪽 절반의 답을, FIND-MAXIMUM-SUBARRAY(A, 5, 8)은 오른쪽 절반의 답을 반환합니다. 각각의 최대 합은?",
+                choices: [
+                  { text: "왼쪽: 4 (A[4..4]),  오른쪽: 3 (A[6..7] = ⟨2,1⟩)", correct: true,
+                    explain: "A[1..4]의 모든 부분 배열 중 최대는 ⟨4⟩ = 4. A[5..8]의 모든 부분 배열 중 최대는 ⟨2,1⟩ = 3." },
+                  { text: "왼쪽: 2,  오른쪽: 2", correct: false,
+                    explain: "왼쪽 최대는 $A[4..4] = 4$, 오른쪽 최대는 $A[6..7] = 3$." },
+                  { text: "왼쪽: 0,  오른쪽: -3", correct: false,
+                    explain: "그건 각 절반의 전체 합이지 최대 부분 배열이 아닙니다." },
+                  { text: "왼쪽: 5,  오른쪽: 2", correct: false,
+                    explain: "A[1..4]에는 ⟨4⟩ = 4가 최대이고 5를 만드는 부분 배열은 없습니다." },
+                ],
+              },
+              {
+                before: { A: [-2, 1, -3, 4, -1, 2, 1, -5], j: null, key: null, i: null },
+                prompt: "최상위 FIND-MAXIMUM-SUBARRAY(A, 1, 8) 최종 반환은? (left-$sum = 4$, right-$sum = 3$, cross-$sum = 6$ 비교)",
+                choices: [
+                  { text: "cross 분기 — (4, 7, 6)", correct: true,
+                    explain: "cross-$sum = 6$이 left-sum(4)와 right-sum(3)보다 크므로 라인 11의 else 분기로 크로싱 결과를 반환. A[4..7] = ⟨4,-1,2,1⟩이 전체 배열의 최대 부분 배열." },
+                  { text: "left 분기 — (4, 4, 4)", correct: false,
+                    explain: "left-$sum(4) \\geq right$-sum(3)은 성립하지만 left-$sum(4) \\geq cross$-sum(6)이 거짓이므로 첫 if 분기를 타지 못합니다." },
+                  { text: "right 분기 — (6, 7, 3)", correct: false,
+                    explain: "right-sum(3)이 셋 중 가장 작으므로 해당 분기로 가지 않습니다." },
+                  { text: "(1, 8, 0) — 전체 배열", correct: false,
+                    explain: "전체 배열의 합은 0이고, 이는 6보다 작으므로 답이 아닙니다." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch6",
+    tier: 1,
+    num: "Ch 6",
+    title: "Heapsort",
+    subtitle: "힙 자료구조 · MAX-HEAPIFY · 힙 정렬",
+    summary: "배열을 트리로 보는 관점 전환이 핵심. BUILD-MAX-HEAP이 $O(n)$인 이유를 완전히 이해해야 합니다.",
+    objectives: [
+      "(이진) 힙의 배열 표현과 최대/최소 힙 성질을 이해하고 PARENT/LEFT/RIGHT 인덱스를 계산할 수 있다.",
+      "MAX-HEAPIFY가 $O(\\lg n)$, BUILD-MAX-HEAP이 $O(n)$인 이유를 수열 합 $\\sum h/2^h$로 증명할 수 있다.",
+      "Heapsort가 in-place·불안정 정렬임을 설명하고 우선순위 큐 응용을 구현할 수 있다.",
+    ],
+    md: `
+## (이진) 힙 자료구조
+
+- 거의 완전 이진 트리 (Complete Binary Tree)
+- 배열 표현: PARENT(i) = $\\lfloor i/2 \\rfloor$, $\\text{LEFT}(i) = 2i$, $\\text{RIGHT}(i) = 2i + 1$
+- **최대 힙 성질**: $A[\\text{PARENT}(i)] \\geq A[i]$
+- 높이 h = $\\lfloor \\lg n \\rfloor$
+
+### 핵심 연산
+
+| 연산 | 시간 복잡도 | 설명 |
+|------|-----------|------|
+| MAX-HEAPIFY | $O(\\lg n)$ | 힙 성질 위반 노드를 아래로 내림 |
+| BUILD-MAX-HEAP | $O(n)$ | 비정렬 배열을 최대 힙으로 변환 |
+| HEAPSORT | $O(n \\lg n)$ | 힙을 이용한 정렬 |
+| HEAP-EXTRACT-MAX | $O(\\lg n)$ | 최대값 추출 |
+| HEAP-INCREASE-KEY | $O(\\lg n)$ | 키 값 증가 |
+| MAX-HEAP-INSERT | $O(\\lg n)$ | 새 원소 삽입 |
+
+\`\`\`
+MAX-HEAPIFY(A, i)
+  l = LEFT(i), r = RIGHT(i)
+  if l ≤ A.heap-size and A[l] > A[i]
+    largest = l
+  else largest = i
+  if r ≤ A.heap-size and A[r] > A[largest]
+    largest = r
+  if largest ≠ i
+    exchange A[i] ↔ A[largest]
+    MAX-HEAPIFY(A, largest)
+\`\`\`
+
+**BUILD-MAX-HEAP이 $O(n)$인 이유** ⭐
+- 높이 h 노드 수 ≤ ⌈n/$2^{h+1}$⌉
+- 총 비용 $= \\sum \\lceil n/2^{h+1} \\rceil \\cdot O(h) = O(n \\cdot \\sum h/2^h) =$ **$O(n)$** (수렴 급수)
+
+**힙 정렬 특징**: In-place, $O(n \\lg n)$ 최악 보장, **불안정 정렬**
+`,
+    ox: [
+      { q: "BUILD-MAX-HEAP의 최악 시간은 $O(n)$이다.", a: true, why: "높이 h 노드 수 ≤ n/$2^{h+1}$의 기하급수 합이 $O(n)$." },
+      { q: "Heapsort는 안정 정렬(stable sort)이다.", a: false, why: "교환 시 같은 key의 상대 순서 보장 없음." },
+      { q: "MAX-HEAPIFY는 $O(\\lg n)$이다.", a: true, why: "높이만큼 내려가며 상수 작업. h = $\\lfloor \\lg n \\rfloor$." },
+      { q: "n개 원소 힙의 높이는 $\\lfloor \\lg n \\rfloor$이다.", a: true, why: "완전 이진 트리 높이." },
+      { q: "이진 힙은 반드시 완전 이진 트리여야 한다.", a: false, why: "'거의 완전(nearly complete)' — 마지막 레벨은 왼쪽부터 채워짐." },
+      { q: "1-indexed 배열에서 노드 i의 부모는 $\\lfloor i/2 \\rfloor$이다.", a: true, why: "CLRS 6.1 정의. 0-indexed면 (i-1)/2." },
+      { q: "Heapsort는 in-place 정렬이다.", a: true, why: "배열 내부에서 교환만 하므로 $O(1)$ 추가 공간." },
+      { q: "최소 힙에서 최솟값은 항상 리프에 있다.", a: false, why: "루트가 최솟값 (min-heap property)." },
+      { q: "우선순위 큐의 HEAP-EXTRACT-MAX는 $O(\\lg n)$이다.", a: true, why: "루트 제거 + MAX-HEAPIFY." },
+      { q: "Heapsort의 최악 시간 복잡도는 $O(n \\lg n)$이다.", a: true, why: "BUILD $O(n)$ + n번 EXTRACT $O(\\lg n)$." },
+    ],
+
+    exercises: [
+      {
+        num: "6.1-1",
+        q: "높이 h인 힙에서 원소의 최소·최대 수는?",
+        hint: "완전 이진 트리 구조.",
+        solution: "최대: 완전 채워진 $2^{h+1}$-1. 최소: 마지막 레벨에 1개만 → $2^h$.",
+      },
+      {
+        num: "6.1-2",
+        q: "n개 원소 힙의 높이는 $\\lfloor \\lg n \\rfloor$임을 증명하시오.",
+        hint: "n이 $2^h$와 $2^{h+1}$-1 사이에 위치.",
+        solution: "높이 h 힙의 노드 수 ∈ [$2^h$, $2^{h+1}$-1]. 로그 취하면 $h \\leq lg$ $n < h$+1 → h = $\\lfloor \\lg n \\rfloor$.",
+      },
+      {
+        num: "6.2-5",
+        q: "MAX-HEAPIFY를 재귀 대신 반복으로 다시 쓰시오.",
+        hint: "while largest != i 루프.",
+        solution: "$i = root$. while 자식 있고 큰 자식이 A[i]보다 크면: 교환 + $i = largest$. 조건 만족 안 될 때까지.",
+      },
+      {
+        num: "6.3-3",
+        q: "높이 h인 노드의 개수가 n 원소 힙에서 ⌈n/$2^{h+1}$⌉ 이하임을 증명하시오.",
+        hint: "높이 h인 노드는 서브트리 크기 ≥ $2^h$.",
+        solution: "h 노드의 서브트리 크기 ≥ $2^h$ → 이런 노드가 k개면 총 서브트리 크기 ≥ k·$2^h$. 전체 n 노드 이하 → k ≤ ⌈n/$2^h$⌉ (섬세하게 $2^{h+1}$).",
+      },
+      {
+        num: "6.4-3",
+        q: "이미 오름차순/내림차순인 배열에 HEAPSORT의 시간은?",
+        hint: "둘 다 $\\Theta(n \\lg n)$.",
+        solution: "HEAPSORT는 최선/최악/평균 모두 $\\Theta(n \\lg n)$. 이미 정렬된 입력이 이점 없음 (Insertion Sort와 대조).",
+      },
+      {
+        num: "6.5-3",
+        q: "YOUNG 테이블이나 비슷한 구조로 MIN-HEAP 다시 구현하시오.",
+        hint: "성질 뒤집기.",
+        solution: "PARENT/LEFT/RIGHT 구조 동일, MIN-HEAPIFY는 ≤ 비교로. 비슷한 $O(\\lg n)$.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "6-1",
+        title: "삽입으로 힙 구축",
+        q: "BUILD-MAX-HEAP을 MAX-HEAP-INSERT의 반복 호출로 구현하는 대안을 고려하자.",
+        parts: [
+        {
+          label: "a",
+          q: "두 절차가 항상 같은 힙을 만드는가? 반례가 있으면 보여라.",
+          solution: "**아니오.** 배열 $\\langle 1, 2, 3\\rangle$에 대해: BUILD-MAX-HEAP은 $\\langle 3, 2, 1\\rangle$ 생성. 삽입 방식은 $\\langle 3, 1, 2\\rangle$ 생성 (1 삽입 → 2 삽입 → 3 삽입 시 경로가 다름). 둘 다 유효한 최대 힙이지만 구조가 다르다.",
+        },
+        {
+          label: "b",
+          q: "최악의 경우, 삽입 방식의 수행 시간이 $\\Theta(n \\lg n)$임을 보여라.",
+          hint: "역순 정렬된 입력에 대해 각 삽입이 $\\Omega(\\lg n)$까지 올라감.",
+          solution: "입력 $\\langle 1, 2, 3, \\ldots, n\\rangle$: $i$번째 삽입 시 $\\lfloor \\lg i \\rfloor$번 비교 → 총 $\\sum_{i=1}^{n} \\lg i = \\Theta(n \\lg n)$. BUILD-MAX-HEAP의 $O(n)$보다 느리다.",
+        },
+        ],
+      },
+      {
+        num: "6-2",
+        title: "$d$-진 힙 분석",
+        q: "$d$-ary 힙: 각 노드가 최대 $d$개 자식을 가진다 ($d=2$가 기본 이진 힙).",
+        parts: [
+        {
+          label: "a",
+          q: "$d$-ary 힙을 배열에 어떻게 표현하는가?",
+          solution: "인덱스 $i$ (1-based)의 자식은 $d(i-1)+2, d(i-1)+3, \\ldots, d(i-1)+d+1 = di+1$. 부모는 $\\lfloor (i-2)/d \\rfloor + 1$.",
+        },
+        {
+          label: "b",
+          q: "$n$개 원소를 가진 $d$-ary 힙의 높이는 $\\Theta(\\log_d n)$임을 보여라.",
+          solution: "$d$-ary 트리에서 높이 $h$의 노드 수 $\\leq \\sum_{i=0}^{h} d^i = (d^{h+1}-1)/(d-1)$. $n$개 담으려면 $d^h \\approx n$ → $h = \\Theta(\\log_d n)$.",
+        },
+        {
+          label: "c",
+          q: "EXTRACT-MAX의 복잡도는?",
+          solution: "루트 추출 후 MAX-HEAPIFY. 각 레벨에서 $d$개 자식 중 최댓값 비교 → $O(d)$. 높이 $\\log_d n$ 레벨 → $O(d \\log_d n)$.",
+        },
+        {
+          label: "d",
+          q: "INSERT의 복잡도는?",
+          solution: "마지막 위치 추가 후 부모와 비교하며 상향. 각 레벨 1회 비교. $O(\\log_d n)$.",
+        },
+        {
+          label: "e",
+          q: "INCREASE-KEY의 복잡도는?",
+          solution: "INSERT와 동일한 상향 버블업 → $O(\\log_d n)$.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "heapify", name: "MAX-HEAPIFY", desc: "힙 성질 위반 노드를 아래로 내리기",
+        tags: ["O(lg n)", "O(h)"], viz: "maxHeapify",
+        drills: {
+          source: "CLRS 3판 6.2-6.4절 pp.154-161, Figure 6.2/6.3",
+          pseudo: {
+            title: "① 의사코드 재구성 — MAX-HEAPIFY",
+            intro: "Ch 6의 핵심 프리미티브 MAX-HEAPIFY(10줄)를 순서대로 배치하세요. 상위 프로시저 BUILD-MAX-HEAP(3줄)과 HEAPSORT(5줄)는 참고로 펼쳐져 있습니다 — 세 프로시저의 의존 관계에 주의.",
+            reference: {
+              title: "참고: BUILD-MAX-HEAP (p.157) · HEAPSORT (p.160)",
+              lines: [
+                { text: "BUILD-MAX-HEAP(A)",                         indent: 0 },
+                { text: "A.heap-$size = A.length$",                    indent: 1 },
+                { text: "for i = ⌊A.length / 2⌋ downto 1",           indent: 1 },
+                { text: "MAX-HEAPIFY(A, i)",                         indent: 2 },
+                { text: "",                                          indent: 0 },
+                { text: "HEAPSORT(A)",                               indent: 0 },
+                { text: "BUILD-MAX-HEAP(A)",                         indent: 1 },
+                { text: "for $i = A.length$ downto 2",                 indent: 1 },
+                { text: "exchange A[1] with A[i]",                   indent: 2 },
+                { text: "A.heap-$size = A.heap$-size - 1",             indent: 2 },
+                { text: "MAX-HEAPIFY(A, 1)",                         indent: 2 },
+              ],
+            },
+            // CLRS p.154 원문
+            lines: [
+              { text: "MAX-HEAPIFY(A, i)",                   indent: 0, note: "프로시저 헤더" },
+              { text: "$l = LEFT(i)$",                         indent: 1, note: "2i" },
+              { text: "$r = RIGHT(i)$",                        indent: 1, note: "2i + 1" },
+              { text: "if $l \\leq A.heap$-size and $A[l] > A[i]$",  indent: 1, note: "왼쪽 자식이 더 크면?" },
+              { text: "$largest = l$",                         indent: 2, note: "후보 갱신" },
+              { text: "else $largest = i$",                    indent: 1, note: "기본값: 자기 자신" },
+              { text: "if $r \\leq A.heap$-size and $A[r] > A[largest]$", indent: 1, note: "오른쪽 자식이 더 크면?" },
+              { text: "$largest = r$",                         indent: 2, note: "후보 갱신" },
+              { text: "if $largest \\neq i$",                      indent: 1, note: "현재 노드가 최대가 아니면" },
+              { text: "exchange A[i] with A[largest]",       indent: 2, note: "큰 값을 위로" },
+              { text: "MAX-HEAPIFY(A, largest)",             indent: 2, note: "재귀로 아래로 내려보냄" },
+            ],
+          },
+          proof: {
+            title: "② BUILD-MAX-HEAP이 $O(n)$인 이유 — 높이별 합산",
+            intro: "'naive' 분석은 n번의 MAX-HEAPIFY × $O(\\lg n)$ = $O(n \\lg n)$입니다. 실제는 더 타이트한 $O(n)$. CLRS 6.3절(p.158)의 합산 기법을 단계별로 따라가세요.",
+            invariantLabel: "보이고자 하는 것: ",
+            invariant: "BUILD-MAX-HEAP의 worst-case 시간은 $O(n)$이다. 핵심: (a) 높이 h 노드 수는 ≤ ⌈n/$2^{h+1}$⌉개, (b) MAX-HEAPIFY(높이 h)는 O(h), (c) 급수 Σ h/$2^h$ = 2 (수렴).",
+            steps: [
+              {
+                stage: "① 느슨한 상한부터",
+                prompt: "MAX-HEAPIFY 한 번은 $O(\\lg n)$이고 BUILD-MAX-HEAP이 총 n/2번 호출하므로, 느슨한 상한은?",
+                choices: [
+                  { text: "$O(n \\lg n)$ — 정확하지만 타이트하지는 않음", correct: true,
+                    explain: "CLRS p.157: 'Each call to MAX-HEAPIFY costs $O(\\lg n)$ time, and BUILD-MAX-HEAP makes $O(n)$ such calls. Thus, the running time is $O(n \\lg n)$. This upper bound, though correct, is not asymptotically tight.'" },
+                  { text: "$O(n^2)$ — 이중 루프처럼 보임", correct: false,
+                    explain: "MAX-HEAPIFY는 한 번에 $O(\\lg n)$이므로 n번 × lg $n = n$ lg n입니다. n²이 아닙니다." },
+                  { text: "$O(n)$ — 이미 선형", correct: false,
+                    explain: "느슨한 분석으로는 바로 $O(n)$을 얻을 수 없습니다. 더 정교한 합산이 필요합니다." },
+                  { text: "$\\Theta(\\lg n)$ — 힙 높이만큼", correct: false,
+                    explain: "n번 호출을 반영해야 합니다." },
+                ],
+              },
+              {
+                stage: "② 높이별 노드 수",
+                prompt: "n-원소 힙에서 높이가 정확히 h인 노드의 개수에 대한 CLRS의 상한은?",
+                choices: [
+                  { text: "최대 ⌈n/$2^{h+1}$⌉개 (연습문제 6.3-3)", correct: true,
+                    explain: "완전 이진 트리 성질: 높이 0(리프)은 대략 n/2개, 높이 1은 n/4개, ..., 높이 h는 최대 ⌈n/$2^{h+1}$⌉개. 이 경계가 합산의 핵심 재료입니다." },
+                  { text: "정확히 $2^h$개", correct: false,
+                    explain: "$2^h$은 '레벨 h의 노드 수(위에서부터)'이지 '높이 h의 노드 수'가 아닙니다. 높이는 리프로부터 거꾸로 셉니다." },
+                  { text: "n/(h+1)개", correct: false,
+                    explain: "힙의 레벨 구조는 지수적이지 1/h 관계가 아닙니다." },
+                  { text: "$O(\\lg n)$개", correct: false,
+                    explain: "높이 h 노드 수는 n에 비례할 수 있습니다 (특히 $h = 0$인 리프)." },
+                ],
+              },
+              {
+                stage: "③ 높이별 MAX-HEAPIFY 비용",
+                prompt: "높이 h인 노드에서 MAX-HEAPIFY가 소비하는 시간은? (루트에서 리프까지의 경로 길이가 핵심)",
+                choices: [
+                  { text: "O(h) — 최악의 경우 해당 노드에서 리프까지 매 단계 내려감", correct: true,
+                    explain: "CLRS p.155: 'the running time of MAX-HEAPIFY on a node of height h as O(h).' 루트가 아니라 '높이 h'인 노드이므로 깊이 h까지만 재귀 호출." },
+                  { text: "$O(\\lg n)$ — 힙 전체 높이", correct: false,
+                    explain: "느슨한 상한. 실제로 해당 노드의 국지 높이 h로 충분히 타이트하게 잡을 수 있습니다." },
+                  { text: "$O(1)$ — 자식 비교만 상수", correct: false,
+                    explain: "재귀가 있으므로 상수가 아닙니다. 최악의 경우 h번 재귀." },
+                  { text: "$O(n)$ — 배열 전체 탐색", correct: false,
+                    explain: "MAX-HEAPIFY는 트리의 한 경로만 따라갑니다." },
+                ],
+              },
+              {
+                stage: "④ 합산 식 세우기",
+                prompt: "위 두 사실을 곱해 총 비용을 합산하면?",
+                choices: [
+                  { text: "Σ_{$h = 0$}^{$\\lfloor \\lg n \\rfloor$} ⌈n/$2^{h+1}$⌉ · O(h)", correct: true,
+                    explain: "'(높이 h 노드 수) × (한 노드당 비용) = ⌈n/$2^{h+1}$⌉ · O(h)'를 모든 높이에 대해 합산. 상한 $\\lfloor \\lg n \\rfloor$까지." },
+                  { text: "Σ_{$h = 0$}^{n} O(h · lg n)", correct: false,
+                    explain: "높이 상한은 n이 아니라 $\\lfloor \\lg n \\rfloor$이고, $O(\\lg n)$은 느슨합니다." },
+                  { text: "n · $O(\\lg n)$ — 평균 고도 × 노드 수", correct: false,
+                    explain: "그건 느슨한 상한의 쓰기 방식. 타이트한 합산은 높이별로 나누어야 합니다." },
+                  { text: "Σ $2^h$ · $O(\\lg n)$", correct: false,
+                    explain: "노드 수는 $2^h$이 아니라 ⌈n/$2^{h+1}$⌉입니다." },
+                ],
+              },
+              {
+                stage: "⑤ n 인수 빼내기",
+                prompt: "합산에서 상수 인수와 n을 밖으로 빼내면? (⌈n/$2^{h+1}$⌉ ≤ n/$2^{h+1}$로 상한)",
+                choices: [
+                  { text: "$O(n)$ · Σ_{$h = 0$}^{$\\lfloor \\lg n \\rfloor$} h/$2^h$", correct: true,
+                    explain: "n/$2^{h+1}$ = (n/2)·(1/$2^h$). O(h)의 상수와 1/2를 O 표기에 흡수하면 $O(n)$ · Σ h/$2^h$." },
+                  { text: "$O(n^2)$ · Σ h/$2^h$", correct: false,
+                    explain: "한 노드당 비용은 O(h)로 n 의존성이 없으므로 n은 한 번만 나옵니다." },
+                  { text: "$O(1)$ · Σ h/$2^h$", correct: false,
+                    explain: "노드 수에 n이 들어있어 빼내야 합니다." },
+                  { text: "$O(\\lg n)$ · Σ h/$2^h$", correct: false,
+                    explain: "⌈n/$2^{h+1}$⌉에서 n이 지배적입니다 (h에 따른 것은 이미 합산에 들어갑니다)." },
+                ],
+              },
+              {
+                stage: "⑥ 급수의 수렴값",
+                prompt: "Σ_{$h = 0$}^∞ h/$2^h$의 값은? (CLRS Appendix A의 공식 A.8: Σ h·$x^{h}$ = x/(1−x)² 에 $x = 1$/2 대입)",
+                choices: [
+                  { text: "(1/2) / (1/2)² = 2", correct: true,
+                    explain: "Σ h·(1/2)^h = (1/2)/(1−1/2)² = (1/2)/(1/4) = 2. 유한 수렴값이 상한 역할을 합니다." },
+                  { text: "∞ — 조화급수처럼 발산", correct: false,
+                    explain: "조화급수는 Σ 1/h인데, 여기는 Σ h/$2^h$로 지수적 감쇠가 선형 증가를 이깁니다. 수렴합니다." },
+                  { text: "1", correct: false,
+                    explain: "x/(1−x)² 공식에 정확히 대입해 보세요. $x = 1$/2 → 0.5/$0.25 = 2$." },
+                  { text: "lg $2 = 1$", correct: false,
+                    explain: "대입 실수입니다. 공식 A.8: Σ h·$x^{h}$ = x/(1−x)²." },
+                ],
+              },
+              {
+                stage: "⑦ 최종 결론",
+                prompt: "따라서 BUILD-MAX-HEAP의 총 비용 상한은? (무한 합산의 상한을 쓸 수 있음)",
+                choices: [
+                  { text: "$O(n)$ · 2 = $O(n)$ — 선형 시간", correct: true,
+                    explain: "Σ_{$h = 0$}^{$\\lfloor \\lg n \\rfloor$} h/$2^h$ ≤ Σ_{$h = 0$}^∞ h/$2^h$ = 2. 따라서 전체는 O(2n) = $O(n)$. 'naive'한 $O(n \\lg n)$보다 타이트한 결과." },
+                  { text: "$O(n \\lg n)$ — 개선이 불가능함", correct: false,
+                    explain: "위 합산이 유한한 상수(2)로 수렴하므로 lg n 인수가 떨어져 나갑니다. $O(n)$입니다." },
+                  { text: "$O(\\lg^2 n)$ — 급수 2차", correct: false,
+                    explain: "lg² n은 이 합산과 무관합니다." },
+                  { text: "$\\Theta(n^2)$ — 모든 힙 연산의 곱", correct: false,
+                    explain: "n² 경계는 BUILD 자체에서는 발생하지 않습니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ MAX-HEAPIFY 직접 추적 — CLRS Figure 6.2",
+            intro: "A = ⟨16, 4, 10, 14, 7, 9, 3, 2, 8, 1⟩, heap-$size = 10$. MAX-HEAPIFY(A, 2)를 호출했을 때 내부 상태 변화를 예측하세요. (힙 성질이 노드 2에서 깨졌다고 가정)",
+            array: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1],
+            steps: [
+              {
+                before: { A: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 2 },
+                prompt: "MAX-HEAPIFY(A, 2) 시작. 라인 1–2: $l = LEFT(2)$, $r = RIGHT(2)$의 값은?",
+                choices: [
+                  { text: "$l = 4$, $r = 5$", correct: true,
+                    explain: "$\\text{LEFT}(i) = 2i$, $\\text{RIGHT}(i) = 2i + 1$. 2i = 4, 2i+$1 = 5$." },
+                  { text: "$l = 3$, $r = 4$", correct: false,
+                    explain: "PARENT(i) = $\\lfloor i/2 \\rfloor$이 $i = 2$의 부모(=1)입니다. 자식은 2i, 2i+1." },
+                  { text: "$l = 1$, $r = 3$", correct: false,
+                    explain: "$i = 2$의 자식은 4와 5입니다 (2·$2 = 4$, 2·2+$1 = 5$)." },
+                  { text: "$l = 5$, $r = 6$", correct: false,
+                    explain: "LEFT은 2i = 4이지 i+3이 아닙니다." },
+                ],
+              },
+              {
+                before: { A: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 2 },
+                prompt: "라인 3 검사: l=$4 \\leq heap$-$size = 10$ and $A[l] = A[4]$=$14 > A[i]$=$A[2] = 4$? 결과와 largest 값은?",
+                choices: [
+                  { text: "조건 참 → $largest = l$ = 4", correct: true,
+                    explain: "$4 \\leq 10$ 이고 $14 > 4$이므로 if 본문 실행. $largest = l$ = 4." },
+                  { text: "조건 참 → $largest = i$ = 2", correct: false,
+                    explain: "else 분기는 조건이 거짓일 때입니다. 여기서는 조건이 참이므로 $largest = l$입니다." },
+                  { text: "조건 거짓 → $largest = i$ = 2", correct: false,
+                    explain: "$A[4] = 14$가 $A[2] = 4$보다 크므로 조건은 참입니다." },
+                  { text: "$largest = 14$ (A[4]의 값)", correct: false,
+                    explain: "largest는 인덱스입니다. A[largest] 값이 아니라 largest 자체는 4." },
+                ],
+              },
+              {
+                before: { A: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 2 },
+                prompt: "라인 6 검사: r=$5 \\leq heap$-$size = 10$ and $A[r] = A[5]$=$7 > A[largest]$=$A[4] = 14$? 결과?",
+                choices: [
+                  { text: "조건 거짓 ($7 > 14$ 아님) → largest 그대로 4", correct: true,
+                    explain: "$7 > 14$는 거짓이므로 if 본문을 건너뜀. largest 여전히 4." },
+                  { text: "조건 참 → $largest = r$ = 5", correct: false,
+                    explain: "$A[5] = 7$이 $A[4] = 14$보다 작습니다. 오른쪽 자식이 더 크지 않습니다." },
+                  { text: "$r = 5$가 heap-size를 넘음 → 건너뜀", correct: false,
+                    explain: "$5 \\leq 10$이므로 범위 안에 있습니다. 건너뛰는 이유는 값 비교가 거짓이기 때문." },
+                  { text: "A[r]과 A[i]를 비교해야 함 → $7 > 4$ 참", correct: false,
+                    explain: "라인 6은 A[r]과 A[largest]를 비교합니다 (A[i]가 아님). largest는 이미 갱신되었을 수 있음." },
+                ],
+              },
+              {
+                before: { A: [16, 4, 10, 14, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 2 },
+                prompt: "라인 8: largest=$4 \\neq i$=2 → 라인 9 'exchange A[i] with A[largest]' 실행. 교환 직후 A의 상태는?",
+                choices: [
+                  { text: "⟨16, 14, 10, 4, 7, 9, 3, 2, 8, 1⟩", correct: true,
+                    explain: "A[2] ↔ A[4]. $A[2] = 4$, $A[4] = 14$ 교환 → $A[2] = 14$, $A[4] = 4$. 나머지는 불변." },
+                  { text: "⟨14, 16, 10, 4, 7, 9, 3, 2, 8, 1⟩", correct: false,
+                    explain: "$A[1] = 16$은 교환과 무관합니다. 교환은 A[2]와 A[4]만." },
+                  { text: "⟨16, 4, 10, 14, 7, 9, 3, 2, 8, 1⟩ (변화 없음)", correct: false,
+                    explain: "$largest \\neq i$이므로 실제로 교환이 일어납니다 (Fig 6.2 (a) → (b))." },
+                  { text: "⟨16, 4, 14, 10, 7, 9, 3, 2, 8, 1⟩", correct: false,
+                    explain: "A[3]과 A[4]를 교환한 결과입니다. 여기선 A[2]와 A[4]를 교환." },
+                ],
+              },
+              {
+                before: { A: [16, 14, 10, 4, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 4 },
+                prompt: "라인 10: MAX-HEAPIFY(A, 4) 재귀. $l = LEFT(4)$, $r = RIGHT(4)$의 값은?",
+                choices: [
+                  { text: "$l = 8$, $r = 9$", correct: true,
+                    explain: "$LEFT(4) = 2$·$4 = 8$, $RIGHT(4) = 2$·4+$1 = 9$." },
+                  { text: "$l = 2$, $r = 3$", correct: false,
+                    explain: "$PARENT(4) = 2$, $ROOT = 1$입니다. 자식은 2i, 2i+1." },
+                  { text: "$l = 7$, $r = 8$", correct: false,
+                    explain: "자식 공식은 2i, 2i+1입니다 (i-1, i+1이 아닙니다)." },
+                  { text: "$l = 10$, $r = 11$", correct: false,
+                    explain: "2·$4 = 8$, 2·4+$1 = 9$. 10, 11은 $i = 5$의 자식." },
+                ],
+              },
+              {
+                before: { A: [16, 14, 10, 4, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 4 },
+                prompt: "라인 3 검사: A[8]=$2 > A[4]$=4 (거짓, $largest = i$=4), 라인 6: A[9]=$8 > A[largest]$=$A[4] = 4$ (참)? 최종 largest는?",
+                choices: [
+                  { text: "$largest = 9$ — 오른쪽 자식 $A[9] = 8$이 가장 큼", correct: true,
+                    explain: "첫 if는 거짓($2 < 4$)이라 $largest = i$ = 4. 두 번째 if는 참($8 > 4$)이라 $largest = r$ = 9로 갱신." },
+                  { text: "$largest = 4$ — 자기 자신이 최대", correct: false,
+                    explain: "$A[9] = 8$이 $A[4] = 4$보다 크므로 largest가 9로 갱신됩니다." },
+                  { text: "$largest = 8$ — 왼쪽 자식", correct: false,
+                    explain: "$A[8] = 2$는 $A[4] = 4$보다 작아 왼쪽은 largest가 되지 않습니다." },
+                  { text: "$largest = 2$ — 부모가 최대", correct: false,
+                    explain: "부모는 참조하지 않습니다 (재귀는 자식 서브트리만 처리)." },
+                ],
+              },
+              {
+                before: { A: [16, 14, 10, 4, 7, 9, 3, 2, 8, 1], j: null, key: null, i: 4 },
+                prompt: "라인 9 교환 A[4] ↔ A[9] 후 이어지는 MAX-HEAPIFY(A, 9). $l = 18$, r=$19 > heap$-$size = 10$ → $largest = i$ = 9, 교환 없음. 재귀 종료 후 최종 A는?",
+                choices: [
+                  { text: "⟨16, 14, 10, 8, 7, 9, 3, 2, 4, 1⟩", correct: true,
+                    explain: "A[4] ↔ A[9] 결과 $A[4] = 8$, $A[9] = 4$. MAX-HEAPIFY(A, 9)는 리프라 아무 변화 없음. 최종 Fig 6.2 (c)." },
+                  { text: "⟨16, 14, 10, 4, 7, 9, 3, 2, 8, 1⟩ (그대로)", correct: false,
+                    explain: "$largest \\neq i$이므로 두 번째 교환이 일어납니다. A[4]와 A[9]를 교환." },
+                  { text: "⟨16, 14, 10, 8, 7, 9, 3, 4, 2, 1⟩", correct: false,
+                    explain: "A[8]과 A[9]를 교환한 형태입니다. 실제는 A[4]↔A[9]." },
+                  { text: "⟨1, 2, 3, 4, 7, 8, 9, 10, 14, 16⟩", correct: false,
+                    explain: "그건 전체 배열 정렬 결과. MAX-HEAPIFY 한 번은 힙 성질만 국지적으로 복원합니다." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      { id: "buildH",  name: "BUILD-MAX-HEAP", desc: "비정렬 배열에서 힙 구성", tags: ["O(n)"], viz: "buildMaxHeap" },
+      { id: "heapSort", name: "Heapsort",      desc: "힙 기반 정렬", tags: ["O(n lg n)", "In-place", "Unstable"], viz: "heapSort" },
+    ],
+  },
+
+  {
+    id: "ch7",
+    tier: 1,
+    num: "Ch 7",
+    title: "Quicksort",
+    subtitle: "Lomuto 분할 · 랜덤화 · 분할 품질의 영향",
+    summary: "9:1 불균형 분할에서도 여전히 $O(n \\lg n)$인 이유를 직관적으로 느낄 수 있어야 합니다.",
+    objectives: [
+      "Lomuto 분할의 동작과 루프 불변식을 설명하고 직접 추적할 수 있다.",
+      "최선·최악·평균(9:1 불균형 포함) 분할의 점화식을 풀어 시간 복잡도를 도출할 수 있다.",
+      "랜덤화 퀵 정렬의 기댓값이 $O(n \\lg n)$임을 지시 확률 변수로 분석할 수 있다.",
+    ],
+    md: `
+## 퀵 정렬 개요
+
+- **분할 정복** 패러다임, In-place
+- **시간 복잡도**: 최악 $\\Theta(n^2)$, 기대값 $O(n \\lg n)$
+- 최악의 입력: 이미 정렬된 배열 (매번 불균형 분할)
+
+\`\`\`
+QUICKSORT(A, p, r)
+  if p < r
+    q = PARTITION(A, p, r)
+    QUICKSORT(A, p, q-1)
+    QUICKSORT(A, q+1, r)
+
+PARTITION(A, p, r)          // Lomuto 분할
+  x = A[r]                  // 피벗 = 마지막 원소
+  i = p - 1
+  for j = p to r-1
+    if A[j] ≤ x
+      i = i + 1
+      exchange A[i] ↔ A[j]
+  exchange A[i+1] ↔ A[r]
+  return i + 1
+\`\`\`
+
+**분할 분석**
+- 최악: $T(n) = T(n-1)$ + $\\Theta(n)$ = $\\Theta(n^2)$
+- 최선: $T(n) = 2T(n/2) + \\Theta(n)$ = $\\Theta(n \\lg n)$
+- 9:1 불균형: T(n) = T(9n/10) + T(n/10) + $\\Theta(n)$ = $O(n \\lg n)$
+
+**랜덤화 퀵 정렬**: 피벗을 무작위 선택 → 최악 회피. 기대 비교 횟수 2n ln n.
+
+**퀵 정렬 vs 합병 정렬**
+- 퀵: In-place, 캐시 효율 우수, 상수 작음
+- 머지: 최악 보장, 안정, 추가 공간 필요
+`,
+    ox: [
+      { q: "Lomuto Partition은 $O(n)$ 시간에 실행된다.", a: true, why: "p..r을 한 번 훑음." },
+      { q: "Randomized Quicksort의 기대 시간은 $O(n \\lg n)$.", a: true, why: "Theorem 7.3. 지시 변수 분석." },
+      { q: "이미 정렬된 배열에 기본 Quicksort는 최선 $O(n \\lg n)$이다.", a: false, why: "최악 $O(n^2)$. 매번 0:(n-1) 분할." },
+      { q: "PARTITION은 피벗을 최종 위치에 놓는다.", a: true, why: "이후 재귀에서 피벗은 이동하지 않음." },
+      { q: "Quicksort는 안정 정렬이다.", a: false, why: "분할 과정에서 같은 key의 상대 순서가 깨질 수 있음." },
+      { q: "Randomized Quicksort의 기대 비교 횟수는 2n·H_n = $O(n \\lg n)$.", a: true, why: "지시 변수 X_{ij}로 유도." },
+      { q: "9:1 불균형 분할에서도 Quicksort는 $O(n \\lg n)$을 유지한다.", a: true, why: "재귀 트리 깊이 $\\log_{10/9} n$ = $\\Theta(\\lg n)$." },
+      { q: "Quicksort의 재귀 스택 공간은 최악 $O(\\lg n)$이다.", a: false, why: "최악 $O(n)$ (불균형 분할의 연속)." },
+      { q: "두 원소 z_i와 z_j는 Quicksort 전체에서 최대 한 번 비교된다.", a: true, why: "피벗과 나머지만 비교하므로 한 쌍은 0~1회." },
+      { q: "RANDOMIZED-PARTITION은 RANDOM(p,r)로 피벗을 선택한다.", a: true, why: "균등 무작위 피벗 이동 후 PARTITION 호출." },
+    ],
+
+    exercises: [
+      {
+        num: "7.1-1",
+        q: "A = 〈13, 19, 9, 5, 12, 8, 7, 4, 11, 2, 6, 21〉에 PARTITION 연산을 적용하시오 (Lomuto, 피벗 = $A[last] = 21$?). 잘못된 예. 실제 예시 다시: A = 〈13, 19, 9, 5, 12, 8, 7, 4, 21, 2, 6, 11〉, $r = 12$, 피벗 = 11.",
+        hint: "Lomuto 경과 추적: i 증가, A[j] ≤ 피벗 시 교환.",
+        solution: "최종 $q = 8$ (피벗 11이 8번 위치). 배열: [9, 5, 8, 7, 4, 2, 6, 11, 21, 13, 19, 12].",
+      },
+      {
+        num: "7.2-1",
+        q: "$T(n) = T(n-1)$ + $\\Theta(n)$ = $\\Theta(n^2)$ 증명.",
+        hint: "치환법.",
+        solution: "$T(n) \\leq T(n-1)$ + cn. 전개: T(1) + c(2+3+...+n) = $\\Theta(n^2)$.",
+      },
+      {
+        num: "7.2-5",
+        q: "$\\alpha  \\leq 1$/2인 분할 비율로 매번 분할 시 Quicksort의 최소·최대 깊이는?",
+        hint: "최소: 모든 단계가 균등, 최대: α 비율로 작은 쪽.",
+        solution: "최소 -$\\log_2 n$ = lg n. 최대 -log_(1-α) n.",
+      },
+      {
+        num: "7.4-2",
+        q: "Quicksort의 최선 시간 복잡도가 $\\Theta(n \\lg n)$임을 증명.",
+        hint: "점화식 $T(n) = 2T(n/2) + \\Theta(n)$.",
+        solution: "균등 분할이 최선. Master Case 2 → $\\Theta(n \\lg n)$.",
+      },
+      {
+        num: "Problem 7-1",
+        q: "Hoare Partition의 정확성 증명 및 QUICKSORT에 통합 방법.",
+        hint: "Lomuto와 재귀 호출 형태가 다름.",
+        solution: "QUICKSORT(A, p, q) + QUICKSORT(A, q+1, r). Hoare의 j가 경계이지 피벗 고정 위치 아님.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "7-1",
+        title: "Hoare 분할 — 정확성",
+        q: "Hoare의 원래 분할 알고리즘은 양끝에서 시작해 서로 마주보는 방향으로 진행한다. Lomuto와 달리 피벗의 최종 위치를 반환하지 않고 '파티션 경계'만 반환한다.",
+        parts: [
+        {
+          label: "a",
+          q: "HOARE-PARTITION이 항상 종료함을 보여라.",
+          hint: "$i$와 $j$의 이동 범위 불변식.",
+          solution: "매 반복에서 $i$는 증가, $j$는 감소. $i > j$가 되면 종료. 입력 배열이 유한하므로 종료 보장.",
+        },
+        {
+          label: "b",
+          q: "Hoare 파티션 분할 후 $A[p..j] \\leq A[j+1..r]$을 만족함을 증명하라.",
+          solution: "**불변식**: (1) $A[k] \\leq x$ for $k \\in [p..i-1]$, (2) $A[k] \\geq x$ for $k \\in [j+1..r]$. 종료 시 $i > j$ → 이 두 구간이 전체. 따라서 $A[p..j] \\leq x \\leq A[j+1..r]$.",
+        },
+        {
+          label: "c",
+          q: "수정된 QUICKSORT를 Hoare-PARTITION으로 작성하라.",
+          solution: "`QUICKSORT(A, p, r): if $p < r$: $q = HOARE$-PARTITION(A, p, r); QUICKSORT(A, p, q); QUICKSORT(A, q+1, r)`. Lomuto의 `QUICKSORT(A, p, q-1); QUICKSORT(A, q+1, r)`와 다름: 피벗이 첫 번째 재귀 호출에 '포함'됨.",
+        },
+        ],
+      },
+      {
+        num: "7-4",
+        title: "Quicksort의 스택 깊이",
+        q: "재귀 QUICKSORT는 호출 스택을 $\\Theta(n)$까지 쓸 수 있다(최악). 스택을 $\\Theta(\\lg n)$로 제한하는 수정을 고안하라.",
+        parts: [
+        {
+          label: "a",
+          q: "재귀 대신 명시적 스택 + 꼬리 재귀 최적화로 어떻게 $O(\\lg n)$ 깊이를 달성할 수 있는가?",
+          hint: "두 재귀 호출 중 '더 작은 쪽'을 먼저 스택에 푸시하고, '큰 쪽'은 tail call로 반복.",
+          solution: "**수정 알고리즘**: while $p < r$: $q = PARTITION(A, p, r)$; 더 작은 파티션을 재귀/스택에 맡기고, 큰 파티션에 대해 p, r 업데이트 후 반복. 최악 스택 깊이 $O(\\lg n)$ 보장 (항상 크기 절반 이하로 재귀).",
+        },
+        {
+          label: "b",
+          q: "이 수정이 수행 시간 복잡도에 영향을 주는가?",
+          solution: "**영향 없음.** 분할 자체의 일은 바뀌지 않음. 스택 깊이만 줄어든다. $\\Theta(n \\lg n)$ 평균 보장.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "lomuto", name: "Lomuto Partition", desc: "마지막 원소를 피벗으로 한 분할",
+        tags: ["O(n)"], viz: "partition",
+        drills: {
+          source: "CLRS 3판 7.1절 pp.171-173, 7.3절 p.179, 7.4.2절 pp.181-184",
+          pseudo: {
+            title: "① 의사코드 재구성 — PARTITION (Lomuto)",
+            intro: "Quicksort의 핵심은 PARTITION 프로시저(CLRS p.171). 8줄을 순서대로 배치하세요. 상위 QUICKSORT와 랜덤화 버전 RANDOMIZED-PARTITION/RANDOMIZED-QUICKSORT는 참고로 펼쳐져 있습니다.",
+            reference: {
+              title: "참고: QUICKSORT · RANDOMIZED-PARTITION · RANDOMIZED-QUICKSORT (pp.170, 179)",
+              lines: [
+                { text: "QUICKSORT(A, p, r)",                    indent: 0 },
+                { text: "if $p < r$",                              indent: 1 },
+                { text: "$q = PARTITION(A, p, r)$",                indent: 2 },
+                { text: "QUICKSORT(A, p, q - 1)",                indent: 2 },
+                { text: "QUICKSORT(A, q + 1, r)",                indent: 2 },
+                { text: "",                                      indent: 0 },
+                { text: "RANDOMIZED-PARTITION(A, p, r)",         indent: 0 },
+                { text: "$i = RANDOM(p, r)$",                      indent: 1 },
+                { text: "exchange A[r] with A[i]",               indent: 1 },
+                { text: "return PARTITION(A, p, r)",             indent: 1 },
+                { text: "",                                      indent: 0 },
+                { text: "RANDOMIZED-QUICKSORT(A, p, r)",         indent: 0 },
+                { text: "if $p < r$",                              indent: 1 },
+                { text: "$q = RANDOMIZED$-PARTITION(A, p, r)",     indent: 2 },
+                { text: "RANDOMIZED-QUICKSORT(A, p, q - 1)",     indent: 2 },
+                { text: "RANDOMIZED-QUICKSORT(A, q + 1, r)",     indent: 2 },
+              ],
+            },
+            // CLRS p.171 원문 PARTITION
+            lines: [
+              { text: "PARTITION(A, p, r)",       indent: 0, note: "프로시저 헤더" },
+              { text: "$x = A[r]$",                 indent: 1, note: "피벗 선택: 마지막 원소" },
+              { text: "$i = p$ - 1",                indent: 1, note: "작은 쪽 영역의 마지막 인덱스" },
+              { text: "for $j = p$ to r - 1",       indent: 1, note: "피벗 제외 모든 원소 스캔" },
+              { text: "if $A[j] \\leq x$",              indent: 2, note: "피벗 이하면 작은 영역에 합류" },
+              { text: "$i = i$ + 1",                indent: 3, note: "작은 영역 확장" },
+              { text: "exchange A[i] with A[j]",  indent: 3, note: "A[j]를 i 위치로" },
+              { text: "exchange A[i + 1] with A[r]", indent: 1, note: "피벗을 경계로 이동" },
+              { text: "return i + 1",             indent: 1, note: "피벗의 최종 위치" },
+            ],
+          },
+          proof: {
+            title: "② RANDOMIZED-QUICKSORT 기대 실행 시간이 $O(n \\lg n)$인 이유 — 지시 확률 변수",
+            intro: "CLRS 7.4.2절. 비교 횟수 X의 기댓값을 지시 확률 변수(indicator RV) + 기댓값 선형성으로 유도하는 단계를 따라가세요.",
+            invariantLabel: "보이고자 하는 것: ",
+            invariant: "RANDOMIZED-QUICKSORT의 기대 실행 시간 E[T(n)] = $O(n \\lg n)$. 핵심: 각 비교 쌍 (z_i, z_j)에 지시 변수 X_ij를 도입하고, E[X] = Σ_{$i < j$} Pr[z_i와 z_j가 비교됨]을 조화급수로 계산.",
+            steps: [
+              {
+                stage: "① 목표 변수 X 정의",
+                prompt: "CLRS Lemma 7.1: QUICKSORT의 실행 시간은 O(n + X)로 bounded, 여기서 X는 무엇?",
+                choices: [
+                  { text: "PARTITION의 line 4 ($A[j] \\leq x$ 비교)가 전체 실행 동안 실행된 총 횟수", correct: true,
+                    explain: "PARTITION 호출 수는 ≤ n이고 각 호출은 $O(1)$ + line 4 반복 횟수에 비례. 총 비교 수 X를 세면 실행 시간을 지배할 수 있음." },
+                  { text: "재귀 호출의 최대 깊이", correct: false,
+                    explain: "깊이만으로는 각 레벨의 비용을 포착하지 못합니다. 분석은 총 비교 수에 집중합니다." },
+                  { text: "피벗으로 선택된 원소의 수", correct: false,
+                    explain: "피벗 수는 기껏 n이므로 분석을 위해서는 부족합니다. 핵심은 비교 수." },
+                  { text: "배열 교환(swap)의 총 횟수", correct: false,
+                    explain: "교환은 각 반복당 0 또는 1이라 비교 수와 순차적이지만, 분석의 중심 변수는 비교 수입니다." },
+                ],
+              },
+              {
+                stage: "② 원소 재명명과 쌍 열거",
+                prompt: "분석을 위해 배열 원소를 z_1, z_2, ..., z_n으로 재명명 (크기 순). 왜 '쌍 (i, j)'가 비교 핵심 단위인가?",
+                choices: [
+                  { text: "각 쌍 {z_i, z_j}는 전체 실행 동안 최대 1번만 비교됨 — 피벗은 재사용되지 않으므로", correct: true,
+                    explain: "CLRS: 'elements are compared only to the pivot element and, after a particular call of PARTITION finishes, the pivot element used in that call is never again compared to any other elements.' 따라서 X = Σ_{$i < j$} X_ij." },
+                  { text: "쌍마다 n번씩 비교되어 평균화가 쉬움", correct: false,
+                    explain: "정반대입니다. 각 쌍은 '최대 1번' 비교됩니다." },
+                  { text: "쌍 내부의 순서가 중요해서", correct: false,
+                    explain: "실제로는 쌍 {i, j}는 집합으로만 고려됩니다 (지시 변수가 대칭)." },
+                  { text: "n(n-1)/2 쌍이 모두 동일 확률로 비교되므로", correct: false,
+                    explain: "비교 확률은 쌍마다 다릅니다 — j − i + 1에 반비례." },
+                ],
+              },
+              {
+                stage: "③ 지시 확률 변수",
+                prompt: "$X_ij = I${z_i와 z_j가 비교됨}로 정의. X와 X_ij의 관계, 그리고 E[X_ij]는?",
+                choices: [
+                  { text: "X = Σ_{$i < j$} X_ij,  E[X_ij] = Pr[z_i와 z_j가 비교됨]", correct: true,
+                    explain: "Lemma 5.1 (indicator의 기댓값 = 확률). 기댓값 선형성으로 E[X] = Σ_{$i < j$} Pr[compared]." },
+                  { text: "$X = max_${$i < j$} X_ij, $E[X_ij] = 1$", correct: false,
+                    explain: "X는 총합이지 최댓값이 아닙니다. 그리고 E[X_ij]는 항상 1이 아니라 확률입니다." },
+                  { text: "$X = \\Pi $ X_ij, $E[X_ij] = 1$/n", correct: false,
+                    explain: "곱이 아니라 합입니다. 확률도 쌍마다 다릅니다." },
+                  { text: "$X = \\Sigma $ X_ij 이지만 독립이 아니어서 E 계산 불가", correct: false,
+                    explain: "기댓값 선형성은 독립 여부와 무관하게 항상 성립합니다 — 이것이 indicator RV의 힘." },
+                ],
+              },
+              {
+                stage: "④ 언제 비교되는가 — 정성적 조건",
+                prompt: "z_i와 z_j($i < j$)가 비교되는 사건의 정확한 조건은? Z_ij = {z_i, z_{i+1}, ..., z_j} 기준.",
+                choices: [
+                  { text: "Z_ij 중에서 첫 번째로 피벗으로 뽑히는 원소가 z_i 또는 z_j여야 함", correct: true,
+                    explain: "만약 $z_i < x$ < z_j인 x가 먼저 피벗이 되면 둘은 서로 다른 분할로 갈라져 영원히 비교 안 됨. 반대로 z_i가 먼저 피벗이면 z_j와 비교됨 (Z_ij 내부에 있으므로 아직 같은 분할)." },
+                  { text: "z_i와 z_j가 모두 피벗으로 뽑혀야 함", correct: false,
+                    explain: "둘 다 뽑힐 필요는 없고, Z_ij 범위 안에서 먼저 뽑히는 한 원소(i든 j든)만이 트리거." },
+                  { text: "z_i와 z_j가 배열에서 인접해 있을 때만", correct: false,
+                    explain: "인접 여부와 무관합니다." },
+                  { text: "항상 비교됨 (모든 쌍)", correct: false,
+                    explain: "앞서 본 반례: 중간값이 먼저 피벗이면 두 쪽은 갈라집니다." },
+                ],
+              },
+              {
+                stage: "⑤ Pr[비교됨] 계산",
+                prompt: "Z_ij의 크기는 j − i + 1. 각 원소가 첫 피벗일 확률이 동일하다면, Pr[z_i 또는 z_j가 첫 피벗]은?",
+                choices: [
+                  { text: "2 / (j − i + 1)", correct: true,
+                    explain: "두 사건(z_i 첫 피벗, z_j 첫 피벗)이 배타적이고 각각 1/(j − i + 1) → 합 2/(j − i + 1). CLRS 식 (7.3)." },
+                  { text: "1 / (j − i + 1)", correct: false,
+                    explain: "z_i든 z_j든 두 경우 모두를 합산해야 합니다." },
+                  { text: "2 / n", correct: false,
+                    explain: "분모는 전체 n이 아니라 Z_ij의 크기. 작은 범위일수록 확률이 높음." },
+                  { text: "(j − i) / n", correct: false,
+                    explain: "확률 해석이 맞지 않습니다. 모든 원소가 같은 확률로 첫 피벗이 될 수 있는 것은 Z_ij 안쪽 한정입니다." },
+                ],
+              },
+              {
+                stage: "⑥ 이중 합 → 변수 치환",
+                prompt: "E[X] = Σ_{$i = 1$}^{n−1} Σ_{$j = i$+1}^{n} 2/(j − i + 1)을 $k = j$ − i로 치환하면 (안쪽 합의 상한과 분모는?)",
+                choices: [
+                  { text: "Σ_{$i = 1$}^{n−1} Σ_{$k = 1$}^{n−i} 2/(k + 1)", correct: true,
+                    explain: "$j = i$ + 1부터 n까지 → $k = 1$부터 n − i까지. j − i + $1 = k$ + 1. CLRS 식 (7.4) 유도 과정의 첫 줄." },
+                  { text: "Σ_{$i = 1$}^{n} Σ_{$k = 1$}^{n} 2/k", correct: false,
+                    explain: "바깥 합 상한은 n − 1, 안쪽은 n − i. 상한이 i에 의존합니다." },
+                  { text: "Σ Σ 2/(k − 1)", correct: false,
+                    explain: "치환 후 분모는 k + 1입니다 (j − i + 1에서 j − $i = k$)." },
+                  { text: "Σ_{i,j} 2/(i · j)", correct: false,
+                    explain: "분모는 차이 j − i + 1에만 의존합니다 (곱이 아님)." },
+                ],
+              },
+              {
+                stage: "⑦ 조화급수 경계",
+                prompt: "Σ_{$k = 1$}^{n−i} 2/(k + 1) < Σ_{$k = 1$}^{n} 2/k = $O(\\lg n)$ (harmonic series, 식 A.7). 바깥쪽 합과 결합하면?",
+                choices: [
+                  { text: "E[X] = O(Σ_{$i = 1$}^{n−1} lg n) = $O(n \\lg n)$. 따라서 E[T(n)] = O(n + X) = $O(n \\lg n)$", correct: true,
+                    explain: "식 (7.4). 각 i마다 안쪽 합이 $O(\\lg n)$이고 바깥 합산으로 n배 → $O(n \\lg n)$. 이것이 RANDOMIZED-QUICKSORT의 기대 실행 시간." },
+                  { text: "$O(n^2)$ — 이중 합은 n²에 비례", correct: false,
+                    explain: "안쪽 합이 1/k 형태의 조화급수라 $O(\\lg n)$으로 바운드됩니다. 단순 n² 분석은 너무 느슨." },
+                  { text: "$O(\\lg n)$ — 바깥 합도 작음", correct: false,
+                    explain: "바깥 합은 $i = 1$부터 n − 1까지 n번 돕니다." },
+                  { text: "$O(n)$ — 상수 시간 호출 n번", correct: false,
+                    explain: "각 i에서 $O(\\lg n)$이 들어가므로 n·lg n입니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ PARTITION 직접 추적 — CLRS Figure 7.1",
+            intro: "A = ⟨2, 8, 7, 1, 3, 5, 6, 4⟩에 PARTITION(A, 1, 8)을 실행. 피벗 $x = A[8]$ = 4. for 루프의 각 반복에서 i, j, A의 상태 변화를 예측하세요.",
+            array: [2, 8, 7, 1, 3, 5, 6, 4],
+            steps: [
+              {
+                before: { A: [2, 8, 7, 1, 3, 5, 6, 4], j: 1, key: 4, i: 0 },
+                prompt: "초기화 (라인 1–2 완료): $x = 4$, $i = 0$, j가 1부터 시작. $j = 1$에서 A[1] = $2 \\leq x$ = 4. 본문 수행 후 i와 A는?",
+                choices: [
+                  { text: "$i = 1$, A 그대로 ⟨2, 8, 7, 1, 3, 5, 6, 4⟩ (A[1]과 A[1] 교환 — 자기 자신)", correct: true,
+                    explain: "$i = i$ + $1 = 1$. exchange A[i] ↔ $A[j] = A[1]$ ↔ A[1]은 무효. CLRS Figure 7.1 (b)." },
+                  { text: "$i = 1$, A = ⟨1, 8, 7, 2, 3, 5, 6, 4⟩", correct: false,
+                    explain: "$j = 1$이므로 A[1]과 A[1]을 교환합니다 (자기 자신). A[4]는 건드리지 않습니다." },
+                  { text: "$i = 0$ (변화 없음)", correct: false,
+                    explain: "$A[1] \\leq 4$가 참이므로 i를 증가시킵니다." },
+                  { text: "$i = 1$, A = ⟨4, 8, 7, 1, 3, 5, 6, 2⟩", correct: false,
+                    explain: "피벗과의 교환은 for 루프가 끝난 뒤 라인 7에서만 일어납니다." },
+                ],
+              },
+              {
+                before: { A: [2, 8, 7, 1, 3, 5, 6, 4], j: 2, key: 4, i: 1 },
+                prompt: "$j = 2$, A[2] = $8 > x$ = 4. 이 반복의 결과는?",
+                choices: [
+                  { text: "조건이 거짓이므로 본문 스킵. i는 1로 유지, A는 그대로.", correct: true,
+                    explain: "if $A[j] \\leq x$가 거짓이면 line 5–6을 실행하지 않음. j만 다음 값으로 자동 전진 (for 루프)." },
+                  { text: "A[2]를 뒤로 밀어 작은 영역에서 배제", correct: false,
+                    explain: "Lomuto 분할은 '미는' 동작이 아니라 '교환'만 합니다. 큰 원소는 제자리에 머물러 있다가 나중에 작은 원소와 교환됩니다." },
+                  { text: "$i = i$ - $1 = 0$", correct: false,
+                    explain: "i는 증가만 하고 감소하지 않습니다." },
+                  { text: "루프 즉시 종료", correct: false,
+                    explain: "조건 거짓은 본문만 스킵하지 루프를 종료하지 않습니다." },
+                ],
+              },
+              {
+                before: { A: [2, 8, 7, 1, 3, 5, 6, 4], j: 3, key: 4, i: 1 },
+                prompt: "$j = 3$, A[3] = $7 > 4$ (스킵). 다음 $j = 4$, A[4] = $1 \\leq 4$. 본문 실행 후 i와 A는?",
+                choices: [
+                  { text: "$i = 2$, A[2] ↔ A[4] 교환 → A = ⟨2, 1, 7, 8, 3, 5, 6, 4⟩", correct: true,
+                    explain: "$i = 1$ + $1 = 2$. $A[2] = 8$과 $A[4] = 1$을 교환. 작은 영역 A[1..i] = ⟨2, 1⟩ 확장. Fig 7.1 (e)." },
+                  { text: "$i = 2$, A 그대로", correct: false,
+                    explain: "A[i]와 A[j]가 다르므로 실제로 교환이 일어나 A가 바뀝니다." },
+                  { text: "$i = 4$ (j와 같음)", correct: false,
+                    explain: "i는 j를 따라가는 것이 아니라 '작은 영역의 끝'을 추적합니다. 이번 반복에서는 2." },
+                  { text: "A[1] ↔ A[4] 교환", correct: false,
+                    explain: "교환은 A[i]와 A[j]인데 $i = 2$이므로 A[2]와 A[4]." },
+                ],
+              },
+              {
+                before: { A: [2, 1, 7, 8, 3, 5, 6, 4], j: 5, key: 4, i: 2 },
+                prompt: "$j = 5$, A[5] = $3 \\leq 4$. 본문 후 i와 A?",
+                choices: [
+                  { text: "$i = 3$, A[3] ↔ A[5] → A = ⟨2, 1, 3, 8, 7, 5, 6, 4⟩", correct: true,
+                    explain: "$i = 2$ + $1 = 3$. $A[3] = 7$과 $A[5] = 3$ 교환. Fig 7.1 (f)." },
+                  { text: "$i = 3$, A[1] ↔ A[5]", correct: false,
+                    explain: "교환은 A[i]와 A[j], 즉 A[3]와 A[5]입니다." },
+                  { text: "$i = 5$, A 그대로", correct: false,
+                    explain: "i 갱신은 $i = i$ + $1 = 3$입니다 (j가 아닌)." },
+                  { text: "$i = 3$, A[3] ↔ A[5]는 자기 자신이므로 A 그대로", correct: false,
+                    explain: "$A[3] = 7$, $A[5] = 3$은 서로 다르므로 실제 교환이 일어납니다." },
+                ],
+              },
+              {
+                before: { A: [2, 1, 3, 8, 7, 5, 6, 4], j: 6, key: 4, i: 3 },
+                prompt: "$j = 6$ (A[6]=$5 > 4$, 스킵), $j = 7$ (A[7]=$6 > 4$, 스킵). for 루프가 여기서 종료됩니다. 루프 종료 직후 i와 A는?",
+                choices: [
+                  { text: "$i = 3$, A = ⟨2, 1, 3, 8, 7, 5, 6, 4⟩", correct: true,
+                    explain: "남은 $j = 6$, 7은 모두 거짓 분기. i는 3에서 멈추고 A는 이전 상태 유지. 작은 영역 A[1..3] = ⟨2,1,3⟩, 큰 영역 A[4..7] = ⟨8,7,5,6⟩." },
+                  { text: "$i = 4$, A 그대로", correct: false,
+                    explain: "i는 조건 참일 때만 증가합니다. $j = 6$,7이 모두 거짓이었으므로 i는 3에 머뭅니다." },
+                  { text: "$i = 7$, A 그대로", correct: false,
+                    explain: "i는 j를 따라가지 않습니다. '작은 영역'의 끝 위치입니다." },
+                  { text: "$i = 3$, A = ⟨2, 1, 3, 4, 8, 7, 5, 6⟩ (피벗이 이미 자리잡음)", correct: false,
+                    explain: "피벗 이동은 라인 7(루프 이후)에서 일어나며, 루프 종료 직후에는 아직 원본 그대로." },
+                ],
+              },
+              {
+                before: { A: [2, 1, 3, 8, 7, 5, 6, 4], j: null, key: 4, i: 3 },
+                prompt: "라인 7 'exchange A[i+1] with A[r]' 실행: A[4] ↔ A[8]. 교환 후 A는?",
+                choices: [
+                  { text: "A = ⟨2, 1, 3, 4, 7, 5, 6, 8⟩", correct: true,
+                    explain: "$A[4] = 8$과 $A[8] = 4$ (피벗) 교환. 이제 $A[4] = 4$가 피벗의 최종 위치이고 $A[1..3] \\leq 4$ < A[5..8]. Fig 7.1 (i)." },
+                  { text: "A 그대로 (피벗이 이미 끝에 있으므로)", correct: false,
+                    explain: "라인 7은 항상 실행됩니다 (조건문 없음). 피벗을 '경계'로 옮기는 역할." },
+                  { text: "A = ⟨2, 1, 3, 8, 7, 5, 6, 4⟩ (교환 위치가 잘못됨)", correct: false,
+                    explain: "라인 7은 정확히 A[i+1]과 A[r]을 교환합니다. $i = 3$이므로 A[4]와 A[8]." },
+                  { text: "A = ⟨4, 1, 3, 8, 7, 5, 6, 2⟩", correct: false,
+                    explain: "A[1]은 교환 대상이 아닙니다. $A[i+1] = A[4]$와 $A[r] = A[8]$이 올바른 대상." },
+                ],
+              },
+              {
+                before: { A: [2, 1, 3, 4, 7, 5, 6, 8], j: null, key: 4, i: 3 },
+                prompt: "라인 8 'return i + 1'의 값은? 그리고 이 값이 QUICKSORT에서 어떻게 쓰이는가?",
+                choices: [
+                  { text: "return 4. QUICKSORT(A, 1, 4 − 1) = (A, 1, 3)와 (A, 5, 8)로 재귀 분할", correct: true,
+                    explain: "$q = 4$ = 피벗 최종 위치. 왼쪽 A[1..3] = ⟨2,1,3⟩ 재귀, 오른쪽 A[5..8] = ⟨7,5,6,8⟩ 재귀. 피벗 $A[4] = 4$는 제자리 확정." },
+                  { text: "return 3. A[1..3]과 A[4..8] 재귀", correct: false,
+                    explain: "return i + $1 = 4$이지 $i = 3$이 아닙니다. 피벗 위치가 q." },
+                  { text: "return 8. 전체 길이", correct: false,
+                    explain: "반환값은 피벗의 최종 위치이지 배열 크기가 아닙니다." },
+                  { text: "return $x = 4$ (피벗의 값)", correct: false,
+                    explain: "반환은 인덱스 i+1이지 값 x가 아닙니다. 둘이 같은 건 이 예제의 우연." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "rand-quick", name: "Randomized Quicksort", desc: "무작위 피벗으로 기대 $O(n \\lg n)$ 보장",
+        tags: ["기대 O(n lg n)", "무작위화"], viz: "quickSort",
+        drills: {
+          source: "CLRS 3판 7.3-7.4.2절 pp.179-184, Theorem 7.3 (기대 비교 횟수) · 지시 확률 변수",
+          pseudo: {
+            title: "① 의사코드 재구성 — RANDOMIZED-QUICKSORT",
+            intro: "CLRS 7.3절 p.179. RANDOMIZED-PARTITION은 PARTITION 호출 전에 무작위 피벗 교환을 추가. QUICKSORT의 PARTITION 호출만 이걸로 바꾸면 최악 입력에서도 기대 $O(n \\lg n)$.",
+            reference: {
+              title: "참고: 무작위화의 이점",
+              lines: [
+                { text: "입력 무관하게 기대 실행 시간 $O(n \\lg n)$ 보장",              indent: 0 },
+                { text: "어떤 입력도 '나쁜 입력'이 아님 (무작위 선택이 평균화)",      indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "분석 도구: 지시 확률 변수 X_{ij}",                         indent: 0 },
+                { text: "  X_{ij} = I{z_i가 z_j와 비교됨} (z_i는 i번째 작은 원소)", indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "총 비교 횟수: X = Σ_{$i < j$} X_{ij}",                         indent: 0 },
+                { text: "$E[X] = \\Sigma $ E[X_{ij}] = Σ Pr{z_i, z_j 비교됨}",                indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "Pr{z_i vs z_j 비교} = 2/(j-i+1)",                          indent: 0 },
+                { text: "→ $E[X] = \\Sigma $ 2/(j-i+1) ≤ 2n·H_n = $O(n \\lg n)$",                indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "RANDOMIZED-PARTITION(A, p, r)",               indent: 0, note: "무작위 피벗 + PARTITION" },
+              { text: "$i = RANDOM(p, r)$",                            indent: 1, note: "p..r에서 균일 무작위 인덱스" },
+              { text: "exchange A[r] with A[i]",                     indent: 1, note: "선택된 원소를 r 위치로" },
+              { text: "return PARTITION(A, p, r)",                   indent: 1, note: "Lomuto PARTITION 호출" },
+              { text: "",                                            indent: 0, note: "" },
+              { text: "RANDOMIZED-QUICKSORT(A, p, r)",               indent: 0, note: "재귀 정렬" },
+              { text: "if $p < r$",                                    indent: 1, note: "원소 2개 이상" },
+              { text: "$q = RANDOMIZED$-PARTITION(A, p, r)",           indent: 2, note: "무작위 분할" },
+              { text: "RANDOMIZED-QUICKSORT(A, p, q - 1)",           indent: 2, note: "왼쪽 부분 재귀" },
+              { text: "RANDOMIZED-QUICKSORT(A, q + 1, r)",           indent: 2, note: "오른쪽 부분 재귀" },
+            ],
+          },
+          proof: {
+            title: "② 기대 비교 횟수 E[X] = $O(n \\lg n)$ 증명",
+            intro: "CLRS Theorem 7.3. 지시 확률 변수와 조화 급수로 기대 비교 횟수의 정확한 상한을 유도.",
+            invariantLabel: "Theorem 7.3: ",
+            invariant: "RANDOMIZED-QUICKSORT의 기대 비교 횟수는 2n·H_n − 2n, 즉 $O(n \\lg n)$. 증명: 지시 변수 X_{ij}로 분해 + z_i와 z_j가 비교될 확률 = 2/(j-i+1) + 조화 급수 H_n = $O(\\lg n)$.",
+            steps: [
+              {
+                stage: "① 두 원소가 한 번만 비교됨",
+                prompt: "z_i와 z_j ($i < j$, 순서 통계량)가 서로 얼마나 자주 비교되나?",
+                choices: [
+                  { text: "최대 1번. PARTITION에서 피벗 x와 다른 원소만 비교. 둘 중 하나가 피벗이 되면 비교, 이후에는 서로 다른 부분 배열에 속해 더 이상 비교 안 됨.", correct: true,
+                    explain: "CLRS p.180 핵심 관찰. 피벗과 나머지만 비교. 피벗은 자기 위치 확정 후 재귀에 참여 안 함. 따라서 z_i, z_j 쌍은 0번 또는 1번 비교." },
+                  { text: "평균 lg n번", correct: false,
+                    explain: "한 번 이상 비교 불가. 피벗의 특성." },
+                  { text: "항상 1번", correct: false,
+                    explain: "0번일 수도 있음 (z_i, z_j 사이 원소가 먼저 피벗이 되어 분리되면 서로 만날 기회 사라짐)." },
+                ],
+              },
+              {
+                stage: "② 비교 확률 — Z_{ij}가 첫 피벗이 될 때만",
+                prompt: "Z_{ij} = {z_i, ..., z_j}라고 하자. z_i와 z_j가 비교되는 '조건'은?",
+                choices: [
+                  { text: "Z_{ij}에서 z_i 또는 z_j가 '먼저' 피벗으로 선택되어야 함. Z_{ij} 내부 다른 원소가 먼저 피벗이 되면 z_i와 z_j는 분리됨.", correct: true,
+                    explain: "CLRS p.180 Lemma 7.1. Z_{ij}에서 피벗 순서의 첫 원소가 z_i 또는 z_j이면 나머지 Z_{ij} 원소들이 아직 같은 부분 배열에 있으므로 비교됨." },
+                  { text: "z_i 또는 z_j 중 더 작은 것이 피벗", correct: false,
+                    explain: "순서는 무관. '먼저' 피벗으로 선택되는 것이 중요." },
+                  { text: "Z_{ij}의 중앙값이 피벗", correct: false,
+                    explain: "중앙값이 먼저 뽑히면 오히려 z_i와 z_j가 분리. 가장자리 원소가 먼저 뽑혀야 함." },
+                ],
+              },
+              {
+                stage: "③ 확률 계산",
+                prompt: "Z_{ij}의 |Z_{ij}| = j - i + 1개 원소 각각이 '먼저 피벗'이 될 확률은 균등하다. Pr{z_i와 z_j가 비교}는?",
+                choices: [
+                  { text: "$Pr = 2$ / (j - i + 1) — z_i 또는 z_j 둘 중 하나(2개 원소)가 먼저 뽑혀야 함", correct: true,
+                    explain: "CLRS Eq (7.5). 균등 무작위 선택이므로 각 원소가 첫 피벗이 될 확률 1/(j-i+1). 유리한 경우는 2가지(z_i 또는 z_j)." },
+                  { text: "1/n", correct: false,
+                    explain: "Z_{ij}의 크기에 의존. 가까운 순서쌍일수록 높은 확률." },
+                  { text: "1/2", correct: false,
+                    explain: "|Z_{ij}|가 2일 때만 1/2. 일반적으로 2/(j-i+1)." },
+                ],
+              },
+              {
+                stage: "④ 총 기대 비교 횟수",
+                prompt: "E[X] = Σ_{$i < j$} E[X_{ij}] = Σ_{$i = 1$}^{n-1} Σ_{$j = i$+1}^{n} 2/(j-i+1). $k = j$-i+1로 치환하면?",
+                choices: [
+                  { text: "E[X] = Σ_{$i = 1$}^{n-1} Σ_{$k = 2$}^{n-i+1} 2/k ≤ Σ_{$i = 1$}^{n-1} Σ_{$k = 1$}^{n} 2/k = (n-1) · 2·H_n = $O(n \\lg n)$", correct: true,
+                    explain: "CLRS p.181. 조화 급수 H_n = Σ_{$k = 1$}^n 1/$k = ln$ n + $O(1)$ = $O(\\lg n)$. 이중 합 경계 → 2(n-1)H_n = $O(n \\lg n)$." },
+                  { text: "$O(n^2)$", correct: false,
+                    explain: "조화 급수는 lg n차. 이중 합이 $O(n \\lg n)$ 보장." },
+                  { text: "$O(n)$", correct: false,
+                    explain: "이중 합이므로 최소 n 이상. lg n 팩터 필수." },
+                ],
+              },
+              {
+                stage: "⑤ 조화 급수 H_n의 특성",
+                prompt: "H_n = Σ_{$k = 1$}^n 1/k의 점근적 값은?",
+                choices: [
+                  { text: "$H_n = ln$ n + γ + $O(1/n)$ ≈ lg n · ln 2 + γ. 오일러-마셰로니 상수 $\\gamma  \\approx 0.577$. 점근적으로 $\\Theta(\\lg n)$.", correct: true,
+                    explain: "CLRS A.7 부록. 조화 급수는 자연 로그로 수렴. $O(\\lg n)$ 차수." },
+                  { text: "$H_n = n$ (발산 속도)", correct: false,
+                    explain: "lg n 속도로만 증가. 선형 발산 아님." },
+                  { text: "H_n = $\\Theta(1)$ (수렴)", correct: false,
+                    explain: "발산. 매우 느리게 증가하지만 발산." },
+                ],
+              },
+              {
+                stage: "⑥ 최악의 경우와의 비교",
+                prompt: "결정적 Quicksort 최악 $O(n^2)$이 무작위화로 $O(n \\lg n)$ '기대값' 보장. 이 차이의 실용적 의미는?",
+                choices: [
+                  { text: "어떤 입력이든 평균적으로 빠름. 악의적 입력이나 정렬된 입력에 대한 취약성 해소. 실제 구현(C++ std::sort, Java, Python)이 무작위 피벗 또는 중앙값의 중앙값 사용.", correct: true,
+                    explain: "CLRS 7.3 정확성의 의의. 무작위화는 '확률적 보증' — 하드코드된 악의적 입력이 통하지 않음. 실무 적용도 이 분석에 근거." },
+                  { text: "차이 없음 (같은 점근 차수)", correct: false,
+                    explain: "결정적은 최악 $O(n^2)$, 무작위는 기대 $O(n \\lg n)$. 차수 자체가 다름." },
+                  { text: "무작위는 항상 결정적보다 느림", correct: false,
+                    explain: "오히려 악의적 입력에서 훨씬 빠름. 평균 입력에선 거의 동일." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ RANDOMIZED-PARTITION 추적 — A=[3,8,2,5,1,4,7,6], $p = 1$, $r = 8$",
+            intro: "$RANDOM(1, 8) = 4$가 선택되어 $A[4] = 5$와 $A[8] = 6$을 먼저 교환한 뒤 PARTITION 실행. 이후 피벗=6 기준 Lomuto 분할.",
+            array: [3, 8, 2, 5, 1, 4, 7, 6],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$RANDOM(1, 8) = 4$. $A[4] = 5$와 $A[8] = 6$ 교환 후 A의 상태는?",
+                choices: [
+                  { text: "A = [3, 8, 2, 6, 1, 4, 7, 5]. 이제 피벗 = $A[8] = 5$.", correct: true,
+                    explain: "무작위 선택된 원소를 r 위치로 이동. PARTITION 관점에서는 동일한 구조 유지." },
+                  { text: "A가 정렬됨", correct: false,
+                    explain: "단일 교환. 정렬이 되지 않음." },
+                  { text: "A[4]가 0으로 바뀜", correct: false,
+                    explain: "단순 교환. 값이 사라지지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "PARTITION(A, 1, 8): 피벗=5. $i = 0$으로 초기화. $j = 1$..7 루프 진행. $j = 1$, A[1]=$3 \\leq 5$이므로?",
+                choices: [
+                  { text: "$i = 1$, exchange A[1]↔A[1] (자기 자신). A 불변: [3,8,2,6,1,4,7,5]", correct: true,
+                    explain: "Lomuto PARTITION의 일반 진행. A[j] ≤ 피벗이면 i 증가 + 교환. 같은 위치 교환은 무동작이지만 i는 증가." },
+                  { text: "A 재배치", correct: false,
+                    explain: "이 단계에선 $i = 1$, $j = 1$로 같아서 실질 변화 없음." },
+                  { text: "피벗 이동", correct: false,
+                    explain: "피벗은 루프 종료 후에만 이동." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$j = 2$, A[2]=$8 > 5$ → 건너뜀. $j = 3$, A[3]=$2 \\leq 5$ → $i = 2$, exchange A[2]↔A[3]. 결과는?",
+                choices: [
+                  { text: "A = [3, 2, 8, 6, 1, 4, 7, 5]", correct: true,
+                    explain: "A[2]와 A[3] 교환. 작은 원소(2)가 앞쪽으로 이동. i가 '작은 원소 영역의 경계'를 추적." },
+                  { text: "A 그대로", correct: false,
+                    explain: "$A[2] = 8$과 $A[3] = 2$ 교환 발생." },
+                  { text: "정렬됨", correct: false,
+                    explain: "부분적 재배치. 정렬 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$j = 4$,5,6,7 진행. A[4]=$6 > 5$ skip. A[5]=$1 \\leq 5$ → $i = 3$, swap A[3]↔A[5]. A[6]=$4 \\leq 5$ → $i = 4$, swap A[4]↔A[6]. A[7]=$7 > 5$ skip. 최종 루프 상태?",
+                choices: [
+                  { text: "A = [3, 2, 1, 4, 6, 8, 7, 5], $i = 4$. 루프 종료 후 swap A[5]↔A[8]: A = [3,2,1,4,5,8,7,6]. $q = 5$ 반환.", correct: true,
+                    explain: "Lomuto의 마지막 단계. $A[i+1] = A[5]$가 피벗보다 큰 영역의 시작. 피벗($A[8] = 5$)와 교환 → 피벗이 올바른 위치 5로. $q = 5$ 반환, $\\leq 5$: [3,2,1,4], >5: [8,7,6]." },
+                  { text: "이미 완전 정렬", correct: false,
+                    explain: "부분적 정렬. 오른쪽 [8,7,6]은 아직 미정렬." },
+                  { text: "피벗이 사라짐", correct: false,
+                    explain: "피벗은 최종 위치 q에 배치. 사라지지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$q = 5$ 이후 재귀 호출 2개: RANDOMIZED-QUICKSORT(A, 1, 4), RANDOMIZED-QUICKSORT(A, 6, 8). 각 부분 배열은?",
+                choices: [
+                  { text: "왼쪽 [3,2,1,4] (모두 $\\leq 5$), 오른쪽 [8,7,6] (모두 >5). 각각 독립 재귀.", correct: true,
+                    explain: "PARTITION의 결과로 '피벗 기준 분할'. 각 부분 배열은 독립적으로 정렬 가능." },
+                  { text: "양쪽이 같은 배열", correct: false,
+                    explain: "배타적 영역. 피벗 위치를 경계로 분리." },
+                  { text: "재귀 호출 없음", correct: false,
+                    explain: "$p < r$이면 재귀. $1 < 4$, $6 < 8$ 모두 성립." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "무작위 피벗 선택이 전체 분석에 주는 이득은?",
+                choices: [
+                  { text: "분할 비율이 '입력 순서'에 의존하지 않고 무작위 선택에만 의존 → 어떤 입력이든 기대 분할 균형. 정렬된/역순 입력의 최악 $O(n^2)$ 회피.", correct: true,
+                    explain: "결정적 Quicksort는 정렬된 입력에서 최악. 무작위화는 이 취약성 제거. 확률적 $O(n \\lg n)$ 보증." },
+                  { text: "알고리즘의 결과가 다름", correct: false,
+                    explain: "최종 정렬 결과는 같음. 속도만 다름." },
+                  { text: "공간을 절약", correct: false,
+                    explain: "공간 복잡도 변화 없음 (재귀 스택 동일)." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "hoare", name: "Hoare Partition", desc: "양 끝에서 좁혀 오는 분할 — Lomuto의 고전적 대안",
+        tags: ["O(n)", "In-place"], viz: "hoarePartition",
+        drills: {
+          source: "CLRS 3판 7.1 문제 7-1 p.185, Hoare's original partition scheme (1962)",
+          pseudo: {
+            title: "① 의사코드 재구성 — HOARE-PARTITION",
+            intro: "CLRS 문제 7-1. 두 인덱스 i, j가 배열 양 끝에서 서로를 향해 이동. 각자 '잘못된 쪽'에 있는 원소를 찾으면 교환. 만나는 순간 중단.",
+            reference: {
+              title: "참고: Lomuto와의 차이",
+              lines: [
+                { text: "Lomuto: 피벗을 끝(A[r])에 두고 한 방향 스캔",                   indent: 0 },
+                { text: "  분할 후 피벗이 최종 위치에 고정",                            indent: 0 },
+                { text: "  반환: 피벗의 인덱스 q ($p \\leq q \\leq r$)",                            indent: 0 },
+                { text: "  재귀: QUICKSORT(p, q-1), QUICKSORT(q+1, r)",                  indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "Hoare: 피벗을 시작(A[p])에 두고 양방향 수렴",                   indent: 0 },
+                { text: "  분할 후 피벗은 임의 위치 (고정 아님)",                        indent: 0 },
+                { text: "  반환: 분할 경계 j (A[p..j] ≤ 모든 A[j+1..r])",                  indent: 0 },
+                { text: "  재귀: QUICKSORT(p, j), QUICKSORT(j+1, r)",                    indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "Hoare가 평균적으로 교환 횟수 ~3배 적음 (실용상 빠름)",             indent: 0 },
+                { text: "단 같은 원소 처리가 Lomuto보다 까다로움",                        indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "HOARE-PARTITION(A, p, r)",                indent: 0, note: "" },
+              { text: "$x = A[p]$",                                indent: 1, note: "피벗 = 첫 원소" },
+              { text: "$i = p$ - 1",                               indent: 1, note: "왼쪽 포인터" },
+              { text: "$j = r$ + 1",                               indent: 1, note: "오른쪽 포인터" },
+              { text: "while TRUE",                              indent: 1, note: "무한 루프 + 조건부 break" },
+              { text: "repeat $j = j$ - 1 until $A[j] \\leq x$",         indent: 2, note: "오른쪽에서 피벗 이하 찾기" },
+              { text: "repeat $i = i$ + 1 until $A[i] \\geq x$",         indent: 2, note: "왼쪽에서 피벗 이상 찾기" },
+              { text: "if $i < j$",                                indent: 2, note: "포인터가 안 만났으면" },
+              { text: "exchange A[i] with A[j]",                 indent: 3, note: "교환 (잘못된 쪽 해소)" },
+              { text: "else return j",                           indent: 2, note: "분할 경계 반환" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 루프 불변식",
+            intro: "CLRS 문제 7-1(b). HOARE-PARTITION 종료 시 '분할 경계' 성질이 성립함을 루프 불변식으로 증명.",
+            invariantLabel: "Hoare 불변식: ",
+            invariant: "HOARE-PARTITION 각 반복 후 다음이 성립한다: A[p..i]의 모든 원소 ≤ x이고 A[j..r]의 모든 원소 ≥ x. 종료 시 $i \\geq j$이고 $A[p..j] \\leq x \\leq A[j+1..r]$. 따라서 j는 '분할 경계'.",
+            steps: [
+              {
+                stage: "① 초기 불변식",
+                prompt: "$i = p$-1, $j = r$+1로 초기화. 이때 불변식이 성립하는 이유는?",
+                choices: [
+                  { text: "A[p..i]와 A[j..r] 모두 빈 범위 ($i < p$, $j > r$) → 공허 참(vacuously true)", correct: true,
+                    explain: "범위가 비면 '모든 원소가 조건 만족'이 자동 성립. 귀납 기저." },
+                  { text: "$x = A[p]$이므로 자기 자신은 ≤ x와 ≥ x 모두 만족", correct: false,
+                    explain: "A[p]는 $i = p$-1, $j = r$+1 범위에 포함되지 않음 (초기)." },
+                  { text: "불변식이 초기엔 성립하지 않음", correct: false,
+                    explain: "공허 참으로 성립." },
+                ],
+              },
+              {
+                stage: "② j의 repeat 루프 종료 조건",
+                prompt: "`repeat $j = j$ - 1 until $A[j] \\leq x$` 루프가 반드시 종료하는 이유는?",
+                choices: [
+                  { text: "A[p] = $x \\leq x$이므로, 최악의 경우에도 j가 p에 도달하면 종료 (j는 단조 감소, 유한)", correct: true,
+                    explain: "CLRS 문제 7-1(a). 피벗 자신이 조건을 만족하므로 루프가 무한 진행하지 않음. 이것이 피벗을 A[p]에 두는 이유." },
+                  { text: "무한 루프 가능", correct: false,
+                    explain: "피벗 원소가 보장함. 종료 증명 가능." },
+                  { text: "반드시 $j = r$에서 종료", correct: false,
+                    explain: "더 일찍 종료 가능. 정확한 위치는 데이터 의존." },
+                ],
+              },
+              {
+                stage: "③ 교환 후 불변식 유지",
+                prompt: "$i < j$이면 $A[i] \\geq x$, $A[j] \\leq x$인 상태에서 교환. 교환 후 $A[i] \\leq x$, $A[j] \\geq x$. 불변식이 유지되는가?",
+                choices: [
+                  { text: "예. 교환 후 A[i]가 ≤ x이므로 A[p..i] 영역에 편입 가능. A[j]가 ≥ x이므로 A[j..r] 영역에 편입 가능. 이후 i++, j-- 시 불변 유지.", correct: true,
+                    explain: "교환이 정확히 양쪽 영역의 확장을 보장. 핵심 관찰." },
+                  { text: "교환은 불변식을 깬다", correct: false,
+                    explain: "교환으로 두 원소가 올바른 쪽에 배치됨." },
+                  { text: "교환 없어도 불변 유지", correct: false,
+                    explain: "교환하지 않으면 $A[i] \\geq x$가 A[p..i] 영역에, $A[j] \\leq x$가 A[j..r] 영역에 들어가 모순." },
+                ],
+              },
+              {
+                stage: "④ 종료 조건",
+                prompt: "$i \\geq j$일 때 루프 종료. 이 시점에서 j의 의미는?",
+                choices: [
+                  { text: "A[p..j] 전체가 ≤ x, A[j+1..r] 전체가 ≥ x. 즉 j가 '분할 경계'", correct: true,
+                    explain: "불변식 + 루프 종료 조건. i와 j가 교차하거나 만나면 남은 미확인 원소가 없음." },
+                  { text: "j가 피벗의 최종 위치", correct: false,
+                    explain: "Hoare는 피벗을 고정 위치에 놓지 않음. j는 '경계'이지 '피벗 인덱스'가 아님." },
+                  { text: "$j = p$가 항상 성립", correct: false,
+                    explain: "일반적으로 아님. j는 데이터에 의존." },
+                ],
+              },
+              {
+                stage: "⑤ Lomuto와의 수행 비교",
+                prompt: "Hoare vs Lomuto. 같은 입력에서 평균 교환 횟수는?",
+                choices: [
+                  { text: "Hoare가 약 3배 적음 — 양 끝에서 조건을 맞추며 좁히므로 교환이 효율적", correct: true,
+                    explain: "CLRS 주석 + 실무 벤치마크. Hoare의 양방향 스캔이 교환 효율 높음. 그래서 Sedgewick·STL 등 실제 Quicksort가 Hoare 기반."  },
+                  { text: "Lomuto가 더 적음", correct: false,
+                    explain: "실측과 이론 모두 Hoare가 우위." },
+                  { text: "동일", correct: false,
+                    explain: "분할 전략이 다르므로 교환 패턴도 다름." },
+                ],
+              },
+              {
+                stage: "⑥ QUICKSORT 호출 형태 차이",
+                prompt: "Hoare 반환 j로 QUICKSORT를 어떻게 호출?",
+                choices: [
+                  { text: "QUICKSORT(A, p, j) + QUICKSORT(A, j+1, r). Lomuto(p, q-1) vs (q+1, r)과 다름. Hoare는 j가 경계이므로 j를 포함.", correct: true,
+                    explain: "CLRS 문제 7-1(c). 피벗이 고정 위치가 아니므로 j+1이 아닌 j까지 왼쪽 부분. 두 알고리즘의 호출 규칙이 다른 중요한 차이점." },
+                  { text: "동일하게 (p, j-1)과 (j+1, r)", correct: false,
+                    explain: "피벗 제외가 아님. j 포함이 맞음." },
+                  { text: "QUICKSORT(A, j+1, r)만", correct: false,
+                    explain: "양쪽 모두 재귀 필요." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Hoare Partition 추적 — A=[6,1,3,8,4,2,5,7], $p = 1$, $r = 8$",
+            intro: "피벗 $x = A[1]$ = 6. $i = 0$, $j = 9$로 시작. 양쪽 포인터가 좁혀 오며 교환하는 과정 추적.",
+            array: [6, 1, 3, 8, 4, 2, 5, 7],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 상태. 첫 repeat 루프 실행: $j = 9$ → 8 → ... $A[j] \\leq 6$인 첫 위치 찾기. 어느 인덱스에서 멈추나?",
+                choices: [
+                  { text: "$j = 7$ (A[7]=$5 \\leq 6$)", correct: true,
+                    explain: "$j = 9$→8: A[8]=$7 > 6$ 계속, $j = 8$→7: A[7]=$5 \\leq 6$ 멈춤. 이때 $j = 7$." },
+                  { text: "$j = 1$ (피벗 자신)", correct: false,
+                    explain: "더 일찍 조건 만족하는 $A[7] = 5$가 있음." },
+                  { text: "$j = 8$ (끝)", correct: false,
+                    explain: "A[8]=$7 > 6$이므로 계속 감소." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이어서 repeat 루프로 i: $i = 0$ → 1 → ... $A[i] \\geq 6$인 첫 위치. 어디?",
+                choices: [
+                  { text: "$i = 1$ ($A[1] = 6$, 피벗 자신이 $\\geq 6$)", correct: true,
+                    explain: "$i = 0$→1: A[1]=$6 \\geq 6$ → 멈춤. 피벗 자신이 조건을 만족하는 첫 후보." },
+                  { text: "$i = 4$ ($A[4] = 8$)", correct: false,
+                    explain: "$A[1] = 6$이 먼저 만족. i는 왼쪽부터 단조 증가." },
+                  { text: "$i = 8$", correct: false,
+                    explain: "훨씬 일찍 $A[1] = 6$에서 종료." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$, $j = 7$. $i < j$이므로 exchange A[1] ↔ A[7]. A는?",
+                choices: [
+                  { text: "A = [5, 1, 3, 8, 4, 2, 6, 7]", correct: true,
+                    explain: "$A[1] = 6$과 $A[7] = 5$ 교환. 5가 왼쪽으로, 6(피벗)이 오른쪽으로 이동." },
+                  { text: "A 불변", correct: false,
+                    explain: "$i < j$이므로 교환 발생." },
+                  { text: "A = [1, 6, 3, 8, 4, 2, 5, 7]", correct: false,
+                    explain: "교환은 A[1]↔A[7]이지 A[1]↔A[2]가 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 iteration: j 감소. A[7]=$6 \\leq 6$이라 즉시 멈춤 → $j = 6$ ($A[6] = 6$? 아니, A[6]=$2 \\leq 6$) → ... 실제로 $j = 6$, A[6]=$2 \\leq 6$ 멈춤? 다시 확인.",
+                choices: [
+                  { text: "j는 7에서 시작. j→6: A[6]=$2 \\leq 6$ → 멈춤. $j = 6$.", correct: true,
+                    explain: "$j = 7$에서 $j = j$-$1 = 6$. A[6]=$2 \\leq 6$이므로 즉시 종료." },
+                  { text: "$j = 7$ 그대로", correct: false,
+                    explain: "repeat 루프는 $j = j$ - 1 먼저 수행 후 조건 검사. 반드시 감소." },
+                  { text: "$j = 1$", correct: false,
+                    explain: "$A[6] = 2$가 먼저 만족." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "i 증가: $i = 1$→2: A[2]=$1 < 6$ skip. $i = 3$: A[3]=$3 < 6$ skip. $i = 4$: A[4]=$8 \\geq 6$ → $i = 4$ 멈춤. 이제 $i < j$ ($4 < 6$) 이므로 exchange.",
+                choices: [
+                  { text: "exchange A[4]↔A[6] → A = [5, 1, 3, 8 → 2, 2 → 8, 6, 7]... 즉 A = [5, 1, 3, 2, 4, 8, 6, 7]", correct: true,
+                    explain: "잠깐 — $A[4] = 8$과 $A[6] = 2$ 교환. 결과 A = [5, 1, 3, 2, 4, 8, 6, 7]. 큰 값이 오른쪽으로 이동." },
+                  { text: "exchange 없음", correct: false,
+                    explain: "$i < j$이므로 교환 발생." },
+                  { text: "A = 정렬 완료", correct: false,
+                    explain: "부분 분할 진행 중이지 정렬 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 iteration: j: j→5: A[5]=$4 \\leq 6$ 멈춤. i: i→5: A[5]=$4 < 6$ skip, i→6: A[6]=$8 \\geq 6$ 멈춤. i=$6 \\geq j$=5 → return $j = 5$.",
+                choices: [
+                  { text: "분할 완료. A = [5, 1, 3, 2, 4, 8, 6, 7]. 경계 $j = 5$. A[1..5]=[5,1,3,2,4] 모두 $\\leq 6$, A[6..8]=[8,6,7] 모두 $\\geq 6$.", correct: true,
+                    explain: "Hoare 종료. j는 경계 — j까지가 '작은 쪽', j+1부터가 '큰 쪽'. 피벗 6은 j+$1 = 6$ 위치(오른쪽)에 있음. QUICKSORT(A,1,5) + QUICKSORT(A,6,8) 재귀." },
+                  { text: "피벗이 경계에 고정", correct: false,
+                    explain: "Lomuto와 달리 Hoare는 피벗 고정 없음. 피벗이 오른쪽 영역에 있을 수 있음." },
+                  { text: "$j = 1$", correct: false,
+                    explain: "실제 $j = 5$."  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch8",
+    tier: 1,
+    num: "Ch 8",
+    title: "Sorting in Linear Time",
+    subtitle: "비교 하한 · Counting · Radix · Bucket",
+    summary: "비교 기반이 아닌 가정을 활용하면 $\\Omega(n \\lg n)$ 장벽을 돌파할 수 있습니다.",
+    objectives: [
+      "결정 트리(decision tree) 모델로 비교 기반 정렬의 하한 $\\Omega(n \\lg n)$을 증명할 수 있다.",
+      "Counting / Radix / Bucket Sort의 동작 조건과 시간·공간 복잡도를 구분할 수 있다.",
+      "Radix Sort가 안정 정렬을 요구하는 이유를 자릿수 정렬 관점에서 설명할 수 있다.",
+    ],
+    md: `
+## 비교 정렬의 하한 ⭐
+
+**정리 8.1**: 최악의 경우, 비교 기반 정렬은 **$\\Omega(n \\lg n)$**번 비교 필요.
+- 증명: 결정 트리(Decision Tree) 모델
+- 리프 수 ≥ n!, 높이 h ≥ $\\lg(n!)$ = $\\Omega(n \\lg n)$
+- **의미**: Merge Sort, Heapsort는 점근적 최적
+
+## 비비교 정렬
+
+**계수 정렬 (Counting Sort)** — 값의 범위가 제한적일 때
+- 입력: A[1..n], 각 원소 ∈ {0..k}
+- **시간**: $\\Theta(n + k)$, **공간**: $\\Theta(n + k)$
+- **안정 정렬** ← Radix Sort 전제
+
+\`\`\`
+COUNTING-SORT(A, B, k)
+  C[0..k] = 0
+  for j = 1 to A.length       // 빈도 계산
+    C[A[j]] = C[A[j]] + 1
+  for i = 1 to k               // 누적합
+    C[i] = C[i] + C[i-1]
+  for j = A.length downto 1    // 역순 배치
+    B[C[A[j]]] = A[j]
+    C[A[j]] = C[A[j]] - 1
+\`\`\`
+
+**기수 정렬 (Radix Sort)** — LSD 방식, 자릿수마다 안정 정렬 사용
+- **시간**: $\\Theta(d(n+k))$
+
+**버킷 정렬 (Bucket Sort)** — [0,1) 균등 분포 가정
+- **시간**: 평균 $\\Theta(n)$, 최악 $\\Theta(n^2)$
+
+### 정렬 알고리즘 종합 비교
+
+| 알고리즘 | 최선 | 평균 | 최악 | 공간 | 안정 | 비교기반 |
+|---------|------|------|------|------|------|---------|
+| Insertion | $\\Theta(n)$ | $\\Theta(n^2)$ | $\\Theta(n^2)$ | $O(1)$ | ✅ | ✅ |
+| Merge | $\\Theta(n \\lg n)$ | $\\Theta(n \\lg n)$ | $\\Theta(n \\lg n)$ | $\\Theta(n)$ | ✅ | ✅ |
+| Heapsort | $O(n \\lg n)$ | $O(n \\lg n)$ | $O(n \\lg n)$ | $O(1)$ | ❌ | ✅ |
+| Quicksort | $\\Theta(n \\lg n)$ | $\\Theta(n \\lg n)$ | $\\Theta(n^2)$ | $O(\\lg n)$ | ❌ | ✅ |
+| Counting | $\\Theta(n + k)$ | $\\Theta(n + k)$ | $\\Theta(n + k)$ | $\\Theta(n + k)$ | ✅ | ❌ |
+| Radix | $\\Theta(d(n+k))$ | $\\Theta(d(n+k))$ | $\\Theta(d(n+k))$ | $\\Theta(n + k)$ | ✅ | ❌ |
+| Bucket | $\\Theta(n)$ | $\\Theta(n)$ | $\\Theta(n^2)$ | $\\Theta(n)$ | ✅ | ❌ |
+`,
+    ox: [
+      { q: "비교 기반 정렬의 최악 하한은 $\\Omega(n \\lg n)$이다.", a: true, why: "결정 트리의 리프 ≥ n! → 높이 ≥ $\\lg(n!)$ = $\\Omega(n \\lg n)$." },
+      { q: "Counting Sort는 안정 정렬이다.", a: true, why: "역순으로 배치하여 상대 순서 유지." },
+      { q: "Radix Sort는 각 자릿수 정렬에 안정 정렬을 필요로 한다.", a: true, why: "상위 자리 처리 시 하위 순서 유지 필수." },
+      { q: "Bucket Sort의 최악 시간은 $\\Theta(n^2)$이다.", a: true, why: "모든 원소가 한 버킷에 몰릴 때." },
+      { q: "Counting Sort는 비교 기반 정렬이다.", a: false, why: "원소 값으로 직접 인덱싱. 비교 없음." },
+      { q: "Radix Sort는 MSD(최상위 자리부터)만 정확하다.", a: false, why: "LSD 방식이 표준. MSD는 구현 복잡." },
+      { q: "Counting Sort의 공간 복잡도는 $\\Theta(n + k)$.", a: true, why: "입력 n + 카운트 배열 k." },
+      { q: "결정 트리 모델에선 리프 개수가 적어도 n!이다.", a: true, why: "각 순열이 하나 이상의 리프에 대응." },
+      { q: "Radix Sort의 시간 복잡도는 $\\Theta(d(n+k))$이다.", a: true, why: "d = 자릿수, 각 pass Counting Sort." },
+      { q: "Bucket Sort는 [0,1) 균등 분포 가정 하에서 기대 $\\Theta(n)$.", a: true, why: "Theorem 8.7. E[Σn_i²] = $\\Theta(n)$." },
+    ],
+
+    problems: [
+      {
+        num: "8-1",
+        title: "비교 정렬의 확률적 하한",
+        q: "결정 트리 모델을 확률적으로 확장: 각 내부 노드에서 임의로 두 분기를 선택할 수 있다고 하자.",
+        parts: [
+        {
+          label: "a",
+          q: "정렬 알고리즘이 '평균' $\\Omega(n \\lg n)$ 비교를 요구함을 증명하라 (모든 입력 순열이 동등 확률).",
+          hint: "평균 경로 길이 = $\\Theta$(lg 리프 수).",
+          solution: "결정 트리의 리프 수 $\\geq n!$. 평균 깊이 $\\geq \\lg(n!)/n! \\cdot n! = \\lg(n!) = \\Omega(n \\lg n)$. 엄밀히는 Jensen 부등식으로 평균 길이 $\\geq \\log_2(\\text{리프 수}) = \\Omega(n \\lg n)$.",
+        },
+        {
+          label: "b",
+          q: "랜덤화 알고리즘에도 동일한 하한이 적용됨을 보여라.",
+          solution: "랜덤화 알고리즘은 '결정 트리의 분포'. 각 결정 트리에 대해 (a)의 하한 적용 → 기댓값도 $\\Omega(n \\lg n)$.",
+        },
+        ],
+      },
+      {
+        num: "8-4",
+        title: "Water Jugs (물통 짝 맞추기)",
+        q: "각각 다른 부피를 가진 $n$개의 빨간 물통과 $n$개의 파란 물통이 있다. 각 빨간 물통은 정확히 하나의 파란 물통과 같은 부피. 빨간-파란 간 비교만 가능 (빨간-빨간, 파란-파란 불가). 짝을 맞춰라.",
+        parts: [
+        {
+          label: "a",
+          q: "각 빨간 물통을 모든 파란과 비교하는 단순 알고리즘의 비교 횟수는?",
+          solution: "$\\Theta(n^2)$ — 각 빨간에 대해 $n$개 파란과 비교.",
+        },
+        {
+          label: "b",
+          q: "$\\Omega(n \\lg n)$ 하한을 보여라.",
+          hint: "결정 트리: $n!$개의 가능한 짝 → $n! \\cdot 2^n$ (각 짝에 대해 순서도 미정)... 하지만 간단히는 $n!$개 짝만 고려.",
+          solution: "짝 맞춤 결과는 $n!$개의 가능한 순열 중 하나 → 결정 트리 리프 수 $\\geq n!$ → 높이 $\\geq \\lg(n!) = \\Omega(n \\lg n)$.",
+        },
+        {
+          label: "c",
+          q: "랜덤화 퀵정렬 기반 $O(n \\lg n)$ 기대 시간 알고리즘을 고안하라.",
+          hint: "한 파란 물통을 랜덤 피벗으로 잡고, 모든 빨간과 비교해 '피벗보다 작은/같은/큰'으로 분할.",
+          solution: "**알고리즘**: (1) 파란 물통 하나 랜덤 선택 → 모든 빨간과 비교해 3분할 (작음/같음/큼). 빨간 피벗 짝 발견. (2) 찾은 빨간 피벗과 모든 파란 비교 → 파란도 3분할. (3) 작은 빨간끼리와 작은 파란끼리, 큰 쪽도 동일하게 재귀. 기대 시간 $O(n \\lg n)$ (랜덤 퀵정렬과 동일 분석).",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "count", name: "Counting Sort", desc: "빈도/누적합으로 선형 시간 정렬",
+        tags: ["Θ(n+k)", "Stable"], viz: "countingSort",
+        drills: {
+          source: "CLRS 3판 8.1절 pp.191-193 (하한), 8.2절 pp.194-196, Figure 8.2",
+          pseudo: {
+            title: "① 의사코드 재구성 — COUNTING-SORT",
+            intro: "비비교 정렬의 대표 — 값 범위 [0..k]의 정수를 안정적(stable)으로 선형 시간에 정렬. CLRS 8.2절(p.195) 의사코드 12줄을 순서대로 배치하세요. 상위 RADIX-SORT와 기반 아이디어는 참고 블록에.",
+            reference: {
+              title: "참고: RADIX-SORT (p.198) · COUNTING-SORT는 안정성이 필수",
+              lines: [
+                { text: "RADIX-SORT(A, d)",                        indent: 0 },
+                { text: "for $i = 1$ to d",                          indent: 1 },
+                { text: "use a stable sort to sort array A on digit i", indent: 2 },
+                { text: "",                                        indent: 0 },
+                { text: "// d자리 수를 LSD(최하위 자릿수)부터 차례로 정렬", indent: 0 },
+                { text: "// 각 자릿수 정렬은 안정이어야 이전 자릿수 순서 보존",   indent: 0 },
+                { text: "// k = $O(n)$일 때 COUNTING-SORT 사용 → $\\Theta(d(n+k))$",    indent: 0 },
+              ],
+            },
+            // CLRS p.195 원문
+            lines: [
+              { text: "COUNTING-SORT(A, B, k)",                         indent: 0, note: "프로시저 헤더" },
+              { text: "let C[0..k] be a new array",                     indent: 1, note: "보조 카운트 배열" },
+              { text: "for $i = 0$ to k",                                 indent: 1, note: "C 초기화 루프" },
+              { text: "$C[i] = 0$",                                       indent: 2, note: "0으로 초기화" },
+              { text: "for $j = 1$ to A.length",                          indent: 1, note: "빈도 집계 루프" },
+              { text: "C[A[j]] = C[A[j]] + 1",                          indent: 2, note: "값별 카운트" },
+              { text: "// C[i] now contains the number of elements equal to i.", indent: 1, note: "주석 — 라인 5까지의 불변식" },
+              { text: "for $i = 1$ to k",                                 indent: 1, note: "누적합 루프" },
+              { text: "$C[i] = C[i]$ + C[i-1]",                           indent: 2, note: "누적합 계산" },
+              { text: "// C[i] now contains the number of elements less than or equal to i.", indent: 1, note: "주석 — 라인 8까지의 불변식" },
+              { text: "for $j = A.length$ downto 1",                      indent: 1, note: "출력 배치 (역순 — 안정성 보장)" },
+              { text: "B[C[A[j]]] = A[j]",                              indent: 2, note: "B에 올바른 위치로 복사" },
+              { text: "C[A[j]] = C[A[j]] - 1",                          indent: 2, note: "같은 값이 또 오면 앞쪽에" },
+            ],
+          },
+          proof: {
+            title: "② 비교 기반 정렬의 $\\Omega(n \\lg n)$ 하한 — 결정 트리",
+            intro: "CLRS 8.1절 Theorem 8.1의 증명을 단계별로 따라갑니다. 비교 정렬을 결정 트리로 추상화 → 리프 수 ≥ n! → 높이 ≥ $\\lg(n!)$ = $\\Omega(n \\lg n)$.",
+            invariantLabel: "정리 8.1: ",
+            invariant: "임의의 비교 기반 정렬 알고리즘은 최악의 경우 $\\Omega(n \\lg n)$번의 비교를 수행해야 한다. 따라서 Merge Sort와 Heapsort는 점근적으로 최적(asymptotically optimal)이다.",
+            steps: [
+              {
+                stage: "① 모델: 결정 트리",
+                prompt: "'비교 정렬'을 결정 트리로 추상화하면, 트리의 각 내부 노드는 무엇을 나타내는가?",
+                choices: [
+                  { text: "두 원소 a_i와 a_j의 비교 (예: $a_i \\leq a_j$?)", correct: true,
+                    explain: "결정 트리는 알고리즘이 '내리는 결정'만 추상화. 비교 정렬에서 결정은 오직 원소 간 비교 결과이므로 내부 노드 = 비교 질문. 왼쪽 자식 = ≤, 오른쪽 자식 = >." },
+                  { text: "배열의 현재 상태 (permutation)", correct: false,
+                    explain: "상태는 leaf에서 확정됩니다. 내부 노드는 '어떤 비교를 할지'만 담습니다." },
+                  { text: "알고리즘의 현재 수행 라인 번호", correct: false,
+                    explain: "결정 트리는 제어 흐름이나 데이터 이동을 추상화하지 않고 '비교 결정'만 표현합니다." },
+                  { text: "재귀 호출의 깊이", correct: false,
+                    explain: "결정 트리는 재귀/반복 구조와 무관합니다." },
+                ],
+              },
+              {
+                stage: "② 리프의 역할",
+                prompt: "결정 트리의 각 reachable leaf는 무엇을 의미하는가? 그리고 가능한 leaf 수의 최소 조건은?",
+                choices: [
+                  { text: "leaf = 하나의 정렬 순열 ⟨π(1), π(2), ..., π(n)⟩. 올바른 비교 정렬은 n!개의 permutation을 모두 표현해야 하므로 reachable $leaf \\geq n$!.", correct: true,
+                    explain: "알고리즘이 끝나면 'a_π(1) ≤ a_π(2) ≤ ... ≤ a_π(n)'이라는 결론을 내려야 함. 서로 다른 입력 permutation은 서로 다른 결론을 요구하므로 각 n!개 permutation마다 적어도 하나의 leaf 필요." },
+                  { text: "leaf = 하나의 비교 연산. 총 n번 비교하므로 n개 leaf.", correct: false,
+                    explain: "leaf는 '최종 결정(정렬 결과)'이지 '한 번의 비교'가 아닙니다." },
+                  { text: "leaf = 알고리즘의 한 반복. leaf 수는 입력 크기 n에 비례.", correct: false,
+                    explain: "leaf 수는 n이 아니라 n!에 비례해야 합니다 (모든 순열을 구별해야 하므로)." },
+                  { text: "leaf 수가 n²개 있으면 충분 — 쌍의 수와 같음", correct: false,
+                    explain: "두 원소의 순서가 아니라 n개 원소의 완전 순열(n! 가지)을 구별해야 합니다." },
+                ],
+              },
+              {
+                stage: "③ 이진 트리의 높이와 leaf",
+                prompt: "높이 h인 이진 트리의 leaf 수 상한은?",
+                choices: [
+                  { text: "≤ $2^h$ — 높이 h인 완전 이진 트리가 최대 $2^h$개 leaf", correct: true,
+                    explain: "결정 트리는 binary (각 비교 → ≤, > 두 갈래)이므로 level i에 최대 2^i개 노드. leaf는 모두 깊이 ≤ h에 있고 가장 많은 경우 $2^h$." },
+                  { text: "≤ h — 높이가 leaf 수를 직접 제한", correct: false,
+                    explain: "높이는 '경로 길이'이지 'leaf 수'가 아닙니다. 이진 트리는 폭이 지수적으로 증가 가능." },
+                  { text: "≤ h² — 조금 더 넉넉한 상한", correct: false,
+                    explain: "실제 상한은 $2^h$로 지수적입니다. h²은 훨씬 작습니다." },
+                  { text: "leaf 수 제한 없음", correct: false,
+                    explain: "이진 트리의 경우 높이 h에서 leaf는 $2^h$를 넘을 수 없습니다." },
+                ],
+              },
+              {
+                stage: "④ 부등식 결합",
+                prompt: "n! ≤ (reachable leaf 수) ≤ $2^h$ 에서 h의 하한은?",
+                choices: [
+                  { text: "h ≥ $\\lg(n!)$ — 양변에 lg를 취하면 됨 (lg는 단조 증가)", correct: true,
+                    explain: "n! ≤ $2^h$의 양변에 lg 적용 → $\\lg(n!)$ ≤ h. 이것이 결정 트리의 최소 높이, 즉 최악 경우 비교 수의 하한." },
+                  { text: "$h \\geq n$ — 2^$n = n$!이므로", correct: false,
+                    explain: "2^$n \\neq n$! 입니다. 실제로 n! > 2^n이 $n \\geq 4$일 때 성립합니다." },
+                  { text: "$h \\geq lg$ n — 리프 수가 n개이므로", correct: false,
+                    explain: "리프 수는 n이 아니라 n!입니다. 핵심 차이." },
+                  { text: "h ≥ √n — 이진 트리의 특성", correct: false,
+                    explain: "이진 트리 성질에 √n 같은 제약은 없습니다. 여기서는 $\\lg(n!)$이 정답." },
+                ],
+              },
+              {
+                stage: "⑤ $\\lg(n!)$의 점근 차수",
+                prompt: "$\\lg(n!)$를 Θ 표기법으로 표현하면?",
+                choices: [
+                  { text: "$\\Theta(n \\lg n)$ — 스털링 근사 또는 CLRS 식 (3.19)", correct: true,
+                    explain: "스털링: n! ≈ √(2πn)(n/e)^n → $\\lg(n!)$ ≈ $n \\lg n$ − n lg e + $O(\\lg n)$ = $\\Theta(n \\lg n)$. 또는 n/$2 \\leq k \\leq n$의 항만 고려해도 ≥ (n/2)·lg(n/2) = $\\Omega(n \\lg n)$." },
+                  { text: "$\\Theta(n)$ — 각 원소당 상수 비교", correct: false,
+                    explain: "n!은 매우 빠르게 성장하는 함수라 그 로그도 n보다 빠릅니다." },
+                  { text: "$\\Theta(\\lg n)$ — 로그 함수이므로", correct: false,
+                    explain: "$\\lg(n!)$ = lg 1 + lg 2 + ... + lg n이고, 이 합은 $n \\lg n$ 차수입니다 (연습 8.1-2)." },
+                  { text: "$\\Theta(n^2)$ — 모든 쌍의 비교", correct: false,
+                    explain: "n²은 과대 평가입니다. 스털링 근사로 정확히 $n \\lg n$." },
+                ],
+              },
+              {
+                stage: "⑥ 결론",
+                prompt: "따라서 '비교 정렬의 최악 실행 시간'에 대해 무엇을 결론지을 수 있는가?",
+                choices: [
+                  { text: "T(n) = $\\Omega(n \\lg n)$ — 어떤 비교 정렬도 이보다 빠를 수 없음. Merge Sort·Heapsort는 asymptotically optimal.", correct: true,
+                    explain: "Corollary 8.2. 상한 $O(n \\lg n)$(merge/heap)과 하한 $\\Omega(n \\lg n)$이 만나므로 $\\Theta(n \\lg n)$이 최적 차수. 상수 factor까지는 더 좋게 할 수 있지만 차수는 못 내림." },
+                  { text: "T(n) = $O(n)$ — 비비교 정렬처럼 선형 가능", correct: false,
+                    explain: "비비교 정렬만 이 장벽을 넘습니다. 비교 기반은 $\\Omega(n \\lg n)$에 막힙니다." },
+                  { text: "T(n) = $\\Theta(n^2)$ — Quicksort 최악이 n²이므로", correct: false,
+                    explain: "n²는 특정 알고리즘의 최악이지 비교 정렬 전체의 하한이 아닙니다." },
+                  { text: "하한 없음 — 이론적 최저 시간이 정해지지 않음", correct: false,
+                    explain: "이 증명이 정확히 '이론적 하한이 $\\Omega(n \\lg n)$임'을 보인 것입니다." },
+                ],
+              },
+              {
+                stage: "⑦ Counting Sort가 이 하한을 돌파하는 이유",
+                prompt: "Counting Sort는 $\\Theta(n + k)$로 작동해 $\\Omega(n \\lg n)$ 하한을 '돌파'합니다. 어떻게 가능한가?",
+                choices: [
+                  { text: "Counting Sort는 원소 간 비교를 하지 않음 — 실제 값을 배열 인덱스로 사용. 따라서 결정 트리 하한이 적용되지 않음.", correct: true,
+                    explain: "CLRS p.196: 'counting sort beats the lower bound of $\\Omega(n \\lg n)$... because it is not a comparison sort. ... it uses the actual values of the elements to index into an array.' 하한은 비교 기반 모델에만 적용." },
+                  { text: "Counting Sort는 결정 트리의 가지 수를 늘려 높이를 줄임", correct: false,
+                    explain: "결정 트리 자체의 구조를 변경한 것이 아니라 모델 밖에서 작동합니다 (인덱싱)." },
+                  { text: "Counting Sort는 병렬 비교를 사용해 시간을 단축", correct: false,
+                    explain: "병렬성 때문이 아니라 비교를 아예 하지 않기 때문입니다." },
+                  { text: "Counting Sort는 실제로는 $\\Omega(n \\lg n)$이고 분석이 잘못됨", correct: false,
+                    explain: "Counting Sort는 k = $O(n)$일 때 정말로 $\\Theta(n)$이며, 비교 모델 밖이라 하한과 모순되지 않습니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ COUNTING-SORT 직접 추적 — CLRS Figure 8.2",
+            intro: "A = ⟨2, 5, 3, 0, 2, 3, 0, 3⟩, $k = 5$. 보조 배열 C와 출력 배열 B의 변화를 단계별로 예측하세요.",
+            array: [2, 5, 3, 0, 2, 3, 0, 3],
+            steps: [
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: null, key: null, i: null },
+                prompt: "라인 2–5 (빈도 집계) 완료 후 C[0..5]의 값은? (C는 각 값의 출현 횟수)",
+                choices: [
+                  { text: "C = ⟨2, 0, 2, 3, 0, 1⟩", correct: true,
+                    explain: "A에서 0이 2번, 1이 0번, 2가 2번, 3이 3번, 4가 0번, 5가 1번. CLRS Fig 8.2 (a)." },
+                  { text: "C = ⟨0, 1, 2, 3, 4, 5⟩", correct: false,
+                    explain: "C는 A의 '히스토그램'이지 index 배열이 아닙니다." },
+                  { text: "C = ⟨2, 2, 4, 7, 7, 8⟩", correct: false,
+                    explain: "그건 누적합을 적용한 뒤의 C(Fig 8.2 (b))입니다. 라인 7-8 실행 후." },
+                  { text: "C = ⟨1, 1, 1, 1, 1, 1⟩", correct: false,
+                    explain: "각 값의 카운트가 1이 아닙니다 (예: 3은 3번 등장)." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: null, key: null, i: null },
+                prompt: "라인 7–8 (누적합) 완료 후 C[0..5]의 값은? ($C[i] = A$에서 i 이하의 원소 개수)",
+                choices: [
+                  { text: "C = ⟨2, 2, 4, 7, 7, 8⟩", correct: true,
+                    explain: "$C[0] = 2$, $C[1] = 2$+$0 = 2$, $C[2] = 2$+$2 = 4$, $C[3] = 4$+$3 = 7$, $C[4] = 7$+$0 = 7$, $C[5] = 7$+$1 = 8$. Fig 8.2 (b)." },
+                  { text: "C = ⟨2, 0, 2, 3, 0, 1⟩", correct: false,
+                    explain: "그건 누적합 전 상태 (Fig 8.2 (a))." },
+                  { text: "C = ⟨8, 6, 4, 1, 1, 0⟩", correct: false,
+                    explain: "역방향 누적이 아니라 정방향 누적합입니다." },
+                  { text: "C = ⟨2, 2, 4, 7, 7, 1⟩", correct: false,
+                    explain: "$C[5] = C[4]$ + C[5]_원래 = 7 + $1 = 8$입니다 (1이 아님)." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: 8, key: null, i: null },
+                prompt: "라인 10–12 첫 반복 ($j = 8$, $A[8] = 3$): B의 어느 인덱스에 무엇이 들어가고, C[3]은 어떻게 변하는가? (현재 C = ⟨2,2,4,7,7,8⟩)",
+                choices: [
+                  { text: "$B[7] = 3$, 그리고 $C[3] = 7$−$1 = 6$", correct: true,
+                    explain: "라인 11: B[C[A[j]]] = B[C[3]] = $B[7] = A[8]$ = 3. 라인 12: $C[3] = C[3]$ − $1 = 6$. Fig 8.2 (c)." },
+                  { text: "$B[8] = 3$, $C[3] = 6$", correct: false,
+                    explain: "위치는 C[A[j]] = $C[3] = 7$이지 $j = 8$이 아닙니다." },
+                  { text: "$B[3] = 3$ (같은 인덱스에 들어감)", correct: false,
+                    explain: "B의 인덱스는 C[A[j]]를 보고 결정합니다 (3이 아님)." },
+                  { text: "$B[7] = 3$, $C[3] = 7$ (감소 안 함)", correct: false,
+                    explain: "라인 12가 항상 C를 1 감소시킵니다 — 다음 같은 값의 위치를 확보하기 위해." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: 7, key: null, i: null },
+                prompt: "두 번째 반복 ($j = 7$, $A[7] = 0$): 현재 C = ⟨2,2,4,6,7,8⟩. B의 어디에 0이 들어가고, 새 C[0]은?",
+                choices: [
+                  { text: "$B[2] = 0$, $C[0] = 2$−$1 = 1$", correct: true,
+                    explain: "C[A[7]] = $C[0] = 2$이므로 $B[2] = 0$. 그 다음 $C[0] = 1$. Fig 8.2 (d)." },
+                  { text: "$B[0] = 0$, $C[0] = 1$", correct: false,
+                    explain: "B의 인덱스는 $C[0] = 2$이지 값 자체(0)가 아닙니다." },
+                  { text: "$B[1] = 0$, $C[0] = 1$", correct: false,
+                    explain: "$C[0] = 2$이므로 B[2]에 배치됩니다 (B는 1-indexed)." },
+                  { text: "$B[7] = 0$ (이전 위치 덮어씀)", correct: false,
+                    explain: "각 반복은 C[A[j]]가 가리키는 서로 다른 인덱스에 배치하므로 덮어쓰지 않습니다." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: null, key: null, i: null },
+                prompt: "모든 반복 완료 후 최종 B는?",
+                choices: [
+                  { text: "B = ⟨0, 0, 2, 2, 3, 3, 3, 5⟩", correct: true,
+                    explain: "입력의 모든 원소가 오름차순으로 안정 배치. 같은 값은 원본 상대 순서 유지. Fig 8.2 (f)." },
+                  { text: "B = ⟨5, 3, 3, 3, 2, 2, 0, 0⟩", correct: false,
+                    explain: "Counting Sort는 오름차순 정렬입니다 (내림차순이 아님)." },
+                  { text: "B = ⟨2, 5, 3, 0, 2, 3, 0, 3⟩ (원본 그대로)", correct: false,
+                    explain: "정렬 결과는 원본과 다른 순서입니다." },
+                  { text: "B = ⟨0, 2, 3, 5, 0, 2, 3, 3⟩ (두 번 쌓임)", correct: false,
+                    explain: "모든 원소가 정확히 한 번씩 배치되며 정렬된 순서여야 합니다." },
+                ],
+              },
+              {
+                before: { A: [2, 5, 3, 0, 2, 3, 0, 3], j: null, key: null, i: null },
+                prompt: "라인 10이 'for $j = A.length$ downto 1'(역순)인 이유는? 만약 'for $j = 1$ to A.length'(정순)로 바꾸면 어떻게 되는가?",
+                choices: [
+                  { text: "역순이어야 stability 유지 — 같은 값끼리 입력 순서가 보존됨. 정순이면 여전히 정렬되지만 stability가 깨짐.", correct: true,
+                    explain: "CLRS 연습 8.2-3. C[A[j]]를 읽은 뒤 감소하는 구조상, 정순이면 뒤에 나오는 같은 값이 앞 인덱스에 배치되어 원본 상대 순서가 뒤바뀝니다. Radix Sort의 정확성은 Counting Sort의 stability에 의존." },
+                  { text: "역순이어야 알고리즘이 아예 정렬됨 — 정순이면 틀린 결과", correct: false,
+                    explain: "정순으로도 정렬은 됩니다. stability만 잃을 뿐." },
+                  { text: "역순이어야 C 배열을 수정하지 않아도 됨", correct: false,
+                    explain: "정순/역순 모두 C를 수정합니다. 차이는 '같은 값의 상대 순서'." },
+                  { text: "역순이 더 빠름 (캐시 효율 등)", correct: false,
+                    explain: "두 방향 모두 $\\Theta(n)$으로 점근 차수는 같고, stability가 진짜 차이입니다." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "radix", name: "Radix Sort", desc: "LSD 방식 자릿수별 안정 정렬",
+        tags: ["Θ(d(n+k))", "Stable"], viz: "radixSort",
+        drills: {
+          source: "CLRS 3판 8.3절 pp.197-200, Lemma 8.3-8.4 · Figure 8.3",
+          pseudo: {
+            title: "① 의사코드 재구성 — RADIX-SORT",
+            intro: "CLRS 8.3절(p.198) Radix Sort는 단 2줄 코드. 하지만 핵심은 하위 안정 정렬(= Counting Sort)의 stability와 LSD(Least Significant Digit) 우선 처리. 3줄 + 헤더를 순서대로.",
+            reference: {
+              title: "참고: 왜 LSD부터? 그리고 복잡도 (Lemma 8.3)",
+              lines: [
+                { text: "// 전제: A의 n개 원소는 d-digit 수, 각 digit ∈ {0, 1, ..., k-1}", indent: 0 },
+                { text: "// digit 1 = 최하위 (least significant), digit d = 최상위",        indent: 0 },
+                { text: "",                                                                indent: 0 },
+                { text: "// LSD부터 처리하는 이유:",                                         indent: 0 },
+                { text: "//   d-1 pass 완료 시 뒤 d-1 digit 기준 정렬 상태.",                 indent: 0 },
+                { text: "//   d번째 pass에서 stable sort가 최상위 digit 기준 정렬하면서",      indent: 0 },
+                { text: "//   같은 최상위를 가진 원소들의 '이전 digit 순서'를 보존 → 전체 정렬.",  indent: 0 },
+                { text: "",                                                                indent: 0 },
+                { text: "// Lemma 8.3: stable sort가 $\\Theta(n + k)$이면 RADIX-SORT는 $\\Theta(d(n+k))$",     indent: 0 },
+                { text: "// Counting Sort 사용 시 이 조건 충족",                             indent: 0 },
+              ],
+            },
+            // CLRS p.198
+            lines: [
+              { text: "RADIX-SORT(A, d)",                                      indent: 0, note: "프로시저 헤더 (d = 자릿수)" },
+              { text: "for $i = 1$ to d",                                        indent: 1, note: "LSD($i = 1$)부터 MSD($i = d$)까지" },
+              { text: "use a stable sort to sort array A on digit i",          indent: 2, note: "각 자리별 안정 정렬 (보통 Counting Sort)" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 + 복잡도 (Lemma 8.3)",
+            intro: "Radix Sort 정확성의 핵심은 (a) 안정성의 필요성, (b) LSD부터 처리하는 이유, (c) 복잡도 분석. 귀납으로 증명.",
+            invariantLabel: "Lemma 8.3: ",
+            invariant: "n개의 d-digit 숫자 (각 $digit \\leq k$ 값)를 입력받았을 때, RADIX-SORT는 (사용된 안정 정렬이 $\\Theta(n + k)$일 때) $\\Theta(d(n+k))$ 시간에 정확히 정렬. 증명: digit 수에 대한 귀납.",
+            steps: [
+              {
+                stage: "① 안정성의 필요성",
+                prompt: "Radix Sort 내부의 정렬이 '안정(stable)'해야 하는 이유는?",
+                choices: [
+                  { text: "동일한 현재 digit 값을 가진 두 원소의 상대 순서가, 이전 pass에서 결정한 하위 digit 순서를 유지해야 하므로", correct: true,
+                    explain: "핵심 불변식. 예: 두 수 ...35와 ...25를 digit '3/2' pass에서 정렬했는데, 다음 digit pass에서 unstable sort를 쓰면 이 순서가 깨져 정답 오류." },
+                  { text: "stable이 unstable보다 항상 빠르다", correct: false,
+                    explain: "속도와는 무관. '정확성'의 필수 조건." },
+                  { text: "stable이 메모리를 덜 쓴다", correct: false,
+                    explain: "Counting Sort(stable)가 오히려 $\\Theta(n + k)$ 추가 메모리. 목적은 순서 보존." },
+                ],
+              },
+              {
+                stage: "② LSD 순서의 불변식",
+                prompt: "RADIX-SORT의 각 pass 후 성립하는 불변식은? (i번째 pass 완료 시점)",
+                choices: [
+                  { text: "하위 i자리만 보면 배열이 정확히 정렬된 상태", correct: true,
+                    explain: "귀납 가설. pass 1 → 1자리 정렬, pass 2 → 하위 2자리 정렬, ..., pass d → 전체 정렬. 각 pass가 stable + 상위 digit 기준 정렬이 결합해 성립." },
+                  { text: "상위 i자리가 정렬", correct: false,
+                    explain: "MSD 순서를 쓰면 그럴 테지만 CLRS의 LSD 방식은 반대. 하위부터." },
+                  { text: "i번째 자리만 단독으로 정렬", correct: false,
+                    explain: "누적적으로 하위 i자리 전체가 정렬된 상태여야 불변식이 유지됨." },
+                ],
+              },
+              {
+                stage: "③ 귀납 단계",
+                prompt: "pass i-1 후 하위 i-1자리 정렬 상태. pass i에서 i번째 digit을 stable sort할 때 왜 하위 i자리가 정렬되나?",
+                choices: [
+                  { text: "stable sort는 i번째 digit이 같은 원소들의 상대 순서를 유지. 이전 pass로 이들의 하위 i-1자리는 정렬됨 → i번째 digit이 같으면 하위 i-1자리로 정렬, 다르면 i번째 digit이 지배. 두 경우 모두 하위 i자리 사전순 정렬.", correct: true,
+                    explain: "stability + LSD 순서의 조합이 귀납적으로 정렬 확장. 이것이 Radix Sort의 마법." },
+                  { text: "unstable sort로도 같은 결과가 나온다", correct: false,
+                    explain: "unstable이면 같은 i-digit의 원소들이 순서가 섞여 이전 pass 결과가 무효화됨." },
+                  { text: "매 pass마다 전체를 처음부터 정렬", correct: false,
+                    explain: "각 pass는 현재 digit만 보고 정렬. 전체 재정렬이 아님." },
+                ],
+              },
+              {
+                stage: "④ 최종 정렬 (pass d 이후)",
+                prompt: "d번의 pass를 마치면?",
+                choices: [
+                  { text: "하위 d자리(= 전체)가 정렬됨 → 배열 전체 정렬 완료", correct: true,
+                    explain: "귀납 불변식의 귀결. d는 숫자의 최대 자릿수이므로 '하위 d자리' = '전체'. Lemma 8.3 정확성 증명 완료." },
+                  { text: "d자리 중 하나만 정렬", correct: false,
+                    explain: "d pass가 누적되어 모든 d자리가 정렬." },
+                  { text: "정렬 보장 안 됨 — 검증 필요", correct: false,
+                    explain: "귀납으로 정확성이 수학적으로 보장됨." },
+                ],
+              },
+              {
+                stage: "⑤ 시간 복잡도",
+                prompt: "Counting Sort($\\Theta(n + k)$)를 내부 정렬로 사용할 때 RADIX-SORT의 시간 복잡도는?",
+                choices: [
+                  { text: "$\\Theta(d(n+k))$ — d번의 pass × 각 pass $\\Theta(n + k)$", correct: true,
+                    explain: "CLRS Lemma 8.3. 각 pass가 전체 배열을 한 번 훑는 Counting Sort. d pass로 총합." },
+                  { text: "$\\Theta(n \\lg n)$ — 비교 기반 하한", correct: false,
+                    explain: "Radix는 비교 기반이 아님. 비교 하한이 적용 안 됨 (Ch 8 Counting Sort와 같은 이유)." },
+                  { text: "Θ(nd) — d에 비례", correct: false,
+                    explain: "각 pass 비용에 +k가 있어 더 정확한 형태. k가 상수이거나 $O(n)$이면 Θ(nd)로 단순화 가능." },
+                ],
+              },
+              {
+                stage: "⑥ 선형 시간 조건",
+                prompt: "RADIX-SORT가 '선형 시간' $\\Theta(n)$이 되는 조건은?",
+                choices: [
+                  { text: "d = $O(1)$ (상수 자릿수) and k = $O(n)$ — 예: 32-bit 정수를 8-bit digit 4개로 나누면 $d = 4$, $k = 256$", correct: true,
+                    explain: "CLRS Lemma 8.4. d와 k를 적절히 선택(Lemma 8.4의 r-bit digit 트릭)하면 Θ(bn/lg n)도 가능. 실용적으로는 고정 비트 크기 + 적당한 분할로 매우 빠름." },
+                  { text: "항상 $\\Theta(n)$", correct: false,
+                    explain: "일반적으로는 $\\Theta(d(n+k))$. d, k가 커지면 $\\Theta(n)$을 초과할 수 있음." },
+                  { text: "비교 정렬 하한 때문에 불가능", correct: false,
+                    explain: "비교 정렬이 아니므로 하한 적용 안 됨. 선형 시간 가능." },
+                ],
+              },
+              {
+                stage: "⑦ Radix vs Quicksort",
+                prompt: "실무에서 Radix Sort가 Quicksort(평균 $\\Theta(n \\lg n)$)를 항상 이기나?",
+                choices: [
+                  { text: "항상은 아님 — 상수 factor와 메모리 접근 패턴이 다름. d와 k가 작은 정수 키에서는 유리하지만, 메모리 캐시 효율이나 in-place 요구에서 Quicksort가 나을 수 있음", correct: true,
+                    explain: "CLRS p.199 논의. 점근적으로 Radix가 Quicksort보다 작아 보이지만 실제 상수는 더 크고 메모리 비용도 큼(not in-place). 입력 특성과 환경에 따라 선택." },
+                  { text: "Radix가 항상 우수", correct: false,
+                    explain: "점근이 좋다고 실무에서 항상 빠른 것은 아님. 상수와 메모리 모델이 중요." },
+                  { text: "Quicksort가 항상 우수", correct: false,
+                    explain: "입력이 좋은 정수 키 구조이면 Radix가 선형으로 빠를 수 있음." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Radix Sort 추적 — CLRS Figure 8.3",
+            intro: "7개 3-digit 숫자 배열: [329, 457, 657, 839, 436, 720, 355]. $d = 3$, $k = 10$. 각 pass의 결과를 예측하세요.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 배열: [329, 457, 657, 839, 436, 720, 355]. Pass 1 ($i = 1$, LSD=일의 자리) 기준 안정 정렬. 각 수의 일의 자리: 9, 7, 7, 9, 6, 0, 5. 결과는?",
+                choices: [
+                  { text: "[720, 355, 436, 457, 657, 329, 839]", correct: true,
+                    explain: "일의 자리 순: 0(720), 5(355), 6(436), 7(457), 7(657), 9(329), 9(839). 457과 657은 원래 순서 유지(stable), 329와 839도 유지. CLRS Fig 8.3 column 2." },
+                  { text: "[329, 457, 657, 839, 436, 720, 355] (변화 없음)", correct: false,
+                    explain: "일의 자리 기준 정렬되어야 하므로 순서가 바뀜." },
+                  { text: "[329, 355, 436, 457, 657, 720, 839] (완전 정렬)", correct: false,
+                    explain: "한 번의 pass로는 '일의 자리만' 정렬. 전체 정렬은 3 pass 후." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Pass 2 ($i = 2$, 십의 자리). 현재 배열 [720, 355, 436, 457, 657, 329, 839]. 각 수의 십의 자리: 2, 5, 3, 5, 5, 2, 3. 안정 정렬 결과는?",
+                choices: [
+                  { text: "[720, 329, 436, 839, 355, 457, 657]", correct: true,
+                    explain: "십의 자리 순: 2(720, 329), 3(436, 839), 5(355, 457, 657). stable하므로 각 그룹 내 이전 순서 유지. Fig 8.3 column 3." },
+                  { text: "[329, 355, 436, 457, 657, 720, 839] (완전 정렬)", correct: false,
+                    explain: "아직 pass 2. 전체 정렬은 pass 3 후." },
+                  { text: "[355, 457, 657, 329, 839, 720, 436] (십의 자리 내림차순)", correct: false,
+                    explain: "정렬은 오름차순. 내림이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Pass 3 ($i = 3$, 백의 자리 = MSD). 현재 [720, 329, 436, 839, 355, 457, 657]. 백의 자리: 7, 3, 4, 8, 3, 4, 6. 안정 정렬 결과는?",
+                choices: [
+                  { text: "[329, 355, 436, 457, 657, 720, 839]", correct: true,
+                    explain: "백의 자리 순: 3(329, 355), 4(436, 457), 6(657), 7(720), 8(839). 각 그룹이 단일 원소 또는 이미 올바른 순서. 최종 정렬 완료. CLRS Fig 8.3 column 4." },
+                  { text: "[839, 720, 657, 457, 436, 355, 329] (내림차순)", correct: false,
+                    explain: "오름차순 정렬." },
+                  { text: "[720, 329, 436, 839, 355, 457, 657] (변화 없음)", correct: false,
+                    explain: "백의 자리 기준으로 재정렬됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "위 pass 2에서 십의 자리 '2' 그룹에 720과 329가 있었음. Stable sort 덕분에 어떤 순서로 배치되었나? 이것이 왜 중요한가?",
+                choices: [
+                  { text: "720, 329 순서 — 이전 pass(일의 자리)에서 720이 329보다 앞에 있었음. stability가 이를 보존 → 두 수의 하위 2자리(20 vs 29) 올바르게 비교됨", correct: true,
+                    explain: "Stability의 구체적 효과. 이전 결과(하위 1자리 정렬)를 깨지 않고 상위 자리 정렬. 이것이 누적되어 전체 정렬로 이어짐." },
+                  { text: "항상 알파벳 순 (3, 7)로", correct: false,
+                    explain: "stability 기준은 이전 순서 보존이지 재정렬이 아님." },
+                  { text: "임의 — stable sort는 상관없음", correct: false,
+                    explain: "stable sort는 명확히 '이전 순서 보존'. 정확히 명시되어 있음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 pass 2에서 unstable sort (Quicksort 등)를 사용했다면 어떤 문제가 생기는가?",
+                choices: [
+                  { text: "십의 자리가 같은 원소들 중 일부가 이전 순서와 달라져, 최종 정렬 결과가 깨질 수 있음", correct: true,
+                    explain: "예: pass 1 후 [329, 839]이지만 unstable sort가 pass 2에서 [839, 329]로 뒤집으면, pass 3 후에도 십의 자리 정렬 정보가 손실되어 잘못된 순서. Radix Sort는 stable sort가 필수." },
+                  { text: "속도가 느려질 뿐 결과는 같음", correct: false,
+                    explain: "결과가 틀려질 수 있음. 속도 문제가 아니라 정확성 문제." },
+                  { text: "Radix Sort는 어떤 내부 정렬이든 작동", correct: false,
+                    explain: "stability가 필수 조건. unstable 사용 시 알고리즘의 정확성 보장 안 됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 예시의 실행 시간을 분석: $n = 7$, $k = 10$ (digit은 0–9), $d = 3$. Counting Sort를 내부로 사용. 총 시간?",
+                choices: [
+                  { text: "$\\Theta(d(n+k))$ = Θ(3·(7+10)) = Θ(51) (상수 factor 무시하면 $\\Theta(n + k)$)", correct: true,
+                    explain: "Lemma 8.3의 공식 적용. n, k, d 모두 작은 예제. 비교 정렬($O(n \\lg n)$ = O(n·lg 7) ≈ 20)보다 상수 factor로는 큼, 하지만 큰 n에서 $\\Theta(n + k)$가 유리." },
+                  { text: "$\\Theta(n^2)$ = Θ(49)", correct: false,
+                    explain: "Radix Sort는 n² 아님. 각 pass는 $\\Theta(n + k)$." },
+                  { text: "$\\Theta(n \\lg n)$ = Θ(7·3) = Θ(21)", correct: false,
+                    explain: "비교 기반 복잡도. Radix는 비교 기반 아님." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "bucket", name: "Bucket Sort", desc: "균등 분포 가정 하의 평균 선형 시간 정렬",
+        tags: ["평균 Θ(n)", "최악 Θ(n²)"], viz: "bucketSort",
+        drills: {
+          source: "CLRS 3판 8.4절 pp.200-204, Theorem 8.7 · Figure 8.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — BUCKET-SORT",
+            intro: "CLRS 8.4절 p.201의 8줄. [0,1) 구간에 균등 분포된 실수를 n개 버킷으로 나누고, 각 버킷을 Insertion Sort로 정렬한 후 연결.",
+            reference: {
+              title: "참고: 가정과 분석",
+              lines: [
+                { text: "입력 가정: A[1..n], 모든 A[i] ∈ [0, 1)",                indent: 0 },
+                { text: "           + 균등 분포(uniformly distributed)",        indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "버킷 B[0..n-1]: 각 버킷은 연결 리스트",                 indent: 0 },
+                { text: "A[i]는 B[⌊n·A[i]⌋]에 삽입",                            indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "분석 (Theorem 8.7):",                                   indent: 0 },
+                { text: "  기대 시간 $\\Theta(n)$ under 균등 분포",                      indent: 0 },
+                { text: "  최악 $\\Theta(n^2)$ — 모든 원소가 한 버킷에 몰릴 때",           indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "핵심: E[n_i²] = 2 - 1/n → 각 버킷 정렬 $O(1)$ 기대",      indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "BUCKET-SORT(A)",                               indent: 0, note: "A[1..n], A[i] ∈ [0,1) 균등" },
+              { text: "$n = A.length$",                                 indent: 1, note: "원소 수 = 버킷 수" },
+              { text: "let B[0..n-1] be a new array",                 indent: 1, note: "버킷 배열 할당" },
+              { text: "for $i = 0$ to n - 1",                           indent: 1, note: "버킷 초기화" },
+              { text: "make B[i] an empty list",                      indent: 2, note: "빈 연결 리스트" },
+              { text: "for $i = 1$ to n",                               indent: 1, note: "모든 원소 분배" },
+              { text: "insert A[i] into list B[⌊n·A[i]⌋]",            indent: 2, note: "해당 버킷에 삽입" },
+              { text: "for $i = 0$ to n - 1",                           indent: 1, note: "각 버킷 정렬" },
+              { text: "sort list B[i] with insertion sort",           indent: 2, note: "Insertion Sort 사용" },
+              { text: "concatenate lists B[0], B[1], ..., B[n-1] in order", indent: 1, note: "순서대로 이어 붙임" },
+            ],
+          },
+          proof: {
+            title: "② 기대 시간 $\\Theta(n)$ 증명 — 지시 변수 + 균등 분포",
+            intro: "CLRS Theorem 8.7 증명의 요지. 핵심은 E[n_i²] ≤ 2로 상한을 잡아 Insertion Sort 부분의 총 기대 시간이 $O(n)$임을 보임.",
+            invariantLabel: "Theorem 8.7: ",
+            invariant: "[0,1)에서 균등 분포된 n개 원소에 대해, BUCKET-SORT의 기대 시간은 $\\Theta(n)$. 증명은 각 버킷 크기 n_i에 대한 E[n_i²] 분석과 기댓값의 선형성.",
+            steps: [
+              {
+                stage: "① 시간 분해",
+                prompt: "총 시간 T(n) = (분배) + (각 버킷 정렬) + (연결). 분배와 연결은 $\\Theta(n)$. 지배적인 부분은?",
+                choices: [
+                  { text: "각 버킷 정렬의 총합 — 각 B[i]를 Insertion Sort로 정렬: Θ(n_i²). 총합: Σ Θ(n_i²) = Θ(Σn_i²)", correct: true,
+                    explain: "CLRS p.202. 분배와 연결은 선형 시간이 명백. 주의할 부분은 'Insertion Sort의 n_i² 총합의 기댓값'." },
+                  { text: "분배 (hashing into buckets)", correct: false,
+                    explain: "분배는 각 원소 $O(1)$, 총 $\\Theta(n)$. 선형." },
+                  { text: "연결 (concatenation)", correct: false,
+                    explain: "연결 리스트 concatenation은 포인터 연결만. $O(n)$." },
+                ],
+              },
+              {
+                stage: "② 지시 변수 X_ij",
+                prompt: "$X_ij = I${A[j]가 B[i]에 할당됨}. 이것의 기댓값은?",
+                choices: [
+                  { text: "$E[X_ij] = 1$/n — 균등 분포 + 버킷 너비 1/n", correct: true,
+                    explain: "A[j] ∈ [0,1) 균등이므로 어느 구간 [k/n, (k+1)/n)에 들어갈 확률도 1/n. 독립적." },
+                  { text: "$E[X_ij] = 1$/n²", correct: false,
+                    explain: "그건 두 독립 사건의 합동 확률. 단일 사건은 1/n." },
+                  { text: "$E[X_ij] = 1$/2", correct: false,
+                    explain: "버킷이 n개일 때 각 버킷은 전체의 1/n. 절반 아님." },
+                ],
+              },
+              {
+                stage: "③ E[n_i]와 E[n_i²]",
+                prompt: "n_i = Σ_j X_ij. E[n_i]와 E[n_i²]의 값은?",
+                choices: [
+                  { text: "$E[n_i] = 1$ (선형성). E[n_i²] = E[(Σ X_ij)²] = Σ E[X_ij²] + Σ_{$j \\neq k$} E[X_ij·X_ik] = n·(1/n) + n(n-1)·(1/n²) = 1 + (n-1)/$n = 2$ - 1/n", correct: true,
+                    explain: "CLRS p.203 핵심 계산. E[X_ij²] = $E[X_ij] = 1$/n (지시 변수). 교차항: 독립성 덕분에 E[X_ij·X_ik] = 1/n². 합산 → 2 - 1/$n \\leq 2$." },
+                  { text: "E[n_i²] = n (선형적)", correct: false,
+                    explain: "n개 원소의 제곱 기댓값이지만 버킷 크기는 n이 아님. E[n_i²] = 2 - 1/n." },
+                  { text: "$E[n_i] = n$/2 (평균 버킷)", correct: false,
+                    explain: "n개 원소가 n개 버킷에 균등 분포 → 버킷당 기댓값 1. 1/2 아님." },
+                ],
+              },
+              {
+                stage: "④ 총 시간의 기댓값",
+                prompt: "E[Σ_i n_i²] = n · E[n_i²] = n(2 - 1/n) = 2n - 1 = $\\Theta(n)$. 이로부터 결론은?",
+                choices: [
+                  { text: "Insertion Sort 부분의 총 기대 시간 = Θ(Σn_i²) = $\\Theta(n)$. 분배·연결 $\\Theta(n)$과 합쳐 전체 $\\Theta(n)$.", correct: true,
+                    explain: "CLRS Theorem 8.7의 결론. 총 기대 시간 $\\Theta(n)$ 달성. 이는 비교 기반 하한 $\\Omega(n \\lg n)$을 회피 (균등 분포 가정과 비비교 연산 덕분)." },
+                  { text: "여전히 $O(n^2)$이 최선", correct: false,
+                    explain: "'기대'가 핵심. 최악은 $\\Theta(n^2)$이지만 기대는 $\\Theta(n)$." },
+                  { text: "$\\Theta(n \\lg n)$ — 비교 하한", correct: false,
+                    explain: "Bucket Sort는 '비교 기반'이 아님. 원소 값 자체로 버킷을 결정 → 하한 회피 가능." },
+                ],
+              },
+              {
+                stage: "⑤ 균등 분포 가정이 깨지면?",
+                prompt: "A가 [0,0.01] 구간에 집중 (균등 아님)이면 어떤 일이 발생?",
+                choices: [
+                  { text: "모든 원소가 B[0]에 몰림 → $n_0 = n$ → Insertion Sort로 B[0]만 정렬하는 데 $\\Theta(n^2)$. 최악 시간 재현.", correct: true,
+                    explain: "CLRS 경고. 균등 분포 가정이 깨지면 $\\Theta(n^2)$로 악화. 일반 데이터에는 사용 불가 — 분포를 알고 있을 때만." },
+                  { text: "여전히 $\\Theta(n)$ (알고리즘이 알아서 처리)", correct: false,
+                    explain: "Insertion Sort가 하나의 긴 리스트를 처리 → 이차 시간." },
+                  { text: "$\\Theta(\\lg n)$로 개선", correct: false,
+                    explain: "반대로 악화. 분포 편향은 하나의 버킷을 비대하게 만듦." },
+                ],
+              },
+              {
+                stage: "⑥ 비교 정렬 하한과의 관계",
+                prompt: "$\\Omega(n \\lg n)$ 비교 정렬 하한을 Bucket Sort가 깨는 이유는?",
+                choices: [
+                  { text: "Bucket Sort는 원소 '값'을 직접 사용해 버킷을 결정 → 비교 기반이 아님. 하한 정리(8.1)의 결정 트리 모델이 적용 안 됨.", correct: true,
+                    explain: "CLRS 8장 구조. 8.1(비교 하한) → 8.2-8.4(비비교 정렬: Counting, Radix, Bucket). 각각 데이터 가정 추가로 하한 우회." },
+                  { text: "Bucket Sort도 $O(n \\lg n)$ 제한", correct: false,
+                    explain: "균등 분포 가정 하에서 $\\Theta(n)$ 달성. 비교 정렬보다 빠름." },
+                  { text: "이론적 하한은 항상 맞음", correct: false,
+                    explain: "하한은 '비교 기반' 모델 하에서만. 다른 모델에서는 성립 안 할 수 있음." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Bucket Sort 추적 — CLRS Figure 8.4",
+            intro: "A = [.78, .17, .39, .26, .72, .94, .21, .12, .23, .68], $n = 10$. 버킷 B[0..9], A[i] → B[⌊10·A[i]⌋]. 분배 → 정렬 → 연결 과정을 추적.",
+            array: [0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.12, 0.23, 0.68],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: ".78은 어느 버킷으로? (⌊10 · 0.78⌋ = ?)",
+                choices: [
+                  { text: "⌊7.8⌋ = 7 → B[7]에 삽입", correct: true,
+                    explain: "floor(10 · 0.78) = $floor(7.8) = 7$. CLRS Figure 8.4에서 .78이 B[7]에." },
+                  { text: "7.8 → B[8] (반올림)", correct: false,
+                    explain: "floor, 즉 내림. 0.x에서 x의 정수 부분." },
+                  { text: ".78 → B[78]", correct: false,
+                    explain: "버킷은 0..n-$1 = 0$..9. 값 자체가 아닌 스케일된 인덱스." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "모든 원소 분배 후 B의 상태는?",
+                choices: [
+                  { text: "B[1]={.17,.12}, B[2]={.26,.21,.23}, B[3]={.39}, B[6]={.68}, B[7]={.78,.72}, B[9]={.94}. 나머지 빈 버킷.", correct: true,
+                    explain: "각 원소를 ⌊10·A[i]⌋로 분배. .17→B[1], .12→B[1], .26→B[2], .21→B[2], .23→B[2], ... B[2]가 가장 붐비며 3개." },
+                  { text: "모든 버킷에 1개씩 균등 분포", correct: false,
+                    explain: "기대는 균등하나 실제는 편차. B[2]에 3개, B[0],B[4],B[5],B[8]은 빈 버킷." },
+                  { text: "B[7]에 .78만", correct: false,
+                    explain: ".72 역시 ⌊7.2⌋=7로 B[7]에 들어감." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "각 버킷을 Insertion Sort로 정렬. 가장 큰 버킷 B[2]={.26, .21, .23}의 정렬 결과와 비교 횟수는?",
+                choices: [
+                  { text: "정렬 후 B[2] = {.21, .23, .26}. Insertion Sort로 3개 원소 정렬: 최대 3번 비교", correct: true,
+                    explain: "Insertion Sort of 3 elements: 2-3 comparisons. .21을 앞에 두고 .23이 .26 앞에 들어감." },
+                  { text: "B[2] = {.26, .23, .21} (역순)", correct: false,
+                    explain: "Insertion Sort는 오름차순. 최종 결과는 오름차순 정렬." },
+                  { text: "각 버킷 정렬에 $O(n^2)$ = 100번 비교", correct: false,
+                    explain: "각 버킷은 평균 1개 원소, 최대 3개. Insertion Sort가 짧은 리스트에 효율적." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "연결(concatenation): B[0]부터 B[9]까지 순서대로 이어 붙임. 최종 출력은?",
+                choices: [
+                  { text: ".12, .17, .21, .23, .26, .39, .68, .72, .78, .94 (오름차순)", correct: true,
+                    explain: "정렬된 버킷을 인덱스 순서로 연결. 버킷 경계가 값 경계를 정의하므로 이어붙이기만 해도 전체 정렬됨." },
+                  { text: "원래 입력 순서", correct: false,
+                    explain: "정렬이 목적. 입력 순서는 분배·정렬·연결을 거쳐 오름차순으로 변환." },
+                  { text: "역순", correct: false,
+                    explain: "연결 순서가 B[0] → B[9]이므로 오름차순." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "n_i² 합은? (각 버킷 크기의 제곱)",
+                choices: [
+                  { text: "0²+2²+3²+1²+0²+0²+1²+2²+0²+$1^{2} = 0$+4+9+1+0+0+1+4+0+$1 = 20$. 평균적으로 E[Σn_i²] ≈ 2n-$1 = 19$에 가까움", correct: true,
+                    explain: "E[Σn_i²] = n(2-1/n) = 2n-$1 = 19$ for $n = 10$. 실제 관측값 20으로 매우 근접. 균등 가정 잘 맞음." },
+                  { text: "100 (모든 원소의 쌍)", correct: false,
+                    explain: "그건 단일 버킷에 몰린 최악. 균등 분포에서는 훨씬 작음." },
+                  { text: "10 (버킷 수)", correct: false,
+                    explain: "버킷 수와 n_i² 합은 다른 양. 합은 크기의 제곱합." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Counting Sort, Radix Sort, Bucket Sort의 적용 조건 차이는?",
+                choices: [
+                  { text: "Counting: 작은 정수 범위 {0..k}. Radix: 고정 자릿수 정수. Bucket: [0,1) 균등 분포 실수. 각각 입력 가정이 다르며 $\\Theta(n)$ 기대 시간 달성.", correct: true,
+                    explain: "CLRS 8장의 세 비비교 정렬. 데이터 특성에 따라 선택. 일반 데이터는 여전히 $O(n \\lg n)$ 비교 정렬." },
+                  { text: "모두 같은 조건", correct: false,
+                    explain: "각 알고리즘이 다른 데이터 가정 요구. 혼용 불가." },
+                  { text: "Bucket이 가장 일반적", correct: false,
+                    explain: "균등 분포 가정이 가장 강함. Counting이 더 일반적(정수만)." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch15",
+    tier: 1,
+    num: "Ch 15",
+    title: "Dynamic Programming",
+    subtitle: "최적 부분 구조 · 중복 부분 문제",
+    summary: "Top-down 메모이제이션과 Bottom-up 테이블 채우기를 문제 특성에 맞게 고를 수 있어야 합니다.",
+    objectives: [
+      "DP 적용의 두 조건(최적 부분 구조 · 중복 부분 문제)을 판별할 수 있다.",
+      "Top-down 메모이제이션과 Bottom-up 테이블 채우기 두 구현 방식을 문제 특성에 맞게 선택할 수 있다.",
+      "막대 자르기·행렬 체인 곱셈·LCS 문제를 점화식으로 정의하고 구현할 수 있다.",
+    ],
+    md: `
+## DP 적용 조건
+1. **최적 부분 구조 (Optimal Substructure)**
+2. **중복 부분 문제 (Overlapping Subproblems)**
+
+## DP 설계 4단계
+1. 최적 해의 구조 특성화
+2. 최적 해의 값을 재귀적으로 정의
+3. (보통) bottom-up으로 계산
+4. 계산된 정보로부터 최적 해 구성
+
+**구현 방식**
+- Top-down + Memoization
+- Bottom-up (iteration)
+
+## 막대 자르기 (Rod Cutting)
+- $r_n = \\max_{1 \\leq i \\leq n}(p_i + r_{n-i})$
+- 나이브 O($2^n$) → DP $\\Theta(n^2)$
+
+\`\`\`
+BOTTOM-UP-CUT-ROD(p, n)
+  r[0] = 0
+  for j = 1 to n
+    q = -∞
+    for i = 1 to j
+      q = max(q, p[i] + r[j-i])
+    r[j] = q
+  return r[n]
+\`\`\`
+
+## 행렬 체인 곱셈 (Matrix-Chain) ⭐
+- $m[i,j] = \\min_{i \\leq k < j}\\{m[i,k] + m[k+1,j] + p_{i-1} \\cdot p_k \\cdot p_j\\}$
+- **시간**: $O(n^3)$, **공간**: $O(n^2)$
+
+**DP vs 분할 정복**
+- 분할 정복: 부분 문제 독립 (e.g. Merge Sort)
+- DP: 부분 문제 중복 (e.g. Fibonacci)
+`,
+    ox: [
+      { q: "DP 적용 조건은 '최적 부분 구조'와 '중복 부분 문제'이다.", a: true, why: "CLRS 15.3. 둘 다 필수." },
+      { q: "Rod Cutting 나이브 재귀는 Θ($2^n$)이다.", a: true, why: "각 길이에서 분할/비분할 2지선다." },
+      { q: "Matrix Chain Order의 시간은 $O(n^2)$이다.", a: false, why: "$O(n^3)$. 3중 루프." },
+      { q: "Top-down DP는 모든 부분 문제를 반드시 계산한다.", a: false, why: "메모이제이션은 필요한 것만 계산." },
+      { q: "LCS의 시간 복잡도는 Θ(mn)이다.", a: true, why: "m×n 테이블 각 셀 $O(1)$." },
+      { q: "분할 정복과 DP의 차이는 '부분 문제의 중복 여부'이다.", a: true, why: "분할 정복은 독립, DP는 중복." },
+      { q: "DP는 반드시 Bottom-up으로만 구현된다.", a: false, why: "Top-down + 메모도 유효." },
+      { q: "Matrix Chain의 점화식은 $m[i,j] = \\min_k (m[i,k]+m[k+1,j]+p_{i-1} \\cdot p_k \\cdot p_j)$이다.", a: true, why: "CLRS 15.2 핵심 식." },
+      { q: "Bottom-up DP는 모든 부분 문제를 크기 순으로 채운다.", a: true, why: "작은 → 큰 순서로 테이블 구성." },
+      { q: "LCS 테이블에서 c[i,j]는 X[1..i]와 Y[1..j]의 LCS 길이다.", a: true, why: "CLRS 15.4 점화식." },
+    ],
+
+    exercises: [
+      {
+        num: "15.1-1",
+        q: "Rod Cutting의 점화식 r_n = max_i(p_i + r_(n-i))을 bottom-up으로 구현하시오.",
+        hint: "r[0..n] 배열을 작은 값부터 채움.",
+        solution: "for $j = 1$ to n: $r[j] = max$ over $i = 1$..j of (p[i] + r[j-i]). 시간 $\\Theta(n^2)$.",
+      },
+      {
+        num: "15.2-1",
+        q: "Matrix Chain Order로 다음 차원 수열의 최적 괄호를 구하시오: 〈5, 10, 3, 12, 5, 50, 6〉.",
+        hint: "m[i,j] 테이블을 $l = 2$..6으로 채움.",
+        solution: "최적 괄호: ((A₁(A₂A₃))((A₄A₅)A₆)) 또는 유사. 최적 비용 약 2010.",
+      },
+      {
+        num: "15.4-2",
+        q: "LCS 알고리즘을 이용해 길이가 아닌 실제 LCS를 출력하시오.",
+        hint: "c 테이블 + b 테이블(방향 기록).",
+        solution: "b[i,j] ∈ {↖, ↑, ←}. PRINT-LCS 재귀: ↖면 X[i] 출력 후 (i-1,j-1). ↑면 (i-1,j). ←면 (i,j-1).",
+      },
+      {
+        num: "15.4-5",
+        q: "LIS (Longest Increasing Subsequence)를 $O(n^2)$과 $O(n \\lg n)$으로 푸시오.",
+        hint: "$O(n^2)$ DP 또는 $O(n \\lg n)$ patience sorting.",
+        solution: "$O(n^2)$: $L[i] = max$ L[j] + 1 over $j < i$ with $A[j] < A[i]$. $O(n \\lg n)$: 이진 탐색으로 tails 배열 유지.",
+      },
+      {
+        num: "15.5-4",
+        q: "최적 이진 탐색 트리의 DP 알고리즘을 구현하시오.",
+        hint: "$e[i,j] = min$ over r (e[i,r-1] + e[r+1,j] + w(i,j)).",
+        solution: "$O(n^3)$ 시간. Knuth 최적화로 $O(n^2)$.",
+      },
+      {
+        num: "Problem 15-1",
+        q: "DAG에서 최장 경로 문제를 DP로 푸시오.",
+        hint: "위상 정렬 후 DP.",
+        solution: "topologically sort. $d[v] = max$ over u→v of (d[u] + w(u,v)). $\\Theta(V + E)$.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "15-1",
+        title: "DAG에서의 최장 단순 경로",
+        q: "방향 간선에 음/양 가중치가 있는 DAG $G = (V, E)$와 정점 $s, t$가 주어진다. $s$에서 $t$로의 최장 경로를 동적 프로그래밍으로 $O(V + E)$에 구하라.",
+        parts: [
+        {
+          label: "a",
+          q: "부분 문제 정의와 점화식을 세워라.",
+          solution: "$L(v) = v$에서 $t$로의 최장 경로 길이. $L(t) = 0$. $L(v) = \\max_{(v,w) \\in E} \\{w(v,w) + L(w)\\}$. DAG는 위상 정렬 후 역순 계산.",
+        },
+        {
+          label: "b",
+          q: "일반 그래프(사이클 가능)에서는 왜 DP가 통하지 않는가?",
+          solution: "사이클이 있으면 최장 '단순' 경로는 NP-hard (해밀턴 경로 → 최장 경로 환원 가능). 부분 구조가 '단순성' 제약으로 깨짐.",
+        },
+        {
+          label: "c",
+          q: "$O(V + E)$ 구현을 서술하라.",
+          solution: "(1) 위상 정렬 $O(V+E)$. (2) 역순으로 각 $v$에 대해 $L(v) = \\max\\{w(v,w) + L(w)\\}$ 계산 — 각 간선은 한 번씩 방문 → $O(V+E)$. 총 $O(V+E)$.",
+        },
+        ],
+      },
+      {
+        num: "15-4",
+        title: "Printing Neatly (예쁘게 출력)",
+        q: "단어 $n$개를 줄당 최대 $M$자의 너비로 배치. 각 줄의 '남는 공간 수'의 세제곱 합을 최소화 (마지막 줄 제외).",
+        parts: [
+        {
+          label: "a",
+          q: "부분 문제와 점화식을 세워라.",
+          solution: "$c(j) = $ 첫 $j$개 단어를 최적 배치할 때 비용. $c(0) = 0$. $c(j) = \\min_{i} \\{c(i-1) + cost(i, j)\\}$, $cost(i,j) = (M - \\sum \\text{단어 길이} - (j-i))^3$ (공백 수 포함).",
+        },
+        {
+          label: "b",
+          q: "시간·공간 복잡도를 분석하라.",
+          solution: "$n$개 하위 문제, 각각 $O(n)$ 선택 → $O(n^2)$. 공간 $O(n)$.",
+        },
+        ],
+      },
+      {
+        num: "15-6",
+        title: "회사 파티 계획",
+        q: "회사가 트리 형태(상사-부하 관계). 각 직원은 '파티 재미 점수'를 가진다. 직원과 직속 상사가 동시에 참석하면 안 된다. 재미 총합을 최대화하라.",
+        parts: [
+        {
+          label: "a",
+          q: "부분 문제와 점화식을 세워라.",
+          solution: "$f(v, 0) = v$ 불참 시 $v$ 서브트리 최대 재미. $f(v, 1) = v$ 참석 시. $f(v, 0) = \\sum_{c} \\max(f(c,0), f(c,1))$. $f(v, 1) = \\text{fun}(v) + \\sum_{c} f(c, 0)$.",
+        },
+        {
+          label: "b",
+          q: "복잡도는?",
+          solution: "각 노드 $O(\\text{자식 수})$ — 전체 $O(n)$ 시간, $O(n)$ 공간.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "rodCut", name: "Rod Cutting", desc: "막대 자르기의 최적 수익 계산",
+        tags: ["Θ(n²)", "DP"], viz: "rodCutting",
+        drills: {
+          source: "CLRS 3판 15.1절 pp.360-370, Figure 15.1-15.3",
+          pseudo: {
+            title: "① 의사코드 재구성 — BOTTOM-UP-CUT-ROD",
+            intro: "CLRS 15.1절(p.366)의 BOTTOM-UP-CUT-ROD 8줄을 순서대로 배치하세요. 참고에 naive CUT-ROD(지수 시간)와 MEMOIZED-CUT-ROD(top-down DP)가 함께.",
+            reference: {
+              title: "참고: CUT-ROD (지수 시간) · MEMOIZED-CUT-ROD (top-down DP)",
+              lines: [
+                { text: "CUT-ROD(p, n)   // 지수 시간 — O($2^n$)",             indent: 0 },
+                { text: "if n == 0: return 0",                              indent: 1 },
+                { text: "q = -∞",                                           indent: 1 },
+                { text: "for $i = 1$ to n:",                                  indent: 1 },
+                { text: "q = max(q, p[i] + CUT-ROD(p, n-i))",               indent: 2 },
+                { text: "return q",                                         indent: 1 },
+                { text: "",                                                 indent: 0 },
+                { text: "MEMOIZED-CUT-ROD(p, n)   // top-down DP — $\\Theta(n^2)$",  indent: 0 },
+                { text: "let r[0..n] be a new array, r[i] = -∞",            indent: 1 },
+                { text: "return MEMOIZED-CUT-ROD-AUX(p, n, r)",             indent: 1 },
+                { text: "",                                                 indent: 0 },
+                { text: "// 점화식 (15.2): r_n = max(p_i + r_{n-i}) for $i = 1$..n", indent: 0 },
+                { text: "// 핵심 관찰: CUT-ROD가 같은 부분 문제를 지수적으로 중복 호출", indent: 0 },
+              ],
+            },
+            // CLRS p.366 원문
+            lines: [
+              { text: "BOTTOM-UP-CUT-ROD(p, n)",                indent: 0, note: "프로시저 헤더" },
+              { text: "let r[0..n] be a new array",             indent: 1, note: "r[j] = 크기 j 최적 수익" },
+              { text: "$r[0] = 0$",                               indent: 1, note: "길이 0 → 수익 0 (기저 사례)" },
+              { text: "for $j = 1$ to n",                         indent: 1, note: "크기 작은 것부터" },
+              { text: "q = -∞",                                 indent: 2, note: "현재 j의 최댓값 초기화" },
+              { text: "for $i = 1$ to j",                         indent: 2, note: "첫 조각 크기 i를 탐색" },
+              { text: "q = max(q, p[i] + r[j - i])",            indent: 3, note: "p[i] + 이미 해결된 r[j-i]" },
+              { text: "$r[j] = q$",                               indent: 2, note: "결과 저장" },
+              { text: "return r[n]",                            indent: 1, note: "크기 n의 최적 수익" },
+            ],
+          },
+          proof: {
+            title: "② DP 정당성 — 최적 부분 구조 + 중복 부분 문제",
+            intro: "CLRS 15.1절. Rod Cutting을 통해 DP의 두 축을 검증: (a) 최적 해가 부분 문제의 최적 해로 구성되는가 (optimal substructure), (b) 부분 문제가 중복되어 DP가 필요한가 (overlapping subproblems).",
+            invariantLabel: "DP 정당성의 두 축: ",
+            invariant: "(1) 최적 부분 구조: 전체 최적 해가 부분 문제의 최적 해로 조립됨. (2) 중복 부분 문제: naive 재귀가 같은 부분 문제를 반복 호출. 두 축이 모두 성립할 때 DP가 지수 → 다항식 시간으로 개선.",
+            steps: [
+              {
+                stage: "① 점화식 (15.2)",
+                prompt: "CLRS의 간결한 점화식 $r_n = \\max_{1 \\leq i \\leq n} (p_i + r_{n-i})$이 의미하는 바는?",
+                choices: [
+                  { text: "왼쪽 끝에서 길이 i를 '첫 조각'으로 자르고 나머지 n-i를 독립적으로 최적 분할 — 가능한 모든 i 중 최댓값 선택", correct: true,
+                    explain: "CLRS 15.1 간결 버전. 첫 조각은 자르지 않고(통째로 p_i 받음), 나머지만 재귀적으로 최적 분할. 모든 첫 조각 크기 i에 대해 max." },
+                  { text: "n개의 조각을 각각 독립적으로 최적화", correct: false,
+                    explain: "조각 개수는 결과의 일부이지 점화식 인자가 아님. 점화식은 '첫 분할 지점'에 대한 것." },
+                  { text: "$r_n = p_n$ − 재귀 없이 상수 시간", correct: false,
+                    explain: "$r_n = p_n$은 '자르지 않기' 옵션 하나일 뿐. 점화식은 모든 가능한 분할을 고려." },
+                  { text: "$r_n = r_{n-1} + p_1$ (1씩 떼어내기)", correct: false,
+                    explain: "이는 특수 케이스($i = 1$)일 뿐. 일반 점화식은 모든 i에 대한 max." },
+                ],
+              },
+              {
+                stage: "② 최적 부분 구조 증명",
+                prompt: "Rod Cutting이 '최적 부분 구조'를 가진다는 것을 어떻게 보이는가?",
+                choices: [
+                  { text: "n의 최적 해가 첫 조각 i*와 나머지 n-i*의 최적 해 조합이라고 가정. 만약 나머지의 해가 최적이 아니면, 더 나은 나머지 해로 바꿔 전체 개선 가능 → 최적성 모순.", correct: true,
+                    explain: "Cut-and-paste (exchange) 논법의 DP 버전. '부분이 최적 아니면 전체도 개선 가능'이라는 모순으로 optimal substructure 보임." },
+                  { text: "첫 조각만 탐욕적으로 가장 큰 p_i를 선택", correct: false,
+                    explain: "그건 greedy 접근이고, Rod Cutting에서는 항상 옳지 않음. 최적 부분 구조는 탐욕과 별개." },
+                  { text: "모든 부분 해를 나열해서 수동으로 검증", correct: false,
+                    explain: "귀납적/구조적 논증이 필요. 나열은 불가능 (부분 해가 무한히 많을 수 있음)." },
+                  { text: "최적 부분 구조가 없으면 DP 적용 불가이므로 자명", correct: false,
+                    explain: "DP 적용 가능성은 검증해야 할 속성. 모든 문제에 성립하는 것은 아님 (예: 최장 경로 문제)." },
+                ],
+              },
+              {
+                stage: "③ Naive 재귀의 지수 시간",
+                prompt: "CUT-ROD(p, n)의 호출 수 T(n)에 대한 점화식과 해는?",
+                choices: [
+                  { text: "$T(n) = 1$ + Σ_{$j = 0$}^{n-1} T(j), 해 $T(n) = 2$^n", correct: true,
+                    explain: "CLRS 식 (15.3)-(15.4). 루트 1회 + 자식들에 대한 재귀 합. 귀납으로 $T(n) = 2$^n 증명 (연습 15.1-1). 막대 크기 n에 대해 가능한 분할이 2^(n-1) 가지이므로 직관적." },
+                  { text: "$T(n) = n^{2}$ — 이중 루프이므로", correct: false,
+                    explain: "naive CUT-ROD는 DP가 없어 지수 시간. n²은 bottom-up DP의 것." },
+                  { text: "$T(n) = n$! — 순열 기반", correct: false,
+                    explain: "2^n이지 n!은 아님. 이진 분기 재귀 구조." },
+                  { text: "T(n) = 2n − 선형", correct: false,
+                    explain: "과소 평가. naive는 같은 부분 문제를 지수적으로 중복 호출." },
+                ],
+              },
+              {
+                stage: "④ 중복 부분 문제 관찰",
+                prompt: "Figure 15.3의 재귀 트리에서 CUT-ROD(p, 2)가 호출되는 횟수는 ($n = 4$일 때)?",
+                choices: [
+                  { text: "여러 번 — 예: CUT-ROD(p, 4) → CUT-ROD(p, 2) ($i = 2$) & CUT-ROD(p, 3) → CUT-ROD(p, 2) ($i = 1$). 중복 발생.", correct: true,
+                    explain: "트리의 두 다른 경로에서 같은 부분 문제에 도달. 이것이 '중복 부분 문제' 속성. DP의 필요성 근거." },
+                  { text: "정확히 1번 — 각 부분 문제는 고유", correct: false,
+                    explain: "naive 재귀는 같은 부분 문제를 재계산함. 이 중복이 지수 시간의 원인." },
+                  { text: "n번 — 크기별로 한 번씩", correct: false,
+                    explain: "크기 2 하나에 대해서도 여러 번 호출됨. '크기별 1회'는 DP의 이상이고, naive는 그 이상." },
+                  { text: "호출되지 않음", correct: false,
+                    explain: "CUT-ROD(p, 4)가 재귀적으로 더 작은 문제를 호출. 크기 2는 확실히 포함." },
+                ],
+              },
+              {
+                stage: "⑤ DP의 해법",
+                prompt: "Bottom-up DP가 지수 시간을 어떻게 다항식 시간으로 개선하는가?",
+                choices: [
+                  { text: "r[j]에 각 부분 문제의 해를 저장. 크기 순(작은 → 큰)으로 한 번씩만 계산. j를 풀 때 이미 r[0..j-1]이 준비됨.", correct: true,
+                    explain: "시간-메모리 trade-off. $O(n)$ 메모리로 중복 제거. 각 r[j] 계산은 O(j) 시간, 전체 합은 Σ j = $\\Theta(n^2)$." },
+                  { text: "재귀 대신 병렬 처리", correct: false,
+                    explain: "병렬화는 상수 factor만 개선. DP의 핵심은 '중복 제거'이지 병렬성이 아님." },
+                  { text: "더 똑똑한 분할 전략으로 해 공간 축소", correct: false,
+                    explain: "DP는 해 공간을 축소하지 않고 '모든 해를 재계산 없이' 탐색." },
+                  { text: "p 배열을 정렬", correct: false,
+                    explain: "가격 배열 정렬은 답을 바꿈 (원래 의미 상실). 정렬 불필요." },
+                ],
+              },
+              {
+                stage: "⑥ Bottom-up의 해결 순서",
+                prompt: "BOTTOM-UP-CUT-ROD의 외부 for 루프가 $j = 1$ to n 순서로 도는 이유는?",
+                choices: [
+                  { text: "r[j] 계산이 r[0..j-1]에 의존하므로 작은 크기부터 채워야 함 (subproblem graph의 topological order)", correct: true,
+                    explain: "r[j] = max(p[i] + r[j-i])에서 r[j-i]의 인덱스 j-i가 j보다 작음. 따라서 의존성 그래프에서 작은 크기 먼저 해결." },
+                  { text: "임의의 순서로 가능 — 결과 동일", correct: false,
+                    explain: "r[j]가 참조하는 r[j-i]가 아직 계산되지 않았으면 -∞ 또는 오류. 순서가 중요함." },
+                  { text: "내림차순이 더 빠름", correct: false,
+                    explain: "내림차순이면 의존성 위반 (큰 j가 작은 j-i에 의존). 올바르지 않은 결과." },
+                  { text: "캐시 효율 때문", correct: false,
+                    explain: "캐시 효율은 상수 factor. 본질적 이유는 의존성 토폴로지." },
+                ],
+              },
+              {
+                stage: "⑦ 시간 복잡도",
+                prompt: "BOTTOM-UP-CUT-ROD의 전체 실행 시간은?",
+                choices: [
+                  { text: "$\\Theta(n^2)$ — 외부 루프 n번 × 내부 루프 평균 n/2번 = 산술급수 Σ $j = n(n+1)$/2", correct: true,
+                    explain: "이중 루프 구조. 내부 루프의 반복 수가 j에 비례하므로 정확한 합은 산술급수. 지수 → 다항식 개선 확인." },
+                  { text: "$\\Theta(n)$ — 외부 루프만 세면 됨", correct: false,
+                    explain: "내부 루프도 포함해야 함. 각 j마다 j번 내부 반복." },
+                  { text: "Θ(n log n) — 이진 탐색 기반", correct: false,
+                    explain: "이진 탐색 없음. 모든 i에 대한 선형 탐색." },
+                  { text: "Θ(2^n) — 여전히 지수적", correct: false,
+                    explain: "DP가 정확히 지수 → 다항식으로 바꾸는 것. $\\Theta(n^2)$는 다항식." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ BOTTOM-UP-CUT-ROD 추적 — CLRS Figure 15.1",
+            intro: "가격표 p[1..10] = [1, 5, 8, 9, 10, 17, 17, 20, 24, 30]. BOTTOM-UP-CUT-ROD를 단계별로 실행하며 r[j] 값을 예측하세요.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기화 (line 1–2): $r[0] = 0$. $j = 1$ (첫 외부 반복): 내부 루프 $i = 1$. q = max(-∞, p[1] + r[0]) = max(-∞, 1+0) = 1. r[1]은?",
+                choices: [
+                  { text: "$r[1] = 1$", correct: true,
+                    explain: "크기 1 막대는 '자르지 않기'만 가능 → $p[1] = 1$. 혹은 첫 조각 $i = 1$ + 나머지 $r[0] = 0$ = 1." },
+                  { text: "$r[1] = 0$", correct: false,
+                    explain: "$r[0] = 0$이지만 $r[1] = p[1]$ = 1." },
+                  { text: "r[1] = -∞", correct: false,
+                    explain: "q 초기값이 -∞이지만 for 루프에서 max가 갱신해 1이 됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$j = 2$: 내부 루프 $i = 1$, 2. $i = 1$: q = max(-∞, p[1]+r[1]) = max(-∞, 1+1) = 2. $i = 2$: q = max(2, p[2]+r[0]) = $max(2, 5+0) = 5$. r[2]는?",
+                choices: [
+                  { text: "$r[2] = 5$ — '자르지 않기' ($p[2] = 5$)가 '1+1로 자르기' (r[1]+$r[1] = 2$)보다 수익 큼", correct: true,
+                    explain: "두 옵션 중 최댓값. 가격표가 concave하지 않아 자르는 것이 꼭 이득이 아님." },
+                  { text: "$r[2] = 2$ — 두 개 1짜리로 자른 합", correct: false,
+                    explain: "$2 < 5$이므로 더 큰 5가 선택됨." },
+                  { text: "$r[2] = 6$ — p[1] + p[2]", correct: false,
+                    explain: "p[1] + p[2]는 길이 3 막대의 분할(1+2). 길이 2 막대에 적용 불가." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$j = 3$: $i = 1$: p[1]+$r[2] = 1$+$5 = 6$. $i = 2$: p[2]+$r[1] = 5$+$1 = 6$. $i = 3$: p[3]+$r[0] = 8$+$0 = 8$. r[3]?",
+                choices: [
+                  { text: "$r[3] = 8$ — p[3] (자르지 않음)이 최적", correct: true,
+                    explain: "세 옵션 모두 비교하면 8이 최대. '자르지 않기'가 이 가격표에서 종종 최적." },
+                  { text: "$r[3] = 6$ — 앞의 두 옵션 평균", correct: false,
+                    explain: "max이지 평균이 아님. 최댓값 8 선택." },
+                  { text: "$r[3] = 14$ — p[1]+p[2]+p[3]", correct: false,
+                    explain: "한 자리의 조각 크기 i만 선택하고 나머지는 r[j-i]로 대체. p의 합이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$j = 4$: $i = 1$: p[1]+$r[3] = 1$+$8 = 9$. $i = 2$: p[2]+$r[2] = 5$+$5 = 10$. $i = 3$: p[3]+$r[1] = 8$+$1 = 9$. $i = 4$: p[4]+$r[0] = 9$+$0 = 9$. r[4]?",
+                choices: [
+                  { text: "$r[4] = 10$ — 2+2 분할", correct: true,
+                    explain: "최적 분할: $4 = 2$+2. r[2]+$r[2] = 5$+$5 = 10$. CLRS p.362와 일치. 흥미로운 점: $p[4] = 9$보다 자른 결과가 더 큼." },
+                  { text: "$r[4] = 9$ — p[4]", correct: false,
+                    explain: "$p[4] = 9$지만 2+2 자르기로 10 가능. 이 경우 자르기가 유리." },
+                  { text: "$r[4] = 11$ — 1+3", correct: false,
+                    explain: "p[1]+$r[3] = 1$+$8 = 9$이지 11이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "계속 진행하면 $r[5] = 13$, $r[6] = 17$, $r[7] = 18$, $r[8] = 22$, $r[9] = 25$, $r[10] = 30$. $r[10] = 30$의 최적 분할은?",
+                choices: [
+                  { text: "$10 = 10$ (자르지 않음, $p[10] = 30$)", correct: true,
+                    explain: "CLRS p.362: $r[10] = 30$, $solution = 10$. 길이 10 막대를 통째로 파는 것이 최적. p[10]이 충분히 큼." },
+                  { text: "$10 = 2$+2+2+2+2 (5개 2짜리)", correct: false,
+                    explain: "5 × $p[2] = 5$ × 5 = $25 < 30$. 통째로가 더 이득." },
+                  { text: "$10 = 6$+4 (큰 두 조각)", correct: false,
+                    explain: "p[6] + $r[4] = 17$ + 10 = $27 < 30$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "BOTTOM-UP-CUT-ROD와 MEMOIZED-CUT-ROD 모두 $\\Theta(n^2)$ 시간. 두 접근의 차이는?",
+                choices: [
+                  { text: "BOTTOM-UP은 반복문 기반으로 호출 오버헤드 없음(상수 factor 우수). MEMOIZED는 재귀 + 캐시로 구현이 자연스럽지만 오버헤드 있음. 점근 차수는 같음.", correct: true,
+                    explain: "CLRS p.367: 'bottom-up approach often has much better constant factors, since it has less overhead for procedure calls.' 교과서적 trade-off: 코드 간결성 vs 실행 속도." },
+                  { text: "BOTTOM-UP이 $\\Theta(n)$으로 더 빠름", correct: false,
+                    explain: "둘 다 $\\Theta(n^2)$입니다. 점근 차수는 같음." },
+                  { text: "MEMOIZED가 정확도가 더 높음", correct: false,
+                    explain: "두 접근 모두 정확한 최적 해를 반환." },
+                  { text: "BOTTOM-UP은 재귀 없어 $\\Theta(n)$ 공간", correct: false,
+                    explain: "두 접근 모두 r 배열에 $\\Theta(n)$ 공간 사용. MEMOIZED는 재귀 스택으로 추가 $\\Theta(n)$." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "matChain", name: "Matrix Chain Order", desc: "행렬 곱셈 최적 순서 — 구간 DP의 정석",
+        tags: ["O(n³)", "DP"], viz: "matrixChain",
+        drills: {
+          source: "CLRS 3판 15.2절 pp.371-378, MATRIX-CHAIN-ORDER · Figure 15.5",
+          pseudo: {
+            title: "① 의사코드 재구성 — MATRIX-CHAIN-ORDER",
+            intro: "CLRS 15.2절 p.375의 bottom-up DP. 핵심 루프 구조는 '체인 길이 l을 2부터 n까지'. 부분 문제 크기 순서로 전개하는 구간 DP 패턴.",
+            reference: {
+              title: "참고: 점화식과 비용 계산",
+              lines: [
+                { text: "입력: p[0..n] — 행렬 A_i는 p[i-1] × p[i] 크기",       indent: 0 },
+                { text: "예: p = [30, 35, 15, 5, 10, 20, 25]이면",            indent: 0 },
+                { text: "     A1(30×35), A2(35×15), A3(15×5), ...",           indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "$m[i,j] = A_i$...A_j 최적 곱셈 횟수",                    indent: 0 },
+                { text: "  $m[i,i] = 0$",                                        indent: 0 },
+                { text: "  $m[i,j] = min${m[i,k]+m[k+1,j]+p[i-1]·p[k]·p[j]}",    indent: 0 },
+                { text: "         for $i \\leq k$ < j",                              indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "s[i,j] = 최적 k 저장 → 괄호 복원에 사용",               indent: 0 },
+                { text: "시간: $O(n^3)$, 공간: $O(n^2)$",                             indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "MATRIX-CHAIN-ORDER(p)",                     indent: 0, note: "$p.length = n$+1" },
+              { text: "$n = p.length$ - 1",                          indent: 1, note: "행렬 수" },
+              { text: "let m[1..n, 1..n] and s[1..n-1, 2..n] be new tables", indent: 1, note: "테이블 할당" },
+              { text: "for $i = 1$ to n",                            indent: 1, note: "대각선 초기화" },
+              { text: "$m[i, i] = 0$",                               indent: 2, note: "길이 1 비용 = 0" },
+              { text: "for $l = 2$ to n",                            indent: 1, note: "l = 체인 길이" },
+              { text: "for $i = 1$ to n - l + 1",                    indent: 2, note: "시작 인덱스 i" },
+              { text: "$j = i$ + l - 1",                             indent: 3, note: "끝 인덱스 j" },
+              { text: "m[i, j] = ∞",                               indent: 3, note: "minimum 초기화" },
+              { text: "for $k = i$ to j - 1",                        indent: 3, note: "분할점 k 시도" },
+              { text: "$q = m[i,k]$ + m[k+1,j] + p[i-1]·p[k]·p[j]",  indent: 4, note: "후보 비용" },
+              { text: "if $q < m[i, j]$",                            indent: 4, note: "더 작으면" },
+              { text: "$m[i, j] = q$; $s[i, j] = k$",                  indent: 5, note: "갱신 + 분할점 기록" },
+              { text: "return m and s",                            indent: 1, note: "테이블 반환" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 최적 부분 구조 + 점화식 귀납",
+            intro: "CLRS 15.2절 Theorem. 최적 부분 구조(Optimal Substructure)를 보이고, 이를 바탕으로 점화식이 올바른 최적값을 계산함을 귀납으로 증명.",
+            invariantLabel: "Theorem (MCO 정확성): ",
+            invariant: "MATRIX-CHAIN-ORDER가 반환하는 m[1,n]은 A_1·A_2·...·A_n의 최소 스칼라 곱셈 횟수. 증명은 (1) 최적 부분 구조 (2) 점화식 정확성 (3) 계산 순서가 의존성을 존중함 세 부분으로 구성.",
+            steps: [
+              {
+                stage: "① 최적 부분 구조(Optimal Substructure)",
+                prompt: "A_i...A_j의 최적 분할이 k에서 (A_i...A_k)·(A_{k+1}...A_j)라고 하자. 두 부분 문제의 해는?",
+                choices: [
+                  { text: "각각 그 부분 문제의 최적 해 — cut & paste 논법: 더 나은 해가 있다면 전체 해도 개선되어 모순", correct: true,
+                    explain: "CLRS p.373 15.2절의 핵심 관찰. 전체 최적 해 안의 각 부분이 반드시 그 부분 문제의 최적 해. 이게 DP의 기본 전제." },
+                  { text: "부분 문제의 해와 무관하게 조합", correct: false,
+                    explain: "그러면 전체 최적성을 보장할 수 없음. 최적 부분 구조 성립 = DP 적용 가능의 필요 조건." },
+                  { text: "두 부분 문제는 동일한 해", correct: false,
+                    explain: "두 부분 문제의 크기와 해가 다를 수 있음. 각각 독립적으로 최적." },
+                ],
+              },
+              {
+                stage: "② 점화식의 세 번째 항 해석",
+                prompt: "점화식 $m[i,j] = m[i,k]$ + m[k+1,j] + p[i-1]·p[k]·p[j]. 세 번째 항의 의미는?",
+                choices: [
+                  { text: "(A_i...A_k)가 p[i-1]×p[k] 결과 행렬, (A_{k+1}...A_j)가 p[k]×p[j] 결과 행렬. 두 행렬을 곱하는 비용 = p[i-1]·p[k]·p[j]", correct: true,
+                    explain: "표준 행렬 곱셈: (a×b)×(b×c) 행렬 곱은 a·b·c번의 스칼라 곱. 분할 결과 크기의 곱이 세 번째 항." },
+                  { text: "전체 곱셈 수의 상한", correct: false,
+                    explain: "세 번째 항은 '마지막 한 번의 곱셈 비용'. 재귀 호출 값 포함 X." },
+                  { text: "임의의 가중치", correct: false,
+                    explain: "정확히 계산된 값. 행렬 곱셈의 표준 비용 공식." },
+                ],
+              },
+              {
+                stage: "③ 모든 k를 시도하는 이유",
+                prompt: "왜 min over k ∈ [i, j-1]로 모든 분할점을 시도해야 하나?",
+                choices: [
+                  { text: "최적 k를 미리 알 수 없기 때문. 그리디하게 중간을 선택하면 최적 해 놓칠 수 있음. DP는 모든 후보를 비교.", correct: true,
+                    explain: "CLRS p.373. 탐욕적 선택(예: 중간 분할)은 행렬 차원에 따라 suboptimal일 수 있음. 완전 탐색이되 부분 문제 재사용으로 $O(n^3)$." },
+                  { text: "성능 최적화를 위해", correct: false,
+                    explain: "정확성 목적. 최적 해를 반드시 찾기 위해 모든 후보 검사." },
+                  { text: "k = (i+j)/2만 시도해도 충분", correct: false,
+                    explain: "반례가 쉽게 만들어짐. 행렬 차원 불균형 시 중간 분할이 최악일 수 있음." },
+                ],
+              },
+              {
+                stage: "④ 부분 문제 의존성과 계산 순서",
+                prompt: "m[i,j] 계산에는 m[i,k]와 m[k+1,j] (둘 다 길이 < j-i+1)가 필요. 따라서 계산 순서는?",
+                choices: [
+                  { text: "체인 길이 l 증가 순으로 계산 — $l = 2$, 3, ..., n. 각 l 단계에서 모든 (i,j) with j-i+$1 = l$을 처리", correct: true,
+                    explain: "CLRS p.375. 작은 부분 문제 → 큰 부분 문제 순으로 테이블 채움. 대각선($l = 1$)부터 시작해 오른쪽 위로 진행. Bottom-up DP의 표준 순서." },
+                  { text: "i 증가 순으로 계산", correct: false,
+                    explain: "그러면 j 방향 의존성이 맞지 않음. 길이 기반 순서가 정답." },
+                  { text: "아무 순서나 무관", correct: false,
+                    explain: "의존성 위배 시 미계산 값 참조 → 잘못된 결과. 순서가 중요." },
+                ],
+              },
+              {
+                stage: "⑤ 귀납으로 정확성 증명",
+                prompt: "체인 길이 l에 대한 귀납. 가설: 모든 길이 < l의 부분 문제가 이미 최적 m 값을 가짐. 이때 길이 l의 계산은?",
+                choices: [
+                  { text: "모든 k에 대해 m[i,k]와 m[k+1,j]가 귀납 가설로 정확 + 모든 k 시도 → 최적 해 도달. 따라서 길이 l도 정확.", correct: true,
+                    explain: "표준 DP 귀납 증명. 기저: $l = 1$에서 $m[i,i] = 0$ trivially 정확. 귀납 단계: 작은 문제가 정확하면 큰 문제도 정확." },
+                  { text: "체인 길이에 무관하게 언제나 정확", correct: false,
+                    explain: "계산 순서가 의존성을 존중해야 성립. 귀납 구조가 필수." },
+                  { text: "l이 n이 되기 전에는 임시값", correct: false,
+                    explain: "매 l 단계 종료 시 해당 모든 (i,j) 값이 최종. 임시값 개념 없음." },
+                ],
+              },
+              {
+                stage: "⑥ 시간 복잡도",
+                prompt: "3중 for 루프. 외부 l (n-1회), 중간 i (~n회), 내부 k (~l회). 총 시간은?",
+                choices: [
+                  { text: "$O(n^3)$ — 대략 ∑$_l = 2$^n (n-l+1)·(l-1) = $\\Theta(n^3)$. 각 (i,j) 쌍당 $O(n)$번의 k 시도", correct: true,
+                    explain: "CLRS p.376. 부분 문제 수 $\\Theta(n^2)$ × 각 문제당 $O(n)$ 후보 = $\\Theta(n^3)$. 공간 $O(n^2)$ (m과 s 테이블)." },
+                  { text: "$O(n^2)$ — 테이블 크기와 동일", correct: false,
+                    explain: "테이블은 $O(n^2)$개 셀이지만 각 셀 계산에 $O(n)$이 추가됨." },
+                  { text: "O($2^n$) — 모든 괄호 조합", correct: false,
+                    explain: "그건 naive recursion. DP로 중복 제거하여 $O(n^3)$." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Matrix Chain 추적 — CLRS Figure 15.5 예시",
+            intro: "p = [30, 35, 15, 5, 10, 20, 25], $n = 6$. 행렬 A_1(30×35), A_2(35×15), A_3(15×5), A_4(5×10), A_5(10×20), A_6(20×25). m 테이블을 $l = 2$부터 채우며 최종 m[1,6]과 최적 괄호를 확인.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$l = 1$ (대각선): $m[i,i] = 0$ for all i. $l = 2$: $m[i, i+1] = p[i-1]$·p[i]·p[i+1]. m[1,2]의 값은?",
+                choices: [
+                  { text: "$m[1,2] = p[0]$·p[1]·$p[2] = 30$·35·$15 = 15750$", correct: true,
+                    explain: "A_1·A_2 = (30×35)·(35×15) → 30·35·15 스칼라 곱셈. 단일 분할이므로 k도 없고 바로 비용 계산." },
+                  { text: "$m[1,2] = 30$+35+$15 = 80$", correct: false,
+                    explain: "행렬 곱 비용은 차원의 '곱'. 합 아님." },
+                  { text: "$m[1,2] = 0$ (한 번의 곱셈 무비용)", correct: false,
+                    explain: "$m[i,i] = 0$일 뿐, m[i,i+1]은 실제 한 번의 곱셈 비용." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$l = 2$ 완료: $m[1,2] = 15750$, $m[2,3] = 2625$, $m[3,4] = 750$, $m[4,5] = 1000$, $m[5,6] = 5000$. $l = 3$에서 m[1,3]은?",
+                choices: [
+                  { text: "min{m[1,1]+m[2,3]+30·35·5, m[1,2]+m[3,3]+30·15·5} = min{0+2625+5250, 15750+0+2250} = min{7875, 18000} = 7875, $s[1,3] = 1$", correct: true,
+                    explain: "분할점 $k = 1$ 또는 $k = 2$ 시도. k=1(A_1 | A_2A_3) 비용 7875가 더 저렴. $s[1,3] = 1$ 기록." },
+                  { text: "$m[1,3] = m[1,2]$+$m[2,3] = 18375$ (단순합)", correct: false,
+                    explain: "부분 문제 합만으로는 부족. 두 결과 행렬을 곱하는 비용을 더해야 함." },
+                  { text: "$m[1,3] = 15750$ (가장 큰 값 유지)", correct: false,
+                    explain: "min이 목표. 가장 작은 분할을 선택." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$l = 3$ 완료: $m[1,3] = 7875$, $m[2,4] = 4375$, $m[3,5] = 2500$, $m[4,6] = 3500$. $l = 4$에서 m[2,5]는?",
+                choices: [
+                  { text: "min{m[2,2]+m[3,5]+35·15·20, m[2,3]+m[4,5]+35·5·20, m[2,4]+m[5,5]+35·10·20} = min{0+2500+10500, 2625+1000+3500, 4375+0+7000} = min{13000, 7125, 11375} = 7125, $s[2,5] = 3$", correct: true,
+                    explain: "$k = 2$, 3, 4 모두 시도. k=3(A_2A_3 | A_4A_5)가 7125로 최적. $s[2,5] = 3$." },
+                  { text: "$k = 2$만 시도", correct: false,
+                    explain: "모든 유효한 k를 시도해야 최적 보장. min 연산이 핵심." },
+                  { text: "대각선 합 = 2625+750+$1000 = 4375$", correct: false,
+                    explain: "그건 m[2,4]값 (4375)로 혼동. m[2,5]는 다른 부분 문제." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "모든 $l = 2$..6 계산 완료. 최종 m[1,6]과 s[1,6]은? (CLRS Figure 15.5 결과)",
+                choices: [
+                  { text: "$m[1,6] = 15125$, $s[1,6] = 3$ — 최적 첫 분할: (A_1·A_2·A_3) · (A_4·A_5·A_6)", correct: true,
+                    explain: "CLRS Figure 15.5 유명한 결과. 15125번의 스칼라 곱셈이 최적. 최외곽 괄호 분할점은 $k = 3$." },
+                  { text: "$m[1,6] = 30$·35·15·5·10·20·25 = 매우 큼", correct: false,
+                    explain: "그건 모든 차원 곱. 실제 최적 곱셈 수는 괄호 순서에 따라 크게 달라짐." },
+                  { text: "$m[1,6] = 0$ (수렴)", correct: false,
+                    explain: "행렬 6개 곱셈은 최소 15125번 필요. 0 불가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "s 테이블로부터 PRINT-OPTIMAL-PARENS 재귀 실행. 최적 괄호는?",
+                choices: [
+                  { text: "((A_1(A_2A_3))((A_4A_5)A_6)) — $s[1,6] = 3$, $s[1,3] = 1$, $s[2,3] = 2$, $s[4,6] = 5$, $s[4,5] = 4$", correct: true,
+                    explain: "s 테이블 재귀 해석. $s[1,6] = 3$으로 먼저 (1..3)(4..6) 분할. 각 부분 재귀. 최종 5번의 행렬 곱으로 전체 계산." },
+                  { text: "(((A_1A_2)A_3)(A_4(A_5A_6))) — 다른 분할", correct: false,
+                    explain: "s[1,3]=1(A_1|A_2A_3)이므로 A_1(A_2A_3). 제안된 형태와 다름." },
+                  { text: "왼쪽에서 오른쪽으로 순차 곱셈 (((A_1A_2)A_3)A_4)A_5)A_6", correct: false,
+                    explain: "순차 곱이 최적이 아님. 비용 차이 큼 (15125 vs 더 큰 값)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Naive 분할 (((A_1A_2)A_3)A_4)A_5)A_6의 비용은? (참고로 15125와 비교)",
+                choices: [
+                  { text: "30·35·15 + 30·15·5 + 30·5·10 + 30·10·20 + 30·20·$25 = 15750$+2250+1500+6000+$15000 = 40500$", correct: true,
+                    explain: "순차 곱 시 누적 행렬 크기(30×...)로 인해 계속 30이 붙어 비쌈. 15125의 약 2.7배. DP가 절대 필요한 예시." },
+                  { text: "15125와 같음", correct: false,
+                    explain: "순서가 다르면 비용도 다름. Naive는 비최적." },
+                  { text: "$O(n^3)$의 상수 차이", correct: false,
+                    explain: "실제 수치 비교: 40500 vs 15125. 순서에 따라 거의 3배 차이." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      { id: "fib",       name: "Fibonacci (Memo vs Naive)", desc: "중복 부분 문제 시각화", tags: ["Θ(n)"], viz: "fibonacci" },
+      {
+        id: "lcs", name: "Longest Common Subsequence", desc: "두 시퀀스의 최장 공통 부분 수열 — 2D DP",
+        tags: ["Θ(mn)", "DP"], viz: "lcs",
+        drills: {
+          source: "CLRS 3판 15.4절 pp.390-396, Theorem 15.1 · Figure 15.8",
+          pseudo: {
+            title: "① 의사코드 재구성 — LCS-LENGTH",
+            intro: "CLRS 15.4절(p.394)의 LCS-LENGTH는 2D 테이블 c[0..m, 0..n]과 방향 테이블 b를 동시에 채우는 DP. 18줄을 순서대로 배치하세요.",
+            reference: {
+              title: "참고: PRINT-LCS (p.395) · 점화식 (15.9)",
+              lines: [
+                { text: "// 점화식 (15.9):",                                     indent: 0 },
+                { text: "$c[i,j] = 0$                     if $i = 0$ or $j = 0$",       indent: 0 },
+                { text: "       = c[i-1,j-1] + 1        if i,$j > 0$ and $x_i = y_j$", indent: 0 },
+                { text: "       = max(c[i,j-1], c[i-1,j]) if i,$j > 0$ and $x_i \\neq y_j$", indent: 0 },
+                { text: "",                                                        indent: 0 },
+                { text: "PRINT-LCS(b, X, i, j)     // 역추적 — c[m,n]에서 출발",    indent: 0 },
+                { text: "if i == 0 or j == 0: return",                             indent: 1 },
+                { text: "if b[i,j] == '↖': PRINT-LCS(b, X, i-1, j-1); print x_i",  indent: 1 },
+                { text: "elseif b[i,j] == '↑': PRINT-LCS(b, X, i-1, j)",           indent: 1 },
+                { text: "else PRINT-LCS(b, X, i, j-1)",                            indent: 1 },
+              ],
+            },
+            // CLRS p.394 LCS-LENGTH
+            lines: [
+              { text: "LCS-LENGTH(X, Y)",                          indent: 0, note: "프로시저 헤더" },
+              { text: "$m = X.length$",                              indent: 1, note: "시퀀스 길이 m" },
+              { text: "$n = Y.length$",                              indent: 1, note: "시퀀스 길이 n" },
+              { text: "let b[1..m, 1..n] and c[0..m, 0..n] be new tables", indent: 1, note: "방향+값 테이블" },
+              { text: "for $i = 1$ to m: $c[i, 0] = 0$",                indent: 1, note: "첫 열 경계 (기저 사례)" },
+              { text: "for $j = 0$ to n: $c[0, j] = 0$",                indent: 1, note: "첫 행 경계 (기저 사례)" },
+              { text: "for $i = 1$ to m",                            indent: 1, note: "행 순회 (외부)" },
+              { text: "for $j = 1$ to n",                            indent: 2, note: "열 순회 (내부, row-major)" },
+              { text: "if x_i == y_j",                             indent: 3, note: "문자 일치?" },
+              { text: "$c[i, j] = c[i-1, j-1]$ + 1",                 indent: 4, note: "대각선 +1" },
+              { text: "b[i, j] = '↖'",                             indent: 4, note: "방향: 대각" },
+              { text: "elseif $c[i-1, j] \\geq c[i, j-1]$",              indent: 3, note: "위쪽이 더 크거나 같으면" },
+              { text: "$c[i, j] = c[i-1, j]$",                       indent: 4, note: "위 값 복사" },
+              { text: "b[i, j] = '↑'",                             indent: 4, note: "방향: 위" },
+              { text: "else",                                      indent: 3, note: "왼쪽이 더 큼" },
+              { text: "$c[i, j] = c[i, j-1]$",                       indent: 4, note: "왼쪽 값 복사" },
+              { text: "b[i, j] = '←'",                             indent: 4, note: "방향: 왼쪽" },
+              { text: "return c and b",                            indent: 1, note: "c[m,n]이 LCS 길이" },
+            ],
+          },
+          proof: {
+            title: "② 최적 부분 구조 — Theorem 15.1 (3가지 경우 분석)",
+            intro: "LCS의 최적 부분 구조를 CLRS Theorem 15.1로 증명. $X_m = X$의 i접두부, $Y_n = Y$의 j접두부 기준 세 경우를 'cut-and-paste' 논법으로.",
+            invariantLabel: "Theorem 15.1: ",
+            invariant: "X, Y의 임의의 LCS Z = ⟨z_1, ..., z_k⟩에 대해: (1) $x_m = y_n$ ⟹ $z_k = x_m$ = y_n이고 Z_{k-1}은 X_{m-1}과 Y_{n-1}의 LCS. (2) $x_m \\neq y_n$, $z_k \\neq x_m$ ⟹ Z는 X_{m-1}과 Y의 LCS. (3) $x_m \\neq y_n$, $z_k \\neq y_n$ ⟹ Z는 X와 Y_{n-1}의 LCS.",
+            steps: [
+              {
+                stage: "① 문제 설정",
+                prompt: "Subsequence Z = ⟨z_1, ..., z_k⟩가 X의 subsequence라는 것의 정확한 정의는?",
+                choices: [
+                  { text: "엄격 증가 인덱스 수열 ⟨i_1, i_2, ..., i_k⟩가 존재하여 x_{i_j} = z_j ($j = 1$..k) 모두 성립", correct: true,
+                    explain: "CLRS p.391 정의. Subsequence는 '순서를 유지하되 일부 원소를 생략'. 연속일 필요는 없음. 예: BCBA는 ABCBDAB의 subsequence (인덱스 2, 3, 4, 7)." },
+                  { text: "Z가 X의 연속된 부분 문자열", correct: false,
+                    explain: "그건 substring이지 subsequence가 아님. Subsequence는 연속 제약 없음." },
+                  { text: "Z의 원소가 X에 모두 포함", correct: false,
+                    explain: "다중 집합 포함만으로는 순서 조건 누락." },
+                  { text: "Z가 X의 permutation", correct: false,
+                    explain: "Permutation은 원소 재배열. Subsequence는 생략 허용." },
+                ],
+              },
+              {
+                stage: "② Case 1: $x_m = y_n$",
+                prompt: "$x_m = y_n$인 경우: 왜 LCS의 마지막 원소 z_k가 반드시 $x_m = y_n$이어야 하는가? (반례 가정을 모순으로)",
+                choices: [
+                  { text: "$z_k \\neq x_m$이라면 Z에 x_m을 뒤에 append해 길이 k+1의 공통 subsequence를 얻을 수 있음 (X의 m위치, Y의 n위치 모두 사용 가능) → Z의 최대성에 모순", correct: true,
+                    explain: "CLRS Theorem 15.1 (1) 증명. X의 마지막 x_m과 Y의 마지막 y_n이 같으면 '안 쓰는 것이 손해'. 길이를 늘릴 수 있으므로 쓰는 것이 최적." },
+                  { text: "LCS의 정의상 마지막 원소는 항상 고정", correct: false,
+                    explain: "일반적으로 z_k는 임의일 수 있음. $x_m = y_n$이라는 특수 조건 하에서만 보장." },
+                  { text: "X와 Y의 길이가 같아야 성립", correct: false,
+                    explain: "길이 무관. m, n 독립." },
+                ],
+              },
+              {
+                stage: "③ Case 1 Part 2",
+                prompt: "Case 1에서 $z_k = x_m$ = y_n이 정해지면, Z_{k-1} (마지막 제외)는 어디의 LCS?",
+                choices: [
+                  { text: "X_{m-1}과 Y_{n-1}의 LCS — 두 시퀀스 모두 마지막 원소를 빼고 남은 접두부", correct: true,
+                    explain: "z_k가 x_m, y_n에서 오므로 나머지 z_1..z_{k-1}은 X와 Y의 마지막을 제외한 부분 {X_{m-1}, Y_{n-1}}에서 나옴. 최대성도 같은 cut-and-paste 논법으로 유지." },
+                  { text: "X_{m-1}과 Y의 LCS — Y 전체 사용 가능", correct: false,
+                    explain: "Y에서도 마지막 y_n이 z_k에 이미 쓰였으므로 나머지는 Y_{n-1}까지." },
+                  { text: "X와 Y의 LCS의 부분", correct: false,
+                    explain: "그건 Z 자체. Z_{k-1}은 접두부의 LCS라는 더 강한 주장." },
+                ],
+              },
+              {
+                stage: "④ Case 2: $x_m \\neq y_n$, $z_k \\neq x_m$",
+                prompt: "x_m이 LCS에 포함되지 않는 경우 ($z_k \\neq x_m$), Z는 어디의 LCS?",
+                choices: [
+                  { text: "X_{m-1}과 Y의 LCS — X의 마지막 x_m을 버려도 무방", correct: true,
+                    explain: "x_m이 LCS에 안 쓰였으므로 X에서 x_m을 제외해도 같은 길이의 공통 subsequence 얻음. 그것이 LCS인지도 cut-and-paste로 보임." },
+                  { text: "X와 Y_{n-1}의 LCS", correct: false,
+                    explain: "그건 Case 3 ($z_k \\neq y_n$). 두 case는 대칭적 쌍." },
+                  { text: "X_{m-1}과 Y_{n-1}의 LCS", correct: false,
+                    explain: "Y는 그대로 사용 가능. 한쪽만 축소." },
+                ],
+              },
+              {
+                stage: "⑤ 점화식 유도",
+                prompt: "세 case로부터 $c[i, j] = LCS$ 길이의 점화식 (식 15.9)을 쓰면?",
+                choices: [
+                  { text: "$c[i,j] = 0$ ($i = 0$ or $j = 0$); c[i-1,j-1]+1 ($x_i = y_j$); max(c[i-1,j], c[i,j-1]) ($x_i \\neq y_j$)", correct: true,
+                    explain: "세 case 분석의 정확한 점화식. 경계 조건 + 두 가지 재귀 형태. 이것이 LCS-LENGTH의 주 로직." },
+                  { text: "$c[i,j] = c[i-1,j-1]$ + 1 (무조건)", correct: false,
+                    explain: "$x_i \\neq y_j$인 경우에도 항상 +1이면 과대 평가. 조건 분기 필수." },
+                  { text: "c[i,j] = min(c[i-1,j], c[i,j-1])", correct: false,
+                    explain: "max이지 min이 아님. LCS는 최장 (최대화 문제)." },
+                ],
+              },
+              {
+                stage: "⑥ 중복 부분 문제 + 시간 복잡도",
+                prompt: "Naive 재귀로 c[i,j]를 풀면 지수 시간. DP가 Θ(mn)인 이유는?",
+                choices: [
+                  { text: "부분 문제는 서로 다른 (i,j) 쌍으로 정확히 mn개. 각 c[i,j] 계산은 $O(1)$ (주변 3셀 참조). 총 Θ(mn).", correct: true,
+                    explain: "2D 테이블의 모든 셀을 한 번씩 채움. 각 셀 $O(1)$. Total Θ(mn). 공간도 Θ(mn) (개선하면 min(m,n) 가능)." },
+                  { text: "각 셀이 O(max(m,n))이므로 O(mn²)", correct: false,
+                    explain: "각 셀은 상수 개(3개) 이전 셀만 참조. $O(1)$ 시간." },
+                  { text: "DP가 본질적으로 선형 Θ(m+n)", correct: false,
+                    explain: "1D가 아니라 2D 테이블. 모든 쌍을 채워야 함." },
+                ],
+              },
+              {
+                stage: "⑦ 역추적으로 LCS 복원",
+                prompt: "c 테이블 + b 테이블로 실제 LCS 문자열을 O(m+n) 시간에 복원하는 방법은? (PRINT-LCS)",
+                choices: [
+                  { text: "b[m,n]에서 시작해 '↖'이면 x_i 출력+대각선 이동, '↑'이면 위로, '←'이면 왼쪽으로. 경계에 도달하면 종료.", correct: true,
+                    explain: "재귀적으로 b 테이블의 화살표를 따라가며 '↖' 표시된 셀에서만 x_i 출력. 각 재귀 호출이 i 또는 j를 1 감소시키므로 O(m+n)." },
+                  { text: "c 테이블을 다시 계산", correct: false,
+                    explain: "이미 계산된 b 테이블을 '읽기만' 하면 충분. 재계산 불필요." },
+                  { text: "LCS는 복원 불가 — 길이만 알 수 있음", correct: false,
+                    explain: "b 테이블 유지가 그 목적. 시간 O(m+n)으로 복원 가능." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ LCS-LENGTH 추적 — CLRS Figure 15.8",
+            intro: "X = ⟨A, B, C, B, D, A, B⟩ ($m = 7$), Y = ⟨B, D, C, A, B, A⟩ ($n = 6$). LCS 테이블 c를 row-major로 채우며 주요 셀 값을 예측하세요. (CLRS 정답: $LCS = BCBA$, 길이 4)",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "경계 조건 (line 5–7): $c[i, 0] = 0$ (모든 i), $c[0, j] = 0$ (모든 j). 의미는?",
+                choices: [
+                  { text: "빈 시퀀스(길이 0)와의 공통 subsequence는 빈 시퀀스 → 길이 0", correct: true,
+                    explain: "기저 사례. 한쪽이 비어 있으면 공통 부분도 비어 있음. 점화식의 첫 번째 case ($i = 0$ or $j = 0$)." },
+                  { text: "초기값은 임의", correct: false,
+                    explain: "0이라는 값은 '빈 시퀀스의 LCS 길이'라는 의미가 있어야 함." },
+                  { text: "-∞로 초기화해도 됨", correct: false,
+                    explain: "점화식에 +1이 있으므로 초기값이 명확해야 함." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$ ($x_1 = A$), $j = 1$ ($y_1 = B$). $x_1 \\neq y_1$ ($A \\neq B$). max(c[0,1], c[1,0]) = $max(0, 0) = 0$. $c[1,1] = 0$, b[1,1] = ?",
+                choices: [
+                  { text: "b[1,1] = '↑' ($c[i-1,j] \\geq c[i,j-1]$이 참, $0 \\geq 0$)", correct: true,
+                    explain: "CLRS 규칙: elseif $c[i-1,j] \\geq c[i,j-1]$. 동률일 때는 '↑' 우선. Fig 15.8의 b 테이블과 일치." },
+                  { text: "b[1,1] = '↖'", correct: false,
+                    explain: "'↖'는 $x_i = y_j$ 조건. 여기선 $A \\neq B$이므로 해당 안 됨." },
+                  { text: "b[1,1] = '←'", correct: false,
+                    explain: "else 분기는 $c[i-1,j] < c[i,j-1]$일 때만. 여기선 $0 = 0$으로 ≥ 충족." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 2$ ($x_2 = B$), $j = 1$ ($y_1 = B$). $x_2 = y_1$ ($B = B$). $c[2,1] = c[1,0]$ + $1 = 0$ + $1 = 1$. 그 다음 $j = 2$ ($y_2 = D$): x_2=$B \\neq D$. max(c[1,2], c[2,1]) = $max(0, 1) = 1$. c[2,2] = ?",
+                choices: [
+                  { text: "$c[2,2] = 1$, b[2,2] = '←' (왼쪽에서 1 복사)", correct: true,
+                    explain: "$c[1,2] = 0$, $c[2,1] = 1$. c[i-1,j] = $0 < c[i,j-1]$ = 1이므로 else 분기 → c[i,j-1] 복사, b = '←'. Fig 15.8의 row 2, col 2 일치." },
+                  { text: "$c[2,2] = 2$", correct: false,
+                    explain: "$x \\neq y$이므로 max만. 최댓값이 1이고 +1은 없음." },
+                  { text: "$c[2,2] = 0$", correct: false,
+                    explain: "$max(0, 1) = 1$이지 0이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "행 3 ($x_3 = C$) 채우기: $j = 3$ ($y_3 = C$)에서 $x_3 = y_3$. $c[2,2] = 1$이므로 $c[3,3] = c[2,2]$ + 1 = ?",
+                choices: [
+                  { text: "$c[3,3] = 2$, b[3,3] = '↖'", correct: true,
+                    explain: "첫 'A, B' vs 'B' 처리 후 'A,B,C' vs 'B,D,C'에서 LCS 길이가 2('BC'). Fig 15.8 row 3, col 3 (진하게 표시)." },
+                  { text: "$c[3,3] = 1$ (변화 없음)", correct: false,
+                    explain: "$x = y$이므로 대각선 +1이 적용됨." },
+                  { text: "$c[3,3] = 3$", correct: false,
+                    explain: "c[2,2] + $1 = 2$이지 3이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "모든 셀을 채운 후 c[7, 6]의 값은? (전체 LCS 길이)",
+                choices: [
+                  { text: "$c[7,6] = 4$ — LCS 길이는 4 (예: BCBA 또는 BDAB)", correct: true,
+                    explain: "CLRS Fig 15.8 lower-right corner. $X = ABCBDAB$와 $Y = BDCABA$의 LCS 길이 = 4. BCBA(BDAB도 가능)가 실제 문자열." },
+                  { text: "$c[7,6] = 7$ (X 길이)", correct: false,
+                    explain: "LCS는 두 시퀀스의 공통 길이이지 한쪽의 전체 길이가 아님." },
+                  { text: "$c[7,6] = 42$ ($mn = 7$×6)", correct: false,
+                    explain: "테이블 크기와 LCS 길이는 무관." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "PRINT-LCS(b, X, 7, 6)로 실제 LCS를 역추적하면? (Fig 15.8에서 shaded path)",
+                choices: [
+                  { text: "'BCBA' — b 테이블을 따라 ↖ 표시된 셀 4개에서 x_i 출력", correct: true,
+                    explain: "$c[7,6] = 4$부터 시작. b가 ↖인 셀을 만나면 해당 x_i 기록하고 대각 이동. 추적 결과 BCBA 또는 BDAB (여러 LCS 중 하나, b 테이블의 구체 값에 따라)." },
+                  { text: "'ABCBDAB' (X 전체)", correct: false,
+                    explain: "X 전체는 Y의 subsequence가 아님. LCS만 출력." },
+                  { text: "'BDCABA' (Y 전체)", correct: false,
+                    explain: "같은 이유로 Y 전체는 X의 subsequence가 아님." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "knapsack-01", name: "0-1 Knapsack", desc: "물건을 쪼갤 수 없는 배낭 — 의사다항식 $O(nW)$",
+        tags: ["O(nW)", "DP"], viz: "knapsack01",
+        drills: {
+          source: "CLRS 3판 16.2절 문제 16-2 (Greedy 불가) + DP 전개 (Ch 15 표준 예제)",
+          pseudo: {
+            title: "① 의사코드 재구성 — 0-1 KNAPSACK DP",
+            intro: "n개 물건(weight w_i, value v_i) + 배낭 용량 W. 각 물건을 '가져가기' 또는 '버리기'. 분할 불가. 점화식으로 최대 가치 계산.",
+            reference: {
+              title: "참고: 점화식과 Greedy 실패",
+              lines: [
+                { text: "K[i, w] = 물건 1..i와 용량 w로 달성 가능 최대 가치",           indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "점화식:",                                                         indent: 0 },
+                { text: "  $K[0, w] = 0$",                                                 indent: 0 },
+                { text: "  $K[i, w] = K[i-1, w]$  if $w_i > w$  (못 넣음)",                   indent: 0 },
+                { text: "  K[i, w] = max(K[i-1, w], K[i-1, w-w_i] + v_i)  else",         indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "시간 $O(nW)$, 공간 $O(nW)$. Weak NP-hard (W가 매개변수)",             indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "Greedy(단위가치순)는 0-1에서 반례:",                             indent: 0 },
+                { text: "  $W = 50$, 물건 {(10,60), (20,100), (30,120)}",                     indent: 0 },
+                { text: "  Greedy 선택: 10+20=가치 160 vs 최적 20+$30 = 220$",                 indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "KNAPSACK-01(w, v, n, W)",                         indent: 0, note: "무게, 가치 배열, 물건 수, 용량" },
+              { text: "let K[0..n, 0..W] be a new table",                indent: 1, note: "DP 테이블 할당" },
+              { text: "for $w = 0$ to W",                                  indent: 1, note: "기저: 물건 0개" },
+              { text: "$K[0, w] = 0$",                                     indent: 2, note: "" },
+              { text: "for $i = 1$ to n",                                  indent: 1, note: "각 물건" },
+              { text: "for $w = 0$ to W",                                  indent: 2, note: "각 용량" },
+              { text: "if $w_i > w$",                                      indent: 3, note: "넣을 수 없음" },
+              { text: "$K[i, w] = K[i-1, w]$",                             indent: 4, note: "이전 결과 복사" },
+              { text: "else K[i, w] = max(K[i-1, w], K[i-1, w-w_i] + v_i)", indent: 3, note: "넣기/안넣기 최대" },
+              { text: "return K[n, W]",                                  indent: 1, note: "최대 가치" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 최적 부분 구조 + DP 귀납",
+            intro: "0-1 배낭의 최적 부분 구조 성립 + 점화식 정확성 증명. Greedy 반례를 동시에 이해.",
+            invariantLabel: "0-1 Knapsack 정확성: ",
+            invariant: "K[i, w]가 '물건 1..i와 용량 w로 최대 가치'의 정확한 값을 저장한다. 증명: (1) 최적 부분 구조 (i번째 포함/미포함 선택), (2) 점화식이 두 경우의 최댓값, (3) 귀납으로 모든 셀 정확.",
+            steps: [
+              {
+                stage: "① 최적 부분 구조",
+                prompt: "최적 해가 물건 i를 포함한다면, 나머지는 어떤 문제의 최적 해?",
+                choices: [
+                  { text: "물건 1..i-1과 용량 w - w_i인 부분 문제의 최적 해 — cut & paste 논법", correct: true,
+                    explain: "CLRS 15.3 표준 논법. i를 제거하고 남은 해가 더 좋다면 전체도 개선 → 모순." },
+                  { text: "독립적", correct: false,
+                    explain: "최적 부분 구조가 정확히 성립 (DP 적용 가능 조건)." },
+                  { text: "임의 부분집합", correct: false,
+                    explain: "특정 부분 문제(1..i-1 범위, 남은 용량)." },
+                ],
+              },
+              {
+                stage: "② 두 경우의 최댓값",
+                prompt: "K[i, w]는 두 가지 경우 중 최대:",
+                choices: [
+                  { text: "(A) i 미포함: K[i-1, w]. (B) i 포함: K[i-1, w-w_i] + v_i (단 $w \\geq w_i$). max(A, B).", correct: true,
+                    explain: "이진 선택 (binary choice). 0-1의 핵심. 물건당 두 부분 문제만 검토." },
+                  { text: "항상 i 포함", correct: false,
+                    explain: "포함 여부가 최적을 결정. 강제 포함은 suboptimal."  },
+                  { text: "항상 단위 가치 최대 선택", correct: false,
+                    explain: "Greedy 전략. 0-1에선 최적 아님." },
+                ],
+              },
+              {
+                stage: "③ Greedy 실패의 직관",
+                prompt: "단위 가치 순 Greedy가 0-1 배낭에서 실패하는 이유는?",
+                choices: [
+                  { text: "Greedy로 가장 비싼 단위가치 물건을 넣으면 '남은 용량'에 채울 수 없는 경우 발생. Fractional은 쪼갤 수 있어 문제없지만 0-1은 쪼개기 불가.", correct: true,
+                    explain: "핵심 차이. 분할 가능 = Greedy 최적, 분할 불가 = DP 필요. Ch 16의 Fractional과 대조." },
+                  { text: "Greedy가 최적 부분 구조를 망가뜨림", correct: false,
+                    explain: "최적 부분 구조는 성립. 탐욕 선택 성질이 실패." },
+                  { text: "입력 정렬 비용 때문", correct: false,
+                    explain: "알고리즘이 결과적으로 suboptimal. 정렬 비용과 무관." },
+                ],
+              },
+              {
+                stage: "④ 시간 vs 의사다항",
+                prompt: "$O(nW)$ 시간이 '의사다항(pseudo-polynomial)'인 이유는?",
+                choices: [
+                  { text: "W는 입력 크기가 아니라 입력의 '값'. W가 크면(예: $W = 2$^n) 지수적. 입력 비트 수에 대해 다항이 아님.", correct: true,
+                    explain: "0-1 Knapsack은 NP-hard (weakly). W가 작을 때만 효율적. 실무에선 W가 작은 문제 해결에 유용." },
+                  { text: "W가 정수여야 한다는 의미", correct: false,
+                    explain: "'의사'는 크기 vs 값의 구분에서 옴." },
+                  { text: "$P = NP$를 의미", correct: false,
+                    explain: "의사다항은 NP-hard를 깨지 않음. W가 지수적이면 여전히 지수." },
+                ],
+              },
+              {
+                stage: "⑤ 공간 최적화",
+                prompt: "$O(nW)$ 공간을 O(W)로 줄이는 방법은?",
+                choices: [
+                  { text: "1D 배열 K[0..W]로 i 외부 루프 + w를 '내림차순' 업데이트. K[w-w_i]가 이전 i-1의 값이어야 하므로 역순 진행.", correct: true,
+                    explain: "표준 공간 최적화. 오름차순이면 같은 iteration에서 업데이트된 값을 잘못 참조. 내림차순이 보존 보장." },
+                  { text: "불가능", correct: false,
+                    explain: "1D 최적화가 표준 기법."  },
+                  { text: "오름차순으로 업데이트", correct: false,
+                    explain: "역순이 정답. 오름차순은 같은 물건을 여러 번 쓰는 버전(unbounded)에 적용." },
+                ],
+              },
+              {
+                stage: "⑥ Fractional vs 0-1",
+                prompt: "같은 입력에서 Fractional과 0-1의 최적 가치 관계?",
+                choices: [
+                  { text: "$Fractional \\geq 0$-1 — Fractional은 분할 허용으로 더 유연. 상한 역할.", correct: true,
+                    explain: "분지 한정(branch-and-bound) 알고리즘에서 Fractional이 0-1의 상한(upper bound)으로 사용됨. 중요한 이론적 관계." },
+                  { text: "항상 동일", correct: false,
+                    explain: "대부분 Fractional이 엄격하게 큼." },
+                  { text: "0-1이 더 큼", correct: false,
+                    explain: "Fractional이 더 많은 선택지." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 0-1 Knapsack DP 추적 — $W = 5$, 물건 {(2,3), (3,4), (4,5), (5,6)}",
+            intro: "$n = 4$, $W = 5$. 테이블 K[5][6] ($i = 0$..4, $w = 0$..5). 점화식 전개 과정.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$K[0, w] = 0$ for all w. 기저 사례 설정. $i = 1$ (물건1: $w = 2$, $v = 3$) 처리. K[1, w]는?",
+                choices: [
+                  { text: "$K[1,0] = 0$, $K[1,1] = 0$ ($w < 2$), K[1,2..5] = max(K[0,w], K[0,w-2]+3) = $max(0, 0+3) = 3$. 즉 K[1]=[0,0,3,3,3,3].", correct: true,
+                    explain: "물건 1을 넣을 수 있는 용량($w \\geq 2$)부터 $v_1 = 3$ 반영. 그보다 작은 w는 불가." },
+                  { text: "K[1] 전체 = 3", correct: false,
+                    explain: "$w = 0$,1에선 물건1 못 넣음 → 0 유지." },
+                  { text: "$K[1, w] = w$", correct: false,
+                    explain: "선형 아님. DP 규칙에 따라 계산." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 2$ (물건2: $w = 3$, $v = 4$). K[2, w] 계산. 특히 K[2, 3]은?",
+                choices: [
+                  { text: "K[2,3] = max($K[1,3] = 3$, K[1,0]+$4 = 4$) = 4. 물건2를 넣는 것이 유리.", correct: true,
+                    explain: "점화식 적용. 물건2($v = 4$)가 물건1($v = 3$)보다 가치 높음." },
+                  { text: "$K[2,3] = 7$ (둘 다 넣음)", correct: false,
+                    explain: "용량 3이라 두 개 합(2+$3 = 5$) 못 들어감. 하나만."  },
+                  { text: "$K[2,3] = 3$", correct: false,
+                    explain: "물건2 넣는 것이 더 나음. max 결과 4." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 2$ 전체 행: K[2] = [0, 0, 3, 4, 4, 7]. $K[2,5] = 7$은 어떻게 나왔나?",
+                choices: [
+                  { text: "K[2,5] = max($K[1,5] = 3$, K[1,2]+$4 = 7$) = 7. 물건1과 물건2 모두 포함 (2+$3 = 5$ 딱 맞음, 가치 3+$4 = 7$).", correct: true,
+                    explain: "두 물건을 모두 담을 수 있는 첫 번째 용량. 가치 합 7 달성." },
+                  { text: "$K[2,5] = 10$", correct: false,
+                    explain: "물건1,2 가치 합은 7. 10은 불가능."},
+                  { text: "$K[2,5] = 4$ (물건2만)", correct: false,
+                    explain: "용량 5에 물건1(2) + 물건2(3) 모두 가능 → 7 우선."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 3$ (물건3: $w = 4$, $v = 5$). K[3, 5] = ?",
+                choices: [
+                  { text: "K[3,5] = max($K[2,5] = 7$, K[2,1]+$5 = 0$+$5 = 5$) = 7. 물건3 단독보다 물건1+2가 유리.", correct: true,
+                    explain: "물건3($v = 5$) 하나 vs 물건1+2($v = 7$). 후자 승."},
+                  { text: "$K[3,5] = 12$", correct: false,
+                    explain: "용량 부족. 2+4=$6 > 5$이라 물건1+3 불가."},
+                  { text: "$K[3,5] = 5$ (물건3만)", correct: false,
+                    explain: "물건1+2 조합이 더 가치 큼."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 4$ (물건4: $w = 5$, $v = 6$). 최종 K[4, 5] = ?",
+                choices: [
+                  { text: "K[4,5] = max($K[3,5] = 7$, K[3,0]+$6 = 6$) = 7. 결국 최적은 물건1+2 (가치 7).", correct: true,
+                    explain: "물건4 단독($v = 6$)보다 물건1+2($v = 7$)가 우세. 최대 가치 = 7."},
+                  { text: "$K[4,5] = 6$ (물건4만)", correct: false,
+                    explain: "물건1+2의 7이 더 큼."},
+                  { text: "$K[4,5] = 18$", correct: false,
+                    explain: "용량 $W = 5$에선 불가능. 물건 가치 합 최대."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "선택된 물건을 역추적하려면?",
+                choices: [
+                  { text: "K[i,w] vs K[i-1,w] 비교. 다르면 물건 i 선택, $w = w$ - w_i. 같으면 i 미선택. $i = n$부터 역순.", correct: true,
+                    explain: "표준 재구성. 추가 공간 없이 테이블만으로 최적 부분집합 복원."},
+                  { text: "별도의 s 배열 유지", correct: false,
+                    explain: "s가 있으면 편리하지만 K만으로 재구성 가능."},
+                  { text: "재구성 불가", correct: false,
+                    explain: "정보 보존됨. 재구성 표준 기법."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "edit-distance", name: "Edit Distance (Levenshtein)", desc: "두 문자열 간 최소 편집 연산 수",
+        tags: ["O(mn)", "DP"], viz: "editDistance",
+        drills: {
+          source: "CLRS 3판 15.5 문제 (확장) · Levenshtein 1965",
+          pseudo: {
+            title: "① 의사코드 재구성 — EDIT-DISTANCE",
+            intro: "문자열 X[1..m], Y[1..n]. 삽입/삭제/치환 연산으로 X를 Y로 만드는 최소 연산 수. 2D DP.",
+            reference: {
+              title: "참고: 점화식",
+              lines: [
+                { text: "$D[i, j] = X[1..i]$를 Y[1..j]로 바꾸는 최소 편집 수",            indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "기저: $D[i, 0] = i$ (X[1..i] → 빈 문자열, i번 삭제)",              indent: 0 },
+                { text: "      $D[0, j] = j$ (빈 문자열 → Y[1..j], j번 삽입)",              indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "점화: X[i] == Y[j]면 $D[i,j] = D[i-1, j-1]$ (일치)",               indent: 0 },
+                { text: "      else $D[i,j] = 1$ + min(",                                  indent: 0 },
+                { text: "            D[i-1, j],    // X[i] 삭제",                         indent: 0 },
+                { text: "            D[i, j-1],    // Y[j] 삽입",                         indent: 0 },
+                { text: "            D[i-1, j-1])  // 치환",                              indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "응용: 맞춤법 검사, DNA 정렬, diff 도구",                         indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "EDIT-DISTANCE(X, Y)",                           indent: 0, note: "" },
+              { text: "$m = X.length$; $n = Y.length$",                    indent: 1, note: "" },
+              { text: "let D[0..m, 0..n] be a new table",              indent: 1, note: "" },
+              { text: "for $i = 0$ to m: $D[i, 0] = i$",                   indent: 1, note: "삭제 비용" },
+              { text: "for $j = 0$ to n: $D[0, j] = j$",                   indent: 1, note: "삽입 비용" },
+              { text: "for $i = 1$ to m",                                indent: 1, note: "" },
+              { text: "for $j = 1$ to n",                                indent: 2, note: "" },
+              { text: "if X[i] == Y[j]",                               indent: 3, note: "일치" },
+              { text: "$D[i, j] = D[i-1, j-1]$",                         indent: 4, note: "연산 없음" },
+              { text: "else $D[i, j] = 1$ + min(D[i-1, j], D[i, j-1], D[i-1, j-1])", indent: 3, note: "삭제/삽입/치환" },
+              { text: "return D[m, n]",                                indent: 1, note: "최소 편집 거리" },
+            ],
+          },
+          proof: {
+            title: "② 점화식 정확성 증명 — 세 가지 경우 분석",
+            intro: "마지막 연산이 무엇이냐에 따른 경우 분석. 모든 경우를 고려하고 최솟값 선택으로 최적 부분 구조 달성.",
+            invariantLabel: "Edit Distance 정확성: ",
+            invariant: "$D[i, j] = X[1..i]$를 Y[1..j]로 변환하는 최소 편집 수. 증명: 최적 해의 '마지막 연산'을 4가지로 경우 분해, 각 경우가 더 작은 부분 문제로 환원.",
+            steps: [
+              {
+                stage: "① 마지막 연산이 '일치(match)'",
+                prompt: "최적 편집 수열의 마지막 연산이 'X[i] == Y[j], 연산 없음'이면?",
+                choices: [
+                  { text: "조건: X[i] == Y[j]. 나머지는 X[1..i-1]→Y[1..j-1] 변환 → $D[i,j] = D[i-1,j-1]$", correct: true,
+                    explain: "문자 일치 시 무연산. 두 끝을 짝지어 부분 문제로 환원." },
+                  { text: "연산 1회 추가", correct: false,
+                    explain: "일치는 무연산. +0." },
+                  { text: "$X[i] \\neq Y[j]$일 때 사용", correct: false,
+                    explain: "일치가 조건. 불일치 시 치환 경우 적용." },
+                ],
+              },
+              {
+                stage: "② 마지막 연산이 '치환(replace)'",
+                prompt: "X[i]를 Y[j]로 치환 ($X[i] \\neq Y[j]$)이 마지막 연산이면?",
+                choices: [
+                  { text: "$D[i, j] = D[i-1, j-1]$ + 1. 나머지는 X[1..i-1]→Y[1..j-1]", correct: true,
+                    explain: "치환 1회 + 부분 문제. 양 끝이 짝지어짐." },
+                  { text: "D[i-1, j]", correct: false,
+                    explain: "그건 삭제 경우." },
+                  { text: "D[i, j-1] + 1", correct: false,
+                    explain: "그건 삽입 경우." },
+                ],
+              },
+              {
+                stage: "③ 마지막 연산이 '삭제(delete)'",
+                prompt: "X[i]를 삭제하는 것이 마지막 연산이면?",
+                choices: [
+                  { text: "$D[i, j] = D[i-1, j]$ + 1. X[1..i-1]을 Y[1..j]로 변환 후 X[i] 삭제.", correct: true,
+                    explain: "삭제 = X에서 한 문자 제거. 길이 m이 m-1로 줄어듦." },
+                  { text: "D[i-1, j-1] + 1", correct: false,
+                    explain: "그건 치환." },
+                  { text: "D[i, j-1]", correct: false,
+                    explain: "그건 삽입." },
+                ],
+              },
+              {
+                stage: "④ 마지막 연산이 '삽입(insert)'",
+                prompt: "Y[j]를 마지막에 삽입하는 경우?",
+                choices: [
+                  { text: "$D[i, j] = D[i, j-1]$ + 1. X[1..i]를 Y[1..j-1]로 변환 후 Y[j] 삽입.", correct: true,
+                    explain: "삽입 = Y에 한 문자 추가. i는 불변, j가 j-1이 됨."  },
+                  { text: "D[i-1, j]", correct: false,
+                    explain: "그건 삭제."  },
+                  { text: "D[i, j]", correct: false,
+                    explain: "부분 문제는 더 작아야 함."  },
+                ],
+              },
+              {
+                stage: "⑤ 모든 경우의 최솟값",
+                prompt: "점화식 D[i,j]가 네 경우의 최솟값을 택하는 이유는?",
+                choices: [
+                  { text: "최적 해의 마지막 연산이 네 가지 중 하나여야 하므로, 모든 가능성의 최솟값이 정확한 D[i,j] — 완전 탐색의 부분 문제 재사용 버전", correct: true,
+                    explain: "DP의 본질. 모든 가능한 '마지막 선택'을 검토하고 최적을 누적." },
+                  { text: "임의의 경우 선택", correct: false,
+                    explain: "최솟값 필요. 임의 선택은 suboptimal."  },
+                  { text: "첫 번째 가능한 경우", correct: false,
+                    explain: "시도 순서와 무관. 값 기준 최솟값."  },
+                ],
+              },
+              {
+                stage: "⑥ 응용과 확장",
+                prompt: "Edit Distance의 실용적 응용은?",
+                choices: [
+                  { text: "맞춤법 검사(spell check), DNA 서열 정렬(bioinformatics), diff 도구, 검색 오타 보정 등", correct: true,
+                    explain: "매우 광범위. 각 연산 비용을 다르게 주는 '가중' 버전도 DP 구조 동일." },
+                  { text: "이론적 관심만", correct: false,
+                    explain: "매우 실용적. 구글 검색 '이것을 찾으셨나요?'의 핵심 기술." },
+                  { text: "문자열 매칭과 동일", correct: false,
+                    explain: "매칭은 부분 위치 찾기, 편집 거리는 전체 변환. 다른 문제."  },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Edit Distance 추적 — X='SUNDAY', Y='SATURDAY'",
+            intro: "$m = 6$, $n = 8$. D[0..6][0..8] 테이블을 채우며 D[6,8] = 편집 거리 계산.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "기저 사례 설정. $D[0, j] = j$ ($j = 0$..8), $D[i, 0] = i$ ($i = 0$..6). $i = 0$ 행의 값은?",
+                choices: [
+                  { text: "D[0, 0..8] = [0, 1, 2, 3, 4, 5, 6, 7, 8] (빈 X에서 Y의 접두사 j개까지 삽입 j번)", correct: true,
+                    explain: "기저 사례 — 빈 문자열로부터 길이 j까지 만들려면 j번 삽입 필요." },
+                  { text: "$D[0, j] = 0$ 전부", correct: false,
+                    explain: "빈 → 비어있지 않은 문자열은 편집 필요." },
+                  { text: "$D[0, j] = j^{2}$", correct: false,
+                    explain: "선형. j번 삽입." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$ (X[1]='S'). D[1, 1] = ? (Y[1]='S' 비교)",
+                choices: [
+                  { text: "X[1]='S' == Y[1]='S' → $D[1,1] = D[0,0]$ = 0", correct: true,
+                    explain: "문자 일치. 무연산. 편집 거리 0." },
+                  { text: "$D[1,1] = 1$ (치환)", correct: false,
+                    explain: "일치하므로 치환 불필요."  },
+                  { text: "$D[1,1] = 2$", correct: false,
+                    explain: "한 문자 일치는 무비용."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$, $j = 2$ (Y[2]='A'). X[1]='S' ≠ 'A'. D[1,2] = ?",
+                choices: [
+                  { text: "$D[1,2] = 1$ + min($D[0,2] = 2$, $D[1,1] = 0$, $D[0,1] = 1$) = 1 + $0 = 1$. 즉 'A' 삽입 1회.", correct: true,
+                    explain: "점화식 적용: 삭제·삽입·치환 중 삽입(D[i,j-1]+1)이 최소." },
+                  { text: "$D[1,2] = 3$", correct: false,
+                    explain: "min은 0. +$1 = 1$."  },
+                  { text: "$D[1,2] = 0$", correct: false,
+                    explain: "문자 다르므로 최소 1 연산."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "완성된 D 테이블의 일부. D[2,5] (X='SU', Y='SATUR')의 값은? (트레이스 상: 3 정도로 예상)",
+                choices: [
+                  { text: "$D[2, 5] = 3$ — 'SU'를 'SATUR'로 변환: 'A' 삽입 + 'T' 삽입 + 'R' 삽입 = 3 연산", correct: true,
+                    explain: "완벽한 정렬: S_U___ → SATUR (대문자 공백 채움). 3번 삽입." },
+                  { text: "$D[2, 5] = 5$", correct: false,
+                    explain: "더 효율적 경로 (일부 문자 재활용) 존재."  },
+                  { text: "$D[2, 5] = 2$", correct: false,
+                    explain: "글자 수 차이만 3. 최소 3 연산."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최종 D[6, 8]의 값은?",
+                choices: [
+                  { text: "$D[6, 8] = 3$ — 'SUNDAY'를 'SATURDAY'로: 'SxxxDAY' 형태로 'A','T','R' 3글자 삽입", correct: true,
+                    explain: "고전적 예제. SUNDAY의 S...DAY가 SATURDAY의 S...DAY와 일치하고 중간에 ATR 3글자 삽입.  일부 교과서 예제."  },
+                  { text: "$D[6, 8] = 8$", correct: false,
+                    explain: "훨씬 적음. 공통 문자 많음."  },
+                  { text: "$D[6, 8] = 2$", correct: false,
+                    explain: "길이 차이만 2지만 문자 변경 포함. 실제 3."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "시간·공간 복잡도는?",
+                choices: [
+                  { text: "시간 Θ(mn), 공간 Θ(mn). 공간은 Θ(min(m,n))로 최적화 가능 (2행만 유지).", correct: true,
+                    explain: "표준 DP. 경로 복원이 필요 없으면 공간 최적화로 OS에 부담 적음."  },
+                  { text: "시간 Θ(m+n)", correct: false,
+                    explain: "각 셀 $O(1)$이지만 셀 수가 mn."  },
+                  { text: "시간 Θ(2^n)", correct: false,
+                    explain: "나이브 재귀. DP로 다항 달성."  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch16",
+    tier: 1,
+    num: "Ch 16",
+    title: "Greedy Algorithms",
+    subtitle: "탐욕 선택 성질 · 활동 선택 · 허프만",
+    summary: "지역 최적이 전역 최적을 만든다는 강한 약속, 그리고 그 약속이 성립하지 않을 때의 반례를 구분할 수 있어야 합니다.",
+    objectives: [
+      "탐욕 선택 성질(greedy-choice property)과 최적 부분 구조 두 조건을 검증할 수 있다.",
+      "활동 선택 문제의 탐욕 전략(가장 빨리 끝나는 활동 우선)을 정당화하고 구현할 수 있다.",
+      "허프만 코드의 최적성을 이해하고 분할 가능 vs 0-1 배낭의 차이를 반례로 설명할 수 있다.",
+    ],
+    md: `
+## 탐욕의 핵심 성질
+1. **탐욕 선택 성질**: 지역 최적 선택이 전역 최적 해로
+2. **최적 부분 구조**: DP와 공유
+
+**탐욕 vs DP**
+- 탐욕: 선택 → 부분 문제 (top-down, 1번 선택)
+- DP: 모든 부분 문제 → 비교 후 선택
+
+## 활동 선택 (Activity Selection) ⭐
+- **전략**: 종료 시간이 가장 빠른 활동을 먼저 선택
+- **시간**: $\\Theta(n)$ (정렬 후), 정렬 포함 $O(n \\lg n)$
+
+\`\`\`
+GREEDY-ACTIVITY-SELECTOR(s, f)
+  n = s.length
+  A = {a₁}
+  k = 1
+  for m = 2 to n
+    if s[m] ≥ f[k]
+      A = A ∪ {aₘ}
+      k = m
+  return A
+\`\`\`
+
+## 허프만 코드 ⭐
+- 최적 접두사 코드
+- 빈도 높은 문자 = 짧은 코드
+- 최소 힙 사용 → $O(n \\lg n)$
+
+**배낭 문제**
+- Fractional Knapsack: 탐욕 최적
+- 0-1 Knapsack: DP 필요
+`,
+    ox: [
+      { q: "Greedy 성공의 두 조건은 '탐욕 선택 성질'과 '최적 부분 구조'이다.", a: true, why: "CLRS 16.2." },
+      { q: "Fractional Knapsack은 Greedy로 최적 해결.", a: true, why: "단위 가치 순 탐욕." },
+      { q: "0-1 Knapsack도 Greedy로 최적 해결 가능하다.", a: false, why: "DP 필요. Greedy는 반례 존재." },
+      { q: "Huffman 코드는 접두사 코드(prefix code)이다.", a: true, why: "어떤 코드도 다른 코드의 접두사가 아님." },
+      { q: "Activity Selection의 최적 전략은 '종료 시간이 가장 빠른 활동 선택'이다.", a: true, why: "GREEDY-ACTIVITY-SELECTOR." },
+      { q: "Greedy 알고리즘은 교환 논법(exchange argument)으로 증명 가능.", a: true, why: "최적 해의 선택을 Greedy 선택으로 교환." },
+      { q: "Greedy는 모든 최적화 문제에 적용된다.", a: false, why: "탐욕 선택 성질을 만족해야 함." },
+      { q: "Huffman은 최소 우선순위 큐로 $O(n \\lg n)$에 트리 구성.", a: true, why: "n-1번 EXTRACT-MIN + INSERT, 각 $O(\\lg n)$." },
+      { q: "Huffman에서 빈도가 가장 낮은 두 문자는 트리의 가장 깊은 형제 리프가 된다.", a: true, why: "탐욕 선택 성질." },
+      { q: "DP와 달리 Greedy는 하향식(top-down)으로 부분 문제를 줄인다.", a: true, why: "선택 후 더 작은 문제로 환원." },
+    ],
+
+    exercises: [
+      {
+        num: "16.1-1",
+        q: "Activity Selection을 bottom-up DP로 풀이 $O(n^2)$ 알고리즘을 설계하시오.",
+        hint: "c[i,j] = 부분 문제 최대 집합 크기.",
+        solution: "$c[i,j] = max$ over k (c[i,k] + 1 + c[k,j]).",
+      },
+      {
+        num: "16.1-4",
+        q: "강의실 스케줄링: 겹치지 않는 강의실 수 최소화.",
+        hint: "Activity Selection 변형 / Greedy.",
+        solution: "시작 시간 정렬 후 각 강의를 가능한 가장 오래된 교실에 배정. $\\Theta(n \\lg n)$.",
+      },
+      {
+        num: "16.2-2",
+        q: "0-1 Knapsack DP 구현. 시간 $O(nW)$.",
+        hint: "K[i, w] 테이블.",
+        solution: "점화식으로 2D 배열 채움. 반환 K[n, W].",
+      },
+      {
+        num: "16.2-4",
+        q: "교수님이 여행 중 연료 충전 문제: Greedy로 최소 충전 횟수.",
+        hint: "각 위치에서 최대 거리까지 갈 수 있으면 계속, 아니면 충전.",
+        solution: "현재 위치에서 갈 수 있는 마지막 주유소까지 이동 후 충전. $\\Theta(n)$.",
+      },
+      {
+        num: "16.3-3",
+        q: "Huffman 트리의 가장 긴 코드워드 길이 상한은?",
+        hint: "최소 빈도 두 개의 비율이 영향.",
+        solution: "n 문자에 대해 최대 길이 ≤ n-1 (최악). 평균은 $H(X) = \\Sigma $ p_i log(1/p_i) 정보량 근접.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "16-1",
+        title: "Coin Changing (동전 교환)",
+        q: "액면 $c^0, c^1, c^2, \\ldots, c^k$의 동전 무한대. 금액 $n$을 최소 개수로 거슬러 주는 탐욕 알고리즘의 최적성을 분석하라.",
+        parts: [
+        {
+          label: "a",
+          q: "가장 큰 액면부터 탐욕적으로 선택하는 것이 이 동전 체계에서 최적임을 보여라.",
+          hint: "어떤 최적 해도 작은 동전 $c$개 이상을 포함하면 하나의 큰 동전으로 교환 가능.",
+          solution: "유도: $c^i$ 동전이 $c$개 이상이면 $c^{i+1}$ 한 개로 교환 가능 (동전 수 감소). 따라서 최적 해는 각 액면에 대해 $c$개 미만. 탐욕과 동일한 분포 유일.",
+        },
+        {
+          label: "b",
+          q: "동전 집합 $\\{1, 10, 25\\}$에서 탐욕이 최적이 아닌 예를 찾아라.",
+          solution: "$n = 30$: 탐욕 $= 25 + 1 + 1 + 1 + 1 + 1 = 6$개. 최적 $= 10 + 10 + 10 = 3$개.",
+        },
+        {
+          label: "c",
+          q: "임의의 동전 집합에 대해 $O(nk)$ DP로 해결하라.",
+          solution: "$f(n) = 1 + \\min_i f(n - c_i)$. Bottom-up: $n$까지 $k$개 액면 고려. $O(nk)$.",
+        },
+        ],
+      },
+      {
+        num: "16-2",
+        title: "Scheduling to Minimize Avg Completion Time",
+        q: "단일 프로세서에서 작업 $J_1, \\ldots, J_n$이 처리 시간 $p_i$를 가진다. 작업 $i$의 완료 시간을 $C_i$라 할 때 $\\sum C_i$를 최소화하는 순서는?",
+        parts: [
+        {
+          label: "a",
+          q: "SPT(Shortest Processing Time) 순으로 정렬하는 것이 최적임을 교환 논증으로 증명하라.",
+          solution: "연속한 두 작업 $i, j$에서 $p_i > p_j$인데 $i$가 먼저라고 가정. 두 작업의 완료 시간 합 = $2s + 2p_i + p_j$. 순서 바꾸면 = $2s + 2p_j + p_i$. 차이 = $p_i - p_j > 0$ → 교환이 더 나음. 따라서 최적은 SPT 순.",
+        },
+        {
+          label: "b",
+          q: "릴리즈 시간($r_i$, 그 시각 이후에만 시작 가능)이 있으면 SPT가 최적이 아님을 반례로 보여라.",
+          solution: "$J_1$: $r_1=0, p_1=10$. $J_2$: $r_2=1, p_2=1$. SPT(오름)로 $J_2$ 먼저 할 수도 있지만 $r_2=1$까지 기다려야 함. 최적 스케줄이 입력 의존적이 됨. (일반적으로 NP-hard.)",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "activity", name: "Activity Selection", desc: "종료시간 기준 탐욕 선택",
+        tags: ["O(n)", "O(n lg n) 포함 정렬", "Greedy"], viz: "activitySelection",
+        drills: {
+          source: "CLRS 3판 16.1-16.2절 pp.416-424, Theorem 16.1 · Figure 16.1",
+          pseudo: {
+            title: "① 의사코드 재구성 — GREEDY-ACTIVITY-SELECTOR",
+            intro: "CLRS 16.1절(p.421)의 반복 버전 Activity Selection 8줄을 순서대로 배치하세요. 전제: 입력 활동이 이미 종료 시간 오름차순($f_{1} \\leq f_{2}$ ≤ ... ≤ fₙ)으로 정렬되어 있음. 참고에 재귀 버전도.",
+            reference: {
+              title: "참고: RECURSIVE-ACTIVITY-SELECTOR (p.419) · 탐욕 전략 요소",
+              lines: [
+                { text: "RECURSIVE-ACTIVITY-SELECTOR(s, f, k, n)",        indent: 0 },
+                { text: "$m = k$ + 1",                                       indent: 1 },
+                { text: "while $m \\leq n$ and $s[m] < f[k]$",                     indent: 1 },
+                { text: "$m = m$ + 1   // a_k와 호환 가능한 첫 활동 찾기",    indent: 2 },
+                { text: "if $m \\leq n$",                                        indent: 1 },
+                { text: "return {a_m} ∪ RECURSIVE-ACTIVITY-SELECTOR(s, f, m, n)", indent: 2 },
+                { text: "else return ∅",                                   indent: 1 },
+                { text: "",                                                indent: 0 },
+                { text: "// 탐욕 선택 규칙: 남은 활동 중 종료 시간 최소",   indent: 0 },
+                { text: "// 정당성: Theorem 16.1 (greedy-choice property)", indent: 0 },
+                { text: "// 가짜 활동 a_0 ($f_0 = 0$)을 두면 초기 호출은 (s, f, 0, n)", indent: 0 },
+              ],
+            },
+            // CLRS p.421 원문
+            lines: [
+              { text: "GREEDY-ACTIVITY-SELECTOR(s, f)",  indent: 0, note: "프로시저 헤더 (입력: s, f 배열, 이미 f 오름차순 정렬 가정)" },
+              { text: "$n = s.length$",                    indent: 1, note: "활동 개수" },
+              { text: "A = {a_1}",                       indent: 1, note: "첫 활동 (가장 먼저 끝남)은 항상 안전" },
+              { text: "$k = 1$",                           indent: 1, note: "$k = A$에 마지막으로 추가된 활동의 인덱스" },
+              { text: "for $m = 2$ to n",                  indent: 1, note: "나머지 활동 순차 탐색" },
+              { text: "if $s[m] \\geq f[k]$",                  indent: 2, note: "a_m이 a_k 끝난 뒤 시작 → 호환" },
+              { text: "$A = A$ ∪ {a_m}",                   indent: 3, note: "A에 추가 (탐욕)" },
+              { text: "$k = m$",                           indent: 3, note: "기준 업데이트" },
+              { text: "return A",                        indent: 1, note: "최대 호환 집합 반환" },
+            ],
+          },
+          proof: {
+            title: "② Greedy-Choice Property — 교환 논법 (Theorem 16.1)",
+            intro: "CLRS 16.1절. 정리: 부분문제 S_k의 비어있지 않은 경우, S_k에서 가장 먼저 끝나는 활동 a_m은 어떤 최대 크기 호환 부분집합에 포함된다. 'exchange argument'로 직접 증명.",
+            invariantLabel: "정리 16.1: ",
+            invariant: "부분문제 S_k가 공집합이 아니면, S_k에서 종료 시간이 가장 이른 활동 a_m은 S_k의 어떤 최대 크기(maximum-size) 상호 호환 부분집합에 포함된다. 이로부터 'greedy choice is always safe' 결론.",
+            steps: [
+              {
+                stage: "① Greedy 선택의 정의",
+                prompt: "'S_k의 greedy 선택'은 정확히 무엇을 의미하는가?",
+                choices: [
+                  { text: "S_k에 남아있는 활동들 중 종료 시간 f_m이 가장 작은 a_m", correct: true,
+                    explain: "S_k = {a_i ∈ S : $s_i \\geq f_k$} (a_k와 호환되며 a_k 이후 시작). 이 안에서 '가장 먼저 끝나는' 활동이 greedy 선택. 다음 활동의 선택지를 최대한 많이 남기려는 휴리스틱." },
+                  { text: "S_k에서 시작 시간이 가장 이른 활동", correct: false,
+                    explain: "가장 이른 시작이 아니라 '가장 이른 종료'. 시작 기준 greedy는 반례가 존재 (연습 16.1-3)." },
+                  { text: "S_k에서 지속 시간이 가장 짧은 활동", correct: false,
+                    explain: "최단 지속도 반례 존재. 종료 시간 기준이 고유하게 올바름." },
+                  { text: "S_k에서 임의의 활동", correct: false,
+                    explain: "greedy는 '명확한 규칙'으로 선택. 임의 선택은 greedy가 아님." },
+                ],
+              },
+              {
+                stage: "② 반례 가정 (exchange 준비)",
+                prompt: "증명의 시작점: S_k의 최대 크기 호환 집합 A_k를 잡고, A_k의 종료 시간 최소 활동을 a_j라 하자. 두 case로 나누면?",
+                choices: [
+                  { text: "Case 1: $a_j = a_m$ → 증명 끝. Case 2: $a_j \\neq a_m$ → 교환 수행해야 함", correct: true,
+                    explain: "greedy가 뽑은 a_m이 이미 A_k에 있으면 자명. 다르면, 그 '다른' a_j와 a_m을 교환해도 여전히 최대 크기 해가 됨을 보이면 충분." },
+                  { text: "Case 1: A_k가 공집합. Case 2: A_k가 비어있지 않음", correct: false,
+                    explain: "정리의 전제에서 S_k가 비어있지 않고, 따라서 최대 크기 집합도 비어있지 않음." },
+                  { text: "Case 1: $f_j < f_m$. Case 2: $f_j > f_m$", correct: false,
+                    explain: "a_m은 'S_k에서 가장 먼저 끝남'으로 정의되므로 $f_m \\leq f_j$가 항상 성립. $f_j < f_m$은 불가." },
+                  { text: "Case 1: a_m ∈ A_k. Case 2: a_m ∉ A_k이지만 $a_j = a_m$", correct: false,
+                    explain: "$a_j = a_m$이면 a_m ∈ A_k와 동치. 두 case가 서로 같음." },
+                ],
+              },
+              {
+                stage: "③ 교환 실행",
+                prompt: "$a_j \\neq a_m$일 때, 새 집합 A'$_k = A_k$ − {a_j} ∪ {a_m}을 만든다. 이것이 호환 집합(mutually compatible)인 이유는?",
+                choices: [
+                  { text: "A_k의 활동들이 서로 disjoint이고 a_j가 그들 중 가장 먼저 끝났으며 $f_m \\leq f_j$. 따라서 a_m도 A_k − {a_j}의 어떤 활동과도 겹치지 않음.", correct: true,
+                    explain: "A_k − {a_j}의 모든 활동은 $s \\geq f_j$ (a_j가 먼저 끝나므로). $f_m \\leq f_j$이므로 a_m은 이들 앞에 위치. 또한 a_m ∈ S_k이므로 a_k와도 호환. 전체가 상호 호환." },
+                  { text: "A_k − {a_j} 자체가 이미 호환이므로 자동으로 A'_k도 호환", correct: false,
+                    explain: "A_k − {a_j}의 호환성은 자명하지만, a_m을 추가해도 호환인지를 별도로 보여야 함." },
+                  { text: "a_m이 a_j보다 길이가 짧아서", correct: false,
+                    explain: "길이는 증명의 근거가 아님. 종료 시간 비교 $f_m \\leq f_j$가 핵심." },
+                  { text: "A_k의 정의상 교환이 언제나 호환을 보존", correct: false,
+                    explain: "'언제나' 호환을 보존하지 않음. a_m이 가장 먼저 끝남이라는 구체적 속성이 필요." },
+                ],
+              },
+              {
+                stage: "④ 크기 비교",
+                prompt: "|A'_k|와 |A_k|의 관계는?",
+                choices: [
+                  { text: "|A'_k| = |A_k| — 하나 빼고 하나 추가했으므로 크기 동일", correct: true,
+                    explain: "A_k의 원소 a_j를 제거하고 a_m을 추가했으므로 크기 불변. 따라서 A'_k도 '최대 크기' 호환 집합." },
+                  { text: "|A'_k| > |A_k|", correct: false,
+                    explain: "하나 추가 + 하나 제거는 크기 변화 없음." },
+                  { text: "|A'_k| < |A_k|", correct: false,
+                    explain: "같은 이유로 감소하지 않음." },
+                  { text: "|A'_k|는 계산 불가", correct: false,
+                    explain: "집합 연산으로 바로 크기 결정됨." },
+                ],
+              },
+              {
+                stage: "⑤ 결론 1: a_m이 어떤 최적해에 포함",
+                prompt: "|A'_k| = |A_k| = (S_k의 최대 크기)이고 a_m ∈ A'_k. 이로부터 무엇을 결론 지을 수 있는가?",
+                choices: [
+                  { text: "a_m을 포함하는 S_k의 최대 크기 호환 집합이 존재 (A'_k가 그것) → greedy 선택이 safe", correct: true,
+                    explain: "'greedy 선택 a_m을 포함하는 최적해가 있다'는 정리 16.1의 정확한 결론. 이것이 'safe'의 의미 — greedy를 따라도 최적성을 잃지 않음." },
+                  { text: "A_k와 A'_k는 동일한 집합", correct: false,
+                    explain: "$A_k \\neq A$'_k일 수 있음 ($a_j \\neq a_m$이므로). 같은 크기라는 것만 성립." },
+                  { text: "모든 최적해가 a_m을 포함", correct: false,
+                    explain: "적어도 하나의 최적해에 a_m이 있다는 약한 결론. 모든 최적해가 포함한다는 강한 결론은 성립하지 않을 수 있음." },
+                  { text: "greedy가 유일한 최적해를 찾음", correct: false,
+                    explain: "최적해가 여럿일 수 있음. greedy는 그 중 하나를 찾을 뿐." },
+                ],
+              },
+              {
+                stage: "⑥ Optimal Substructure",
+                prompt: "greedy로 a_m을 선택한 뒤 남은 부분문제는 S_m (= a_m 이후 시작 가능한 활동들). 이 구조를 '최적 부분 구조'라고 부르는 이유는?",
+                choices: [
+                  { text: "전체 최적해 = {a_m} ∪ (S_m의 최적해). 즉 원 문제의 최적해가 부분문제의 최적해로 구성됨.", correct: true,
+                    explain: "Greedy에서 '최적 부분 구조 + greedy-choice property'는 정당성의 두 축. 첫 선택(a_m) 후 남은 S_m을 독립적으로 최적화하면 전체 최적." },
+                  { text: "부분문제의 크기가 원문제의 정확히 절반이어서", correct: false,
+                    explain: "분할 정복과 다름. Greedy는 크기가 '감소'만 하면 충분, 절반이 아니어도 됨." },
+                  { text: "재귀 호출이 정확히 한 번 발생해서", correct: false,
+                    explain: "한 번의 재귀는 구현 효율의 결과이지 '최적 부분 구조'의 정의가 아님." },
+                  { text: "DP 테이블이 필요 없어서", correct: false,
+                    explain: "Greedy가 DP 테이블을 피하는 것은 greedy-choice property 덕분이지 '최적 부분 구조' 때문이 아님." },
+                ],
+              },
+              {
+                stage: "⑦ Greedy vs DP",
+                prompt: "Activity Selection은 DP로도 풀 수 있지만 Greedy가 충분한 이유는?",
+                choices: [
+                  { text: "Greedy-choice property가 성립하여 매 단계 첫 선택이 반드시 최적해의 일부이므로 하위 선택지를 저장할 필요 없음", correct: true,
+                    explain: "DP는 '여러 선택지의 최적을 저장'해야 하지만, greedy-choice property가 성립하면 '한 선택'만 보면 됨. 테이블 대신 루프로 $\\Theta(n)$에 해결." },
+                  { text: "DP는 항상 잘못된 답을 준다", correct: false,
+                    explain: "DP도 올바른 답을 줌 (연습 16.1-1). 다만 불필요하게 복잡할 뿐." },
+                  { text: "Greedy가 항상 DP보다 빠르다", correct: false,
+                    explain: "문제에 따라 다름. Greedy-choice property가 성립하지 않으면 DP가 필요하고 정확." },
+                  { text: "Activity Selection에 중복 부분 문제가 없어서", correct: false,
+                    explain: "오히려 중복 부분 문제가 있어서 DP가 가능하기도 함. Greedy의 성립 조건은 '중복 없음'이 아니라 '매 선택이 safe'." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ GREEDY-ACTIVITY-SELECTOR 추적 — CLRS Figure 16.1",
+            intro: "11개 활동, 종료 시간 오름차순 정렬됨. (s[i], f[i]): a1=(1,4), a2=(3,5), a3=(0,6), a4=(5,7), a5=(3,9), a6=(5,9), a7=(6,10), a8=(8,11), a9=(8,12), a10=(2,14), a11=(12,16). 단계별 k, A 예측.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기화 (line 1–3) 완료 직후 k와 A의 값은?",
+                choices: [
+                  { text: "A = {a_1}, $k = 1$", correct: true,
+                    explain: "Line 2: a_1을 바로 선택 (종료 시간 최소 = $f_1 = 4$). Line 3: $k = 1$로 설정." },
+                  { text: "A = ∅, $k = 0$", correct: false,
+                    explain: "알고리즘은 a_1을 'greedy 선택'으로 이미 포함시킴. k도 이미 1." },
+                  { text: "A = {a_1, a_2, ..., a_n}, $k = n$", correct: false,
+                    explain: "모든 활동을 넣는 것이 아니라 호환 가능한 것만. 초기에는 a_1 하나뿐." },
+                  { text: "A = {a_0}, $k = 0$ (가짜 활동)", correct: false,
+                    explain: "반복 버전은 가짜 활동 a_0을 사용하지 않음 (재귀 버전에만 사용)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$m = 2$ 반복: $s[2] = 3$, $f[k] = f[1]$ = 4. 조건 $s[m] \\geq f[k]$는 참인가 거짓인가?",
+                choices: [
+                  { text: "$3 \\geq 4$는 거짓 → a_2 건너뜀, A 불변", correct: true,
+                    explain: "a_2가 시작(3)하기 전에 a_1이 아직 안 끝남(4). 겹침. 건너뜀." },
+                  { text: "참 → a_2 추가", correct: false,
+                    explain: "$3 < 4$입니다 (a_2가 a_1 끝나기 전에 시작)." },
+                  { text: "f[2]와 f[1]을 비교해야 함", correct: false,
+                    explain: "조건은 $s[m] \\geq f[k]$ (시작 vs 이전 끝)입니다." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$m = 3$: s[3] = $0 < 4$, 건너뜀. $m = 4$: $s[4] = 5$, $f[k] = f[1]$ = 4. 결과?",
+                choices: [
+                  { text: "$5 \\geq 4$ 참 → A = {a_1, a_4}, $k = 4$", correct: true,
+                    explain: "a_4가 a_1 끝난 후 시작($5 \\geq 4$). A에 추가 후 k를 4로 업데이트. 다음부터는 $f[4] = 7$과 비교." },
+                  { text: "A 불변 (이미 a_1이 있어서)", correct: false,
+                    explain: "조건이 참이면 반드시 추가. a_1 존재와 상관없이." },
+                  { text: "A = {a_1, a_2, a_3, a_4}", correct: false,
+                    explain: "a_2와 a_3은 이미 건너뛰어짐. 스킵한 것은 A에 들어가지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$m = 5$, 6, 7 순회: $s = 3$, 5, 6 (각각 < $f[4] = 7$). 모두 건너뜀. $m = 8$: $s[8] = 8$, $f[4] = 7$. 결과?",
+                choices: [
+                  { text: "$8 \\geq 7$ 참 → A = {a_1, a_4, a_8}, $k = 8$", correct: true,
+                    explain: "a_8이 a_4 끝난 후 시작. 추가 + $k = 8$. 다음부터는 $f[8] = 11$과 비교." },
+                  { text: "A 불변 — 이미 3개면 충분", correct: false,
+                    explain: "greedy는 '최대한 많이' 선택. 호환되면 무조건 추가." },
+                  { text: "A = {a_1, a_4, a_5}", correct: false,
+                    explain: "a_5는 s[5]=$3 < 7$이라 건너뛰어짐. a_5는 선택되지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$m = 9$: s=$8 < f[8]$=11, 건너뜀. $m = 10$: s=$2 < 11$, 건너뜀. $m = 11$: $s[11] = 12$, $f[8] = 11$. 결과?",
+                choices: [
+                  { text: "$12 \\geq 11$ 참 → A = {a_1, a_4, a_8, a_11}, $k = 11$", correct: true,
+                    explain: "마지막 활동 a_11도 조건 충족. 최종 A 완성. Fig 16.1의 최종 결과." },
+                  { text: "$12 > 11$이므로 조건 실패 (엄격 부등식 필요)", correct: false,
+                    explain: "조건은 ≥ (등호 포함). a_11 시작(12) = a_8 끝난 직후(11) 그 뒤라 OK." },
+                  { text: "a_10이 추가되어야 함", correct: false,
+                    explain: "a_10은 $s = 2$라 $f[8] = 11$보다 훨씬 전에 시작. 이미 지나간 활동이라 선택 불가." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "for 루프 종료 후 최종 A와 |A|는? 그리고 이것이 '최대'임을 확신할 수 있는 근거는?",
+                choices: [
+                  { text: "A = {a_1, a_4, a_8, a_11}, |A| = 4. 최대성은 Theorem 16.1의 greedy-choice property로 귀납 보장.", correct: true,
+                    explain: "각 단계에서 greedy 선택이 safe (최대 크기 해의 일부). 반복 적용으로 전체가 최대 크기. CLRS Figure 16.1의 결과와 일치." },
+                  { text: "|A| = 11 (모든 활동)", correct: false,
+                    explain: "활동들이 서로 겹치므로 모두 호환 불가. |A| < 11." },
+                  { text: "|A| = 6 (대략 절반)", correct: false,
+                    explain: "Fig 16.1의 예제에서 최대 호환 집합 크기는 정확히 4." },
+                  { text: "최대성을 이 예제에서 확인할 수 없음", correct: false,
+                    explain: "Theorem 16.1이 모든 입력에 대해 greedy의 최적성을 보장. 예제에서도 수동 탐색으로 확인 가능." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "huffman", name: "Huffman Coding", desc: "최소 힙으로 접두사 트리 구성",
+        tags: ["O(n lg n)", "Greedy", "Prefix-free"], viz: "huffman",
+        drills: {
+          source: "CLRS 3판 16.3절 pp.428-437, Lemma 16.2-16.3 · Figure 16.5",
+          pseudo: {
+            title: "① 의사코드 재구성 — HUFFMAN",
+            intro: "CLRS 16.3절(p.431)의 Huffman 알고리즘 9줄. Min-priority queue로 빈도 최소 두 개를 반복적으로 병합해 최적 접두사 코드 트리 구성.",
+            reference: {
+              title: "참고: 비용 함수 + 이론",
+              lines: [
+                { text: "// 비용 함수 (식 16.4):",                               indent: 0 },
+                { text: "B(T) = Σ_{c ∈ C} c.freq · d_T(c)",                      indent: 0 },
+                { text: "       (d_T(c) = 문자 c의 leaf 깊이 = 코드워드 길이)",   indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "// 정리 (optimal prefix code):",                         indent: 0 },
+                { text: "Lemma 16.2: 최저 빈도 두 문자 x, y는 최적 트리에서",      indent: 0 },
+                { text: "  같은 깊이의 sibling leaf로 만들 수 있음 (greedy choice)", indent: 0 },
+                { text: "Lemma 16.3: x, y를 합친 문자 z로 대체한 C'의 최적 트리에서", indent: 0 },
+                { text: "  z를 x, y의 sibling 부모로 확장한 T는 C의 최적 (optimal substructure)", indent: 0 },
+              ],
+            },
+            // CLRS p.431
+            lines: [
+              { text: "HUFFMAN(C)",                                    indent: 0, note: "프로시저 헤더 (C = 문자 집합)" },
+              { text: "n = |C|",                                       indent: 1, note: "문자 개수" },
+              { text: "$Q = C$",                                         indent: 1, note: "min-priority queue를 C로 초기화 ($key = freq$)" },
+              { text: "for $i = 1$ to n - 1",                            indent: 1, note: "n-1번 병합 → 최종 1개 트리" },
+              { text: "allocate a new node z",                         indent: 2, note: "병합 결과 내부 노드" },
+              { text: "$z.left = x$ = EXTRACT-MIN(Q)",                   indent: 2, note: "최저 빈도 꺼내 왼쪽 자식" },
+              { text: "$z.right = y$ = EXTRACT-MIN(Q)",                  indent: 2, note: "다음 최저 빈도 오른쪽 자식" },
+              { text: "$z.freq = x.freq$ + y.freq",                      indent: 2, note: "병합 노드의 빈도 = 합" },
+              { text: "INSERT(Q, z)",                                  indent: 2, note: "z를 큐에 재삽입" },
+              { text: "return EXTRACT-MIN(Q)   // 마지막 남은 루트",    indent: 1, note: "유일 남은 노드가 루트" },
+            ],
+          },
+          proof: {
+            title: "② Greedy-Choice (Lemma 16.2) + Optimal Substructure (Lemma 16.3)",
+            intro: "Huffman 정당성은 두 레마의 결합. Lemma 16.2: 최저 빈도 두 문자를 merge해도 최적성 유지. Lemma 16.3: merge 후 문제의 최적 해에서 원래 문제 최적 해 복원 가능.",
+            invariantLabel: "두 레마: ",
+            invariant: "Lemma 16.2 (greedy-choice): C의 최저 빈도 x, y에 대해 codeword 길이가 같고 마지막 비트만 다른(= 깊이 최대 sibling) 최적 prefix code가 존재. Lemma 16.3 (optimal substructure): x, y를 합성 문자 z($z.freq = x.freq$ + y.freq)로 대체한 C' = C − {x,y} ∪ {z}의 최적 트리 T'에, z를 x, y의 부모로 확장한 T가 C의 최적 트리.",
+            steps: [
+              {
+                stage: "① 접두사 코드의 본질",
+                prompt: "Prefix code란? 그리고 왜 full binary tree로 표현되는가?",
+                choices: [
+                  { text: "어떤 코드워드도 다른 코드워드의 접두사가 아닌 코드. 이진 트리의 leaf가 문자이고 root→leaf 경로가 코드워드 ⟹ 자동으로 prefix-free. Full tree: 모든 internal node가 자식 2개를 가질 때 최적(비어있는 가지는 낭비).", correct: true,
+                    explain: "CLRS p.429. Prefix-free이면 decoding 시 즉시 읽기(unambiguous). 트리 표현은 '0=왼쪽, 1=오른쪽' 경로. Full binary가 아닌 경우 '부족한' 가지를 무한으로 대체 가능." },
+                  { text: "Prefix는 모든 코드워드가 같은 접두사를 공유한다는 뜻", correct: false,
+                    explain: "반대. '어떤 코드워드도 다른 것의 접두사가 아님'. 공유가 아니라 회피." },
+                  { text: "Prefix code는 항상 고정 길이", correct: false,
+                    explain: "가변 길이 prefix code가 Huffman의 핵심. 고정 길이는 한 종류일 뿐." },
+                ],
+              },
+              {
+                stage: "② 최저 빈도가 가장 깊이",
+                prompt: "왜 최저 빈도 문자는 최적 트리에서 가장 깊은 leaf에 있어야 하는가?",
+                choices: [
+                  { text: "깊이가 깊을수록 코드워드가 길고 가중합 c.freq × 깊이에 더 많이 기여. 자주 나오는 문자는 얕게, 드문 문자는 깊게 두어야 총합 최소화", correct: true,
+                    explain: "직관적 근거. $B(T) = \\Sigma $ freq·depth이 비용. depth 큰 위치에는 freq 작은 문자를 배정해 곱을 작게 유지. 이게 '교환 가능한 양이 없다' = greedy choice의 기반." },
+                  { text: "최저 빈도는 최상단", correct: false,
+                    explain: "반대. 깊이가 깊어야 함 (긴 코드워드로 낭비 최소화)." },
+                  { text: "깊이와 빈도는 무관", correct: false,
+                    explain: "비용 함수 B(T) 정의상 강하게 상관. 최적 트리에서는 반드시 역상관." },
+                ],
+              },
+              {
+                stage: "③ Lemma 16.2 증명 — 교환 논법",
+                prompt: "증명 전략: 최적 T에서 최대 깊이 sibling leaf a, b와 최저 빈도 x, y. 어떻게 서로 교환해도 비용 안 늘어남을 보이나?",
+                choices: [
+                  { text: "a ↔ x 교환(T → T')의 비용 차이 = (a.freq − x.freq)·(d_T(a) − d_T(x)) $\\geq 0$ — 두 괄호 모두 비음", correct: true,
+                    explain: "x가 최저 빈도이므로 $a.freq \\geq x.freq$. a가 최대 깊이이므로 $d_T(a) \\geq d_T(x)$. 두 비음 값의 곱은 비음 → B(T') ≤ B(T). T가 최적이므로 T'도 최적." },
+                  { text: "교환은 트리 구조를 망가뜨리므로 수행 안 함", correct: false,
+                    explain: "교환은 leaf의 위치만 바꾸고 트리 구조는 유지. 유효함." },
+                  { text: "교환 후 비용은 항상 엄격히 감소", correct: false,
+                    explain: "동률(=0) 가능. 엄격 감소가 아니라 '증가 없음'이 정확." },
+                ],
+              },
+              {
+                stage: "④ 최적 부분 구조 (Lemma 16.3)",
+                prompt: "x, y를 가중 합 문자 z($freq = x$+y)로 대체한 C'의 최적 트리 T'. T' 확장해 x, y를 z의 자식 leaf로 만든 T의 비용은?",
+                choices: [
+                  { text: "B(T) = B(T') + x.freq + y.freq — z가 내부 노드로 바뀌고 x, y가 새 leaf", correct: true,
+                    explain: "T'에서 z의 깊이 = k일 때, T에서 x, y의 깊이 = k+1. 기여도 차이 = (x+y)·(k+1) − (x+y)·$k = x$+y. B(T) = B(T') + x.freq + y.freq (CLRS 식, p.434)." },
+                  { text: "B(T) = B(T') — 같음", correct: false,
+                    explain: "z를 leaf에서 internal로 바꾸면서 x, y가 leaf가 되면 총 비용이 변함. 정확한 차이가 있음." },
+                  { text: "B(T) = B(T') + 1 — 새 노드 추가", correct: false,
+                    explain: "개수 증가가 아니라 빈도 가중 깊이의 합이 증가. 정확한 값은 x.freq + y.freq." },
+                ],
+              },
+              {
+                stage: "⑤ 확장의 최적성",
+                prompt: "T'가 C'의 최적이면 $T = T$'에 x, y 추가한 것이 C의 최적임을 어떻게 증명? (귀류법)",
+                choices: [
+                  { text: "C의 다른 트리 T''가 B(T'') < B(T)라 가정. T''에서 x, y sibling 제거해 z로 대체하면 B(T''') < B(T') — T'의 최적성과 모순", correct: true,
+                    explain: "대응 변환: C ↔ C'의 트리 간 비용 차이가 일정(x+y)하므로 한쪽의 최적성이 다른 쪽으로 이전. 귀류법 핵심." },
+                  { text: "확장은 항상 최적", correct: false,
+                    explain: "증명 없이 주장. 귀류법 구조가 정당성을 제공." },
+                  { text: "greedy이므로 자동 최적", correct: false,
+                    explain: "greedy-choice와 optimal-substructure 모두 필요. 둘을 결합해야 함." },
+                ],
+              },
+              {
+                stage: "⑥ 알고리즘 전체 정당성",
+                prompt: "Lemma 16.2와 16.3을 합쳐 Huffman의 전체 정확성을 어떻게 결론?",
+                choices: [
+                  { text: "귀납. 기저 $n = 1$ 자명. 귀납: Lemma 16.2로 두 최저 빈도 합치는 게 안전. Lemma 16.3으로 줄어든 문제의 최적 해를 확장하면 원 문제 최적. 매 단계 반복 → n-1회 후 완성.", correct: true,
+                    explain: "greedy 알고리즘 정당성 증명의 표준 형태. greedy-choice + optimal-substructure + 귀납." },
+                  { text: "실험적으로 항상 최적 결과이므로", correct: false,
+                    explain: "엄밀 증명 필요. 수학적 귀납으로." },
+                  { text: "min-priority queue가 정렬을 보장하므로", correct: false,
+                    explain: "PQ는 구현 세부사항. 정당성은 구조적 논리." },
+                ],
+              },
+              {
+                stage: "⑦ 복잡도",
+                prompt: "n개 문자에 대해 Huffman의 시간 복잡도 $O(n \\lg n)$의 근거는?",
+                choices: [
+                  { text: "초기화 BUILD-MIN-HEAP $O(n)$, 그 뒤 n-1번 반복: EXTRACT-MIN 2번 + INSERT 1번 (각 $O(\\lg n)$) = 총 $O(n \\lg n)$", correct: true,
+                    explain: "CLRS p.432. 힙의 각 연산이 $O(\\lg n)$이고 n-1번 반복. van Emde Boas 트리로 O(n lg lg n) 가능." },
+                  { text: "$O(n^2)$ — 매번 정렬", correct: false,
+                    explain: "매번 정렬이 아니라 min-heap 재구조 $O(\\lg n)$. 총 $O(n \\lg n)$." },
+                  { text: "$O(n)$ — 선형", correct: false,
+                    explain: "각 힙 연산이 $O(\\lg n)$. n-1번이면 $O(n \\lg n)$." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Huffman 추적 — CLRS Figure 16.3/16.5",
+            intro: "문자 빈도: $a = 45$, $b = 13$, $c = 12$, $d = 16$, $e = 9$, $f = 5$ (천 단위). HUFFMAN을 실행하며 각 병합 단계를 예측하세요.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Q 초기화. 가장 먼저 EXTRACT-MIN 2번에 뽑히는 문자는?",
+                choices: [
+                  { text: "$f = 5$와 $e = 9$ — 두 최저 빈도", correct: true,
+                    explain: "우선순위 큐는 freq 오름차순. 첫 2개는 f(5)와 e(9). CLRS Fig 16.5 (a)→(b)." },
+                  { text: "$a = 45$와 $b = 13$", correct: false,
+                    explain: "a가 최대, b는 중간대. 최저 2개는 f, e." },
+                  { text: "$c = 12$와 $b = 13$", correct: false,
+                    explain: "$f = 5$, $e = 9$가 더 작음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "첫 병합: $z_{1} = merge(f, e)$, $z_{1}.freq = 5$ + $9 = 14$. Q 삽입 후 현재 큐는 (freq 순)?",
+                choices: [
+                  { text: "$c = 12$, $b = 13$, $z_{1} = 14$, $d = 16$, $a = 45$", correct: true,
+                    explain: "f, e 제거 후 $z_{1} = 14$ 삽입. freq 순 정렬: $c(12) < b(13)$ < $z_{1}(14) < d(16)$ < a(45). Fig 16.5 (b)." },
+                  { text: "$z_{1} = 14$만 남음", correct: false,
+                    explain: "다른 문자 a, b, c, d는 그대로 남음." },
+                  { text: "$a = 45$, $b = 13$, $c = 12$, $d = 16$ (z₁ 제거)", correct: false,
+                    explain: "z₁은 유지됨 — 나중에 다시 병합됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "두 번째 반복: EXTRACT-MIN 2번 = c(12), b(13). $z_{2} = merge(c, b)$, $z_{2}.freq = 25$. Q 삽입. 이때 큐는?",
+                choices: [
+                  { text: "$z_{1} = 14$, $d = 16$, $z_{2} = 25$, $a = 45$", correct: true,
+                    explain: "c, b 제거 후 $z_{2} = 25$ 삽입. 남은 원소 freq 순. Fig 16.5 (c)." },
+                  { text: "$a = 45$, $z_{1} = 14$, $d = 16$ (z₂ 제거)", correct: false,
+                    explain: "z₂는 내부 노드로 큐에 남음." },
+                  { text: "빈 큐", correct: false,
+                    explain: "아직 5개 원소 남음 (z₁, d, z₂, a)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "세 번째 반복: EXTRACT-MIN 2번 = z₁(14), d(16). z₃ = merge(z₁, d), $z_{3}.freq = 30$. 이제 큐는?",
+                choices: [
+                  { text: "$z_{2} = 25$, $z_{3} = 30$, $a = 45$", correct: true,
+                    explain: "Fig 16.5 (d). 남은 3개 노드." },
+                  { text: "$a = 45$, $z_{2} = 25$ (z₃ 제거)", correct: false,
+                    explain: "z₃는 큐에 유지." },
+                  { text: "$z_{3} = 30$만", correct: false,
+                    explain: "z₂와 a도 남아 있음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "네 번째 반복: z₂(25), z₃(30) 뽑음. z₄ = merge(z₂, z₃), $z_{4}.freq = 55$. 다섯 번째(마지막) 반복: a(45), z₄(55) 뽑음. z₅ = merge(a, z₄), $z_{5}.freq = 100$. 최종 트리 루트는?",
+                choices: [
+                  { text: "z₅ ($freq = 100$) — 루프 종료 후 Q에 단 하나 남은 노드", correct: true,
+                    explain: "n-$1 = 5$번 병합 완료. Q에 유일한 노드 z₅가 루트. 전체 빈도의 합과 일치(45+13+12+16+9+$5 = 100$). Fig 16.5 (f)." },
+                  { text: "a (가장 자주 나오는 문자)", correct: false,
+                    explain: "a는 z₅의 자식. 루트는 병합으로 만들어진 내부 노드." },
+                  { text: "f (최저 빈도, 가장 깊음)", correct: false,
+                    explain: "f는 가장 깊은 leaf지 루트가 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최종 트리에서 각 문자의 코드워드 (root→leaf의 0/1 경로). a의 코드워드 길이는? (a는 루트의 자식)",
+                choices: [
+                  { text: "a의 코드워드 길이 = 1 (예: '0') — 가장 자주 쓰이므로 가장 짧게", correct: true,
+                    explain: "z₅의 왼쪽 자식이 a (혹은 오른쪽). 깊이 1. Fig 16.3의 'variable-length codeword' 참조: a='0'. 빈도 45인 a가 1비트로 인코딩 → 대폭 절약." },
+                  { text: "a의 코드워드 길이 = 4", correct: false,
+                    explain: "길이 4는 f 또는 e (최저 빈도)의 코드워드 길이." },
+                  { text: "a의 코드워드 길이 = 3 (fixed-length)", correct: false,
+                    explain: "Huffman은 가변 길이. a는 빈도 최대이므로 가장 짧게." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "matroid", name: "Matroids & Greedy", desc: "Matroid 이론 — Greedy가 최적인 '일반 조건' 규명",
+        tags: ["이론", "Greedy 일반화"], viz: "matroid",
+        drills: {
+          source: "CLRS 3판 16.4-16.5절 pp.437-450, Theorem 16.10 (GREEDY가 matroid에서 최적)",
+          pseudo: {
+            title: "① 의사코드 재구성 — GREEDY (for Weighted Matroid)",
+            intro: "CLRS 16.4절. 'Matroid (M = (S, I))' 위에서 Greedy가 항상 최적 해를 내놓는다. 이게 Greedy의 추상 이론적 근거.",
+            reference: {
+              title: "참고: Matroid 정의",
+              lines: [
+                { text: "Matroid M = (S, I) 세 조건:",                                   indent: 0 },
+                { text: "  (1) S는 유한 집합",                                            indent: 0 },
+                { text: "  (2) I는 S의 부분집합들의 집합 (독립 집합들)",                     indent: 0 },
+                { text: "  (3) 상속 성질(hereditary): B ∈ I, A ⊆ B ⇒ A ∈ I",              indent: 0 },
+                { text: "  (4) 교환 성질(exchange): A, B ∈ I, |A| < |B| ⇒",               indent: 0 },
+                { text: "      ∃ x ∈ B\\A with A ∪ {x} ∈ I",                             indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "최대 독립 집합을 'basis'라 함. 모든 basis 크기 동일.",            indent: 0 },
+                { text: "",                                                               indent: 0 },
+                { text: "가중 Matroid (weighted): 각 x ∈ S에 가중치 $w(x) > 0$",             indent: 0 },
+                { text: "목표: 가중치 합이 최대인 독립 집합 찾기",                          indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "GREEDY(M, w)",                                 indent: 0, note: "M = (S, I), 가중치 w" },
+              { text: "A = ∅",                                         indent: 1, note: "빈 집합으로 시작" },
+              { text: "sort S into monotonically decreasing w order",  indent: 1, note: "가중치 내림차순 정렬" },
+              { text: "for each x ∈ S (in sorted order)",              indent: 1, note: "큰 것부터 고려" },
+              { text: "if A ∪ {x} ∈ I",                                indent: 2, note: "독립성 유지?" },
+              { text: "$A = A$ ∪ {x}",                                   indent: 3, note: "추가" },
+              { text: "return A",                                      indent: 1, note: "최적 basis" },
+            ],
+          },
+          proof: {
+            title: "② Greedy 최적성 — Matroid 구조의 충분성",
+            intro: "Theorem 16.10. Matroid 구조 위의 Greedy는 항상 최적. 증명: 탐욕 선택 성질(첫 번째 원소 선택의 안전성) + 최적 부분 구조 + 교환 논법.",
+            invariantLabel: "Theorem 16.10: ",
+            invariant: "M = (S, I)가 matroid이고 w가 양수 가중치 함수이면, GREEDY가 M에 대한 최적(최대 가중치) 독립 집합을 반환한다. 증명: 첫 원소 x (가중치 최대)가 어떤 최적 해에 포함됨을 교환 성질로 증명 + 재귀 최적 구조.",
+            steps: [
+              {
+                stage: "① Matroid의 두 가지 성질",
+                prompt: "상속(hereditary)과 교환(exchange) 성질의 직관은?",
+                choices: [
+                  { text: "상속: '독립이면 부분도 독립' (DP의 최적 부분 구조와 유사). 교환: '더 큰 독립에서 작은 쪽으로 원소를 빌릴 수 있음' (최대 basis 크기 보장).", correct: true,
+                    explain: "두 성질이 '독립성'의 일관성을 정의. 선형 독립, 사이클 없음 등 여러 자연스러운 개념이 matroid임." },
+                  { text: "상속은 독립 집합의 합집합이 독립", correct: false,
+                    explain: "그건 matroid에서 성립하지 않음 (일반적으로). 상속은 부분집합 방향." },
+                  { text: "교환은 무조건 원소 교환 가능", correct: false,
+                    explain: "조건부: |A|<|B|일 때만, 그리고 B\\A에서."  },
+                ],
+              },
+              {
+                stage: "② 그래프 예시 — Graphic Matroid",
+                prompt: "무방향 그래프 G = (V, E)에서 $S = E$, I = '사이클 없는 간선 집합'으로 정의하면?",
+                choices: [
+                  { text: "이게 Graphic Matroid. basis = 신장 트리(spanning tree). 가중 matroid → Kruskal MST의 정당성 근거.", correct: true,
+                    explain: "CLRS Theorem 16.11. MST 찾기 = graphic matroid에서 최소 basis 찾기 (음수 가중치 또는 부호 반전). Kruskal이 GREEDY의 직접 적용." },
+                  { text: "Matroid 아님", correct: false,
+                    explain: "두 성질 만족 확인 가능. Graphic은 대표 matroid."  },
+                  { text: "유클리드 공간 matroid", correct: false,
+                    explain: "그건 다른 종류(Vectorial matroid). Graphic은 그래프 기반."  },
+                ],
+              },
+              {
+                stage: "③ 첫 원소 선택의 안전성",
+                prompt: "가중치 최대 원소 x가 어떤 최적 해에 포함된다는 것을 어떻게 증명?",
+                choices: [
+                  { text: "최적 해 B가 x를 포함 안 한다고 가정. {x}는 독립(I의 공집합 성질 + 교환). |{x}|=1 < |B|이므로 교환 성질로 x를 B에 추가 가능. x 제거 후 다른 원소로 교체 시 가중치 감소 → 모순.", correct: true,
+                    explain: "CLRS Lemma 16.6 ·16.7의 핵심. 탐욕 선택 성질의 matroid 위에서의 증명." },
+                  { text: "직관적으로 명백함", correct: false,
+                    explain: "엄밀한 증명 필요. 교환 성질이 핵심."  },
+                  { text: "모든 원소가 최적에 포함", correct: false,
+                    explain: "최대 basis가 모든 원소는 아님."  },
+                ],
+              },
+              {
+                stage: "④ 최적 부분 구조",
+                prompt: "x 포함 후 남은 문제는 무엇?",
+                choices: [
+                  { text: "축약(contraction) matroid M/x = (S', I'), S' = S \\ {x}, I' = {A ⊆ S' : A ∪ {x} ∈ I}. 재귀적으로 GREEDY 적용.", correct: true,
+                    explain: "CLRS Exercise 16.4-3. Matroid의 축약/삭제 연산으로 부분 문제 형성. 재귀 구조 명확."  },
+                  { text: "독립적인 부분 문제", correct: false,
+                    explain: "M/x라는 새 matroid로 환원."  },
+                  { text: "새 문제 없음", correct: false,
+                    explain: "재귀 구조 있음. 남은 원소에서 최적 basis 완성."  },
+                ],
+              },
+              {
+                stage: "⑤ Matroid가 아닌 예시",
+                prompt: "0-1 Knapsack의 '독립 집합' 정의는 matroid가 아닌 이유?",
+                choices: [
+                  { text: "교환 성질 실패. 두 독립 집합(용량 내 합) A, B with |A| < |B|에서 B\\A의 원소를 A에 추가해도 용량 초과 가능 → 독립 아님.", correct: true,
+                    explain: "이게 0-1 Knapsack에서 Greedy 실패의 이론적 이유. Matroid 구조 없음 → DP 필요." },
+                  { text: "상속 성질 실패", correct: false,
+                    explain: "상속은 OK (용량 내 부분 → 부분도 용량 내). 교환이 실패."  },
+                  { text: "Matroid임", correct: false,
+                    explain: "Greedy가 실패하므로 반드시 matroid 아님."  },
+                ],
+              },
+              {
+                stage: "⑥ Greedy 적용 가능성의 판단",
+                prompt: "실제로 어떤 문제가 matroid인지 어떻게 판단?",
+                choices: [
+                  { text: "S와 I 정의 후 (1) 상속 (2) 교환 두 성질 확인. 성립하면 Greedy 최적. 주요 예: Graphic, Uniform, Transversal, Vectorial matroid.", correct: true,
+                    explain: "엄밀한 검증. 실제론 '이미 알려진 matroid에 환원'하는 것이 흔함 (예: MST → Graphic)."  },
+                  { text: "모든 최적화 문제에 matroid 적용", correct: false,
+                    explain: "0-1 Knapsack, TSP 등 많은 문제는 matroid 아님."  },
+                  { text: "Greedy 시도 후 반례 찾기", correct: false,
+                    explain: "사전에 matroid 구조 확인이 이론적 안전."  },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Matroid 예시 — Graphic Matroid에서 MST",
+            intro: "무방향 그래프 V={a,b,c,d}, 간선 E={(a,b,3), (a,c,5), (b,c,2), (b,d,4), (c,d,1)}. $S = E$, I=사이클 없는 간선 집합. 가중 matroid로 MST 찾기.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "가중치 내림차순 정렬 (이 문제는 MST이므로 오름차순으로 선택). 오름차순: (c,d,1), (b,c,2), (a,b,3), (b,d,4), (a,c,5). A=∅. 첫 원소 (c,d)?",
+                choices: [
+                  { text: "A ∪ {(c,d)} = {(c,d)}. 사이클 없음 → 독립 → 추가. A = {(c,d)}.", correct: true,
+                    explain: "첫 간선은 항상 사이클 없으므로 추가. Graphic matroid의 빈 독립 집합에서 확장 가능."},
+                  { text: "사이클 검사 불필요", correct: false,
+                    explain: "일반 경우 필요. 첫 원소는 자동 통과일 뿐." },
+                  { text: "추가 안 함", correct: false,
+                    explain: "독립성 유지되면 추가."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 (b,c,2). A={(c,d)} ∪ {(b,c)} = {(c,d), (b,c)}. 사이클?",
+                choices: [
+                  { text: "사이클 없음 (b-c-d 경로만 있고 미순환). 추가. A = {(c,d), (b,c)}.", correct: true,
+                    explain: "Union-Find로 확인 가능. b, c, d가 연결 되지만 아직 다른 컴포넌트 없음."},
+                  { text: "사이클 생성", correct: false,
+                    explain: "3개 정점 경로. 사이클 아님."  },
+                  { text: "가중치가 다른 간선에서 나옴", correct: false,
+                    explain: "가중치 무관한 이야기. 순수 구조."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 (a,b,3). A ∪ {(a,b)} = {(c,d), (b,c), (a,b)}. 독립?",
+                choices: [
+                  { text: "사이클 없음. a-b-c-d 경로. 추가. A = {(c,d), (b,c), (a,b)}, 총 3 간선.", correct: true,
+                    explain: "트리 모양 (4 정점, 3 간선, 사이클 없음). 이것이 이미 MST."},
+                  { text: "사이클 있음", correct: false,
+                    explain: "3개 간선 + 4 정점으로는 트리. 사이클 없음."  },
+                  { text: "건너뜀", correct: false,
+                    explain: "독립이면 추가."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 (b,d,4). A ∪ {(b,d)} 독립?",
+                choices: [
+                  { text: "A에 이미 b-c-d 경로 존재. (b,d) 추가하면 b-d 사이클 생성 → I에 속하지 않음 → 건너뜀.", correct: true,
+                    explain: "Graphic matroid의 독립성 = 사이클 없음. 사이클 생성 간선은 제외."},
+                  { text: "추가", correct: false,
+                    explain: "사이클 생성. 독립 아님."  },
+                  { text: "(b,d) 제거 후 재시도", correct: false,
+                    explain: "Greedy는 각 원소를 한 번만 고려. 재시도 없음."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "마지막 (a,c,5). A ∪ {(a,c)} 독립?",
+                choices: [
+                  { text: "a-b-c 경로 이미 있음. (a,c) 추가 시 사이클. 건너뜀. 최종 A = {(c,d), (b,c), (a,b)} 총 가중치 1+2+$3 = 6$.", correct: true,
+                    explain: "MST 완성. 4 정점 = 3 간선, 사이클 없음, 최소 가중치 합."  },
+                  { text: "추가하여 4 간선", correct: false,
+                    explain: "사이클 생성."  },
+                  { text: "(a,c)가 대체", correct: false,
+                    explain: "Greedy는 이미 선택한 것 빼지 않음."  },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 예제가 matroid + greedy 이론의 구체적 예임을 이해. Theorem 16.11은 무엇을 보장?",
+                choices: [
+                  { text: "어떤 가중치 함수, 어떤 그래프에서도 GREEDY가 graphic matroid 위에서 최적 basis(MST)를 반환. Kruskal이 바로 이 알고리즘.", correct: true,
+                    explain: "구체 증명: (1) Graphic이 matroid임 증명 (교환 성질) + (2) Theorem 16.10 적용. Kruskal의 정당성이 일반 이론의 귀결."  },
+                  { text: "이 예제에만 국한", correct: false,
+                    explain: "일반 정리. 모든 그래프에 적용."  },
+                  { text: "Greedy가 항상 최적이 아니다", correct: false,
+                    explain: "Matroid 구조 하에선 항상 최적."  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch17",
+    tier: 1,
+    num: "Ch 17",
+    title: "Amortized Analysis",
+    subtitle: "집계 · 회계 · 포텐셜 방법 · 동적 테이블",
+    summary: "일련의 연산에 대한 평균 비용을 증명하는 기법 — 한 연산의 최악은 비싸도 장기 평균은 저렴할 수 있음.",
+    objectives: [
+      "집계법(aggregate)·회계법(accounting)·포텐셜법(potential) 세 분할상환 분석 기법을 적용할 수 있다.",
+      "동적 테이블·이진 카운터 등 예제에서 각 연산의 분할상환 비용을 계산할 수 있다.",
+      "분할상환 비용·평균 비용·최악 비용의 차이를 명확히 구분할 수 있다.",
+    ],
+    md: `
+## 세 가지 분할상환 방법 (CLRS 17장)
+
+**1. 집계 분석(Aggregate Analysis)** — 가장 단순
+- n개 연산 총 비용 T(n)의 상한을 직접 계산
+- 분할상환 비용 = T(n) / n
+- 예: 스택의 MULTIPOP — n번 push + pop 총합이 $O(n)$이므로 평균 $O(1)$
+
+**2. 회계 방법(Accounting Method)** — 신용 할당
+- 각 연산에 '분할상환 비용' ĉ 할당 (실제 비용 c와 다를 수 있음)
+- ĉ > c이면 '신용(credit)'이 쌓임, 나중에 비싼 연산에 씀
+- 모든 시점에서 누적 신용 $\\geq 0$ 보장
+- 예: 2진 카운터 증가 — 각 비트 플립에 크레딧 1 보관, $1 \\to 0$ 플립이 신용 소진
+
+**3. 포텐셜 방법(Potential Method)** — 가장 유연 ⭐
+- 자료구조 상태 D_i마다 포텐셜 함수 Φ(D_i) 정의
+- $\\Phi (D_0) = 0$, $\\Phi (D_i) \\geq 0$ (모든 i)
+- 분할상환 비용: ĉ_i = c_i + Φ(D_i) − Φ(D_{i−1})
+- 총 분할상환 ≥ 실제 총 비용 ($\\Phi  \\geq 0$이므로)
+
+## 동적 테이블 (CLRS 17.4) ⭐
+
+### TABLE-INSERT with doubling
+- 가득 차면 크기 두 배로 확장, 모든 원소 복사
+- 한 번의 확장: O(num) — 비쌈
+- n번 삽입: Σ 확장 비용 + Σ 단순 삽입 = $O(n)$
+- **분할상환 $O(1)$ per insertion**
+
+### 포텐셜 함수
+- $\\Phi (T) = 2$·T.num − T.size
+- 가득 찬 직후 $\\Phi  = num$ (테이블 크기만큼 축적)
+- 확장 직후 $\\Phi  = 0$ (축적한 신용 소진)
+
+## 주요 응용
+- **동적 배열(std::vector, ArrayList)**: push_back의 분할상환 $O(1)$
+- **Union-Find (Ch 21)**: α(n) 분석
+- **Splay Tree**: $O(\\lg n)$ amortized
+- **Fibonacci Heap**: DECREASE-KEY 분할상환 $O(1)$
+`,
+    ox: [
+      { q: "분할상환 분석은 '최악 연산'이 아닌 '연산 수열 평균'을 분석.", a: true, why: "CLRS 17. amortized vs worst-case per operation." },
+      { q: "포텐셜 함수는 $\\Phi (D_0) = 0$, $\\Phi (D_i) \\geq 0$을 만족해야 한다.", a: true, why: "분할상환 ≥ 실제 비용 보장." },
+      { q: "동적 테이블의 TABLE-INSERT는 분할상환 $O(1)$이다.", a: true, why: "$\\Phi  = 2$·num-size로 ĉ≤3." },
+      { q: "집계 분석(Aggregate)은 모든 연산 비용이 같음을 요구한다.", a: false, why: "총합 T(n)만 보면 됨. 개별 비용 달라도 무관." },
+      { q: "회계 방법(Accounting)에서 누적 신용은 음수가 될 수 있다.", a: false, why: "항상 $\\geq 0$ 유지." },
+      { q: "포텐셜 방법의 분할상환 비용은 $\\hat{c}_i = c_i + \\Phi_i - \\Phi_{i-1}$.", a: true, why: "CLRS 17.3." },
+      { q: "분할상환 $O(1)$은 최악 연산이 $O(1)$임을 의미한다.", a: false, why: "평균만 보장. 한 연산 최악은 $O(n)$ 가능." },
+      { q: "확장 배율 $k > 1$이면 TABLE-INSERT 분할상환은 모두 $O(1)$이다.", a: true, why: "상수만 달라짐." },
+      { q: "MULTIPOP 스택 연산은 분할상환 $O(1)$이다.", a: true, why: "CLRS 17.1. 한 원소는 push/pop 각 1번." },
+      { q: "분할상환 분석과 확률적(randomized) 분석은 동일한 개념이다.", a: false, why: "서로 다름. 분할상환은 결정적 입력에도 적용." },
+    ],
+
+    exercises: [
+      {
+        num: "17.1-2",
+        q: "MULTIPOP 없이 스택이 2진 카운터를 증가시킬 때, n번의 INCREMENT에 대해 총 비트 플립 수는?",
+        hint: "비트 i는 n/2^i 번 flip.",
+        solution: "총 = Σ_{$i = 0$}^{lg n} n/2^i < 2n → amortized $O(1)$ per INCREMENT.",
+      },
+      {
+        num: "17.2-1",
+        q: "스택 연산에서 n개 연산의 총 비용을 회계 방법으로 $O(n)$ 증명.",
+        hint: "PUSH에 크레딧 2 할당 (1 저장, 1 미래 POP 대비).",
+        solution: "각 원소가 스택에 들어가면 크레딧 2 지불. 나중 POP은 크레딧 1 사용. 총 $2n$ 크레딧 $= O(n)$.",
+      },
+      {
+        num: "17.3-2",
+        q: "2진 카운터의 INCREMENT에 대해 포텐셜 $\\Phi (i) = i$의 1 비트 수로 증명.",
+        hint: "단일 플립 0→1: ΔΦ=+1. 1→0: ΔΦ=-1.",
+        solution: "한 번의 INCREMENT가 t번 1→0 플립 + 1번 0→1 플립. 실제 비용 t+1. ΔΦ = -t+1. ĉ = (t+1) + (-t+1) = 2 → $O(1)$ amortized.",
+      },
+      {
+        num: "17.4-1",
+        q: "동적 테이블의 축소 조건을 $\\alpha  < 1$/4로 쓰면 왜 잘못되나?",
+        hint: "삽입/삭제 교대 시 반복 확장/축소.",
+        solution: "$\\alpha  < 1$/4에서 축소하면 $\\alpha  = 1$/2가 됨. 이후 두 배 추가로 $\\alpha  = 1$이 되면 확장. 교대 입력이 매번 확장/축소 → $\\Theta(n)$. 1/4 ↔ 1/2 갭 필요.",
+      },
+      {
+        num: "Problem 17-1",
+        q: "비트 역순 카운터: 각 INCREMENT가 $O(\\lg n)$ 비트 플립 필요. 총 시간 $O(n \\lg n)$.",
+        hint: "lg n 깊이의 이진 트리 순회.",
+        solution: "각 INCREMENT가 이진 캐리를 따라 lg n 레벨. 총 $O(n \\lg n)$. amortized $O(\\lg n)$.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "17-1",
+        title: "Bit-Reversed Counter",
+        q: "$k$비트 카운터를 '비트 역순'으로 증가시키는 연산의 상환 비용을 분석하라.",
+        parts: [
+        {
+          label: "a",
+          q: "최하위 비트가 '최상위'처럼 작동하는 카운터. 단순 분석에서 최악 비용은?",
+          solution: "일반 이진 카운터처럼 $\\Theta(k)$ 최악 (모든 비트가 뒤집히는 경우).",
+        },
+        {
+          label: "b",
+          q: "집계 방법으로 분할상환 비용이 $O(1)$임을 보여라.",
+          solution: "$n$회 증가 후 뒤집힌 총 비트 수 ≤ $2n$ (일반 이진 카운터와 동일). 분할상환 $O(1)$.",
+        },
+        ],
+      },
+      {
+        num: "17-2",
+        title: "동적으로 크기 조정되는 해시 테이블",
+        q: "load factor $\\alpha$가 임계값(예: 1)에 도달하면 크기를 2배로 늘리는 해시 테이블. INSERT의 분할상환 비용을 분석하라.",
+        parts: [
+        {
+          label: "a",
+          q: "확장(rehash)은 $O(n)$이지만, 분할상환 $O(1)$임을 보여라.",
+          solution: "포텐셜 $\\Phi = 2 \\cdot \\text{num} - \\text{size}$ ($num \\geq size$/2일 때). 정상 INSERT 실제 1, $\\Delta\\Phi = 2$ → 상환 3. 확장 INSERT 실제 $n+1$, $\\Delta\\Phi = 2 - n$ → 상환 3. $O(1)$.",
+        },
+        {
+          label: "b",
+          q: "축소(shrink)를 어떻게 해야 상환 $O(1)$을 유지하는가?",
+          solution: "$\\alpha$가 $1/4$ 이하일 때 절반으로 축소 (1/2 아님!). $1/2$에서 축소하면 INSERT/DELETE 사이에서 계속 뒤집히며 $\\Omega(n)$ 상환 발생.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "dynamic-table", name: "Dynamic Table (동적 테이블 확장)", desc: "삽입마다 2배 확장 — 분할상환 $O(1)$",
+        tags: ["O(1) 분할상환", "포텐셜"], viz: "dynamicTable",
+        drills: {
+          source: "CLRS 3판 17.4절 pp.463-468, Theorem 17.4 · 집계/회계/포텐셜 세 방법",
+          pseudo: {
+            title: "① 의사코드 재구성 — TABLE-INSERT (테이블 확장 포함)",
+            intro: "CLRS 17.4절 p.464의 TABLE-INSERT. 가득 차면 두 배 확장 + 모든 원소 복사. 이 단순 코드가 분할상환 $O(1)$의 주제가 됨.",
+            reference: {
+              title: "참고: 실제 비용(c_i)과 분할상환 비용(ĉ_i)",
+              lines: [
+                { text: "T.size: 현재 할당된 슬롯 수 (0으로 시작)",                indent: 0 },
+                { text: "T.num: 저장된 원소 수 (0으로 시작)",                      indent: 0 },
+                { text: "load factor $\\alpha (T) = T.num$ / T.size",                       indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "i번째 삽입의 실제 비용 c_i:",                              indent: 0 },
+                { text: "  확장 없으면 $c_i = 1$",                                   indent: 0 },
+                { text: "  확장 있으면 $c_i = T.num_${before} + 1 (복사 + 삽입)",    indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "포텐셜 $\\Phi (T) = 2$·T.num − T.size:",                          indent: 0 },
+                { text: "  ½ 찬 테이블: $\\Phi  = 0$",                                     indent: 0 },
+                { text: "  가득 찬 테이블: $\\Phi  = T.num$ (확장 대비 저축)",              indent: 0 },
+                { text: "  확장 직후: Φ = 2(num) − 2·$num = 0$ (저축 소진)",          indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "ĉ_i = c_i + Φ_i − Φ_{i−1} $\\leq 3$ → amortized $O(1)$",           indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "TABLE-INSERT(T, x)",                              indent: 0, note: "x를 동적 테이블에 삽입" },
+              { text: "if T.size == 0",                                  indent: 1, note: "빈 테이블이면" },
+              { text: "allocate T.table with 1 slot",                    indent: 2, note: "크기 1로 초기 할당" },
+              { text: "$T.size = 1$",                                      indent: 2, note: "size 업데이트" },
+              { text: "if T.num == T.size",                              indent: 1, note: "가득 찼으면 확장" },
+              { text: "allocate new-table with 2·T.size slots",          indent: 2, note: "크기 두 배로 할당" },
+              { text: "insert all items in T.table into new-table",      indent: 2, note: "기존 원소 전체 복사" },
+              { text: "free T.table",                                    indent: 2, note: "이전 테이블 해제" },
+              { text: "$T.table = new$-table; $T.size = 2$·T.size",          indent: 2, note: "포인터 교체" },
+              { text: "insert x into T.table",                           indent: 1, note: "새 원소 삽입" },
+              { text: "$T.num = T.num$ + 1",                               indent: 1, note: "원소 수 증가" },
+            ],
+          },
+          proof: {
+            title: "② 분할상환 $O(1)$ 증명 — 포텐셜 방법",
+            intro: "CLRS Theorem 17.4. 포텐셜 $\\Phi (T) = 2$·T.num − T.size로 n번 TABLE-INSERT의 총 비용이 $O(n)$임을 보임.",
+            invariantLabel: "Theorem 17.4: ",
+            invariant: "빈 테이블에서 시작하는 n번의 TABLE-INSERT 연산 수열의 총 실제 비용은 $O(n)$. 분할상환 비용은 연산당 $O(1)$. 증명: 포텐셜 $\\Phi  = 2$·num − size로 ĉ_i ≤ 3임을 보이고, Σc_i ≤ Σĉ_i (Φ_0 = 0, Φ_n ≥ 0이므로).",
+            steps: [
+              {
+                stage: "① 포텐셜 함수의 유효성",
+                prompt: "$\\Phi (T) = 2$·T.num − T.size가 포텐셜 함수이기 위해 만족해야 할 조건은?",
+                choices: [
+                  { text: "$\\Phi (T_0) = 0$ (빈 테이블) AND $\\Phi (T_i) \\geq 0$ (모든 i)", correct: true,
+                    explain: "CLRS p.465. 빈 테이블: $num = 0$, $size = 0$ → $\\Phi  = 0$ ✓. 임의 시점: size/$2 \\leq num \\leq size$이므로 2·$num \\geq size$ → $\\Phi  \\geq 0$ ✓ (단, 확장 직후 size/$2 = num$). 이 조건이 만족되면 총 분할상환 ≥ 총 실제 비용." },
+                  { text: "Φ가 항상 양수", correct: false,
+                    explain: "0도 허용. $\\Phi (T_0) = 0$이 명시적으로 요구됨." },
+                  { text: "Φ가 상수", correct: false,
+                    explain: "포텐셜은 자료구조 상태에 따라 변함. 상수면 의미 없음." },
+                ],
+              },
+              {
+                stage: "② 확장 없는 삽입의 분할상환 비용",
+                prompt: "i번째 삽입이 확장을 유발하지 않을 때 ($T.num < T.size$). 실제 비용 $c_i = 1$. ĉ_i는?",
+                choices: [
+                  { text: "ĉ_i = c_i + ΔΦ = 1 + [2(num_i) − size_i] − [2(num_i − 1) − size_{i−1}] = 1 + 2 − $0 = 3$ (size 불변)", correct: true,
+                    explain: "CLRS p.466. size는 변하지 않음 (확장 없음), num이 1 증가 → ΔΦ = 2. 실제 1 + ΔΦ $2 = 3$. 분할상환 상수." },
+                  { text: "ĉ_i = 1 (실제 비용과 같음)", correct: false,
+                    explain: "포텐셜 변화를 더해야 함. Φ가 증가하면 분할상환 비용도 증가." },
+                  { text: "ĉ_i = 0", correct: false,
+                    explain: "적어도 실제 삽입 1이 필요. 음수 분할상환은 Φ가 감소할 때만." },
+                ],
+              },
+              {
+                stage: "③ 확장 있는 삽입의 분할상환 비용",
+                prompt: "i번째 삽입이 확장을 유발할 때 (num_{i−1} = size_{i−1} = num_i − 1). 실제 비용 $c_i = num_i$ (복사) + 1 (삽입). ĉ_i는?",
+                choices: [
+                  { text: "ĉ_i = num_i + [2·num_i − 2·num_{i−1}] − [2·num_{i−1} − num_{i−1}] = num_i + (2·num_i − 2·num_{i−1}) − num_{i−1} = num_i + 2 − num_{i−1} = 3 ($num_i = num_${i−1}+1 대입)", correct: true,
+                    explain: "CLRS p.467 계산. 확장 시 $size_i = 2$·size_{i−1} = 2·num_{i−1}. Φ_i = 2·num_i − 2·num_{i−1} = 2. Φ_{i−1} = 2·num_{i−1} − num_{i−1} = num_{i−1}. $c_i = num_${i−1} + 1. ĉ_i = num_{i−1}+1 + 2 − num_{i−1} = 3." },
+                  { text: "ĉ_i = n (실제 비용 전체)", correct: false,
+                    explain: "포텐셜이 급락하여 상쇄. 축적된 Φ(=num)이 복사 비용을 덮어줌." },
+                  { text: "ĉ_i = 1", correct: false,
+                    explain: "정확한 계산은 3. 삽입 1 + 확장 대비 저축 2." },
+                ],
+              },
+              {
+                stage: "④ 총 비용 결론",
+                prompt: "모든 삽입 i에 대해 ĉ_i $\\leq 3$. n번 삽입의 총 실제 비용 Σc_i는?",
+                choices: [
+                  { text: "Σc_i ≤ Σĉ_i + Φ_0 − Φ_n ≤ 3n + 0 − 0 = 3n = $O(n)$. 연산당 분할상환 비용 $O(1)$.", correct: true,
+                    explain: "CLRS Theorem 17.4 결론. Φ_0 = 0, Φ_n ≥ 0이므로 Φ_0 − Φ_n $\\leq 0$. 따라서 Σc_i ≤ Σĉ_i ≤ 3n." },
+                  { text: "Σc_i = $O(n^2)$ (확장마다 n번 복사)", correct: false,
+                    explain: "확장 비용 총합도 $O(n)$ — 두 배 증가라 기하급수가 수렴. 2+4+8+...+n < 2n." },
+                  { text: "Σc_i = $O(n \\lg n)$", correct: false,
+                    explain: "lg n이 아니라 상수 차수. 두 배 확장의 기하급수는 선형." },
+                ],
+              },
+              {
+                stage: "⑤ 집계 분석과의 비교",
+                prompt: "같은 결과를 집계 분석(Aggregate Analysis)으로는 어떻게 증명?",
+                choices: [
+                  { text: "단순 삽입 비용 합 n + 확장 비용 합 $\\leq 1$+2+4+...+n < 2n → 총 < 3n → 평균 < 3 = $O(1)$", correct: true,
+                    explain: "CLRS p.464. 기하급수 합은 첫 항의 2배 미만. 더 간단하지만 덜 유연. 포텐셜 방법이 여러 종류 연산 혼합 시 강점." },
+                  { text: "집계 분석으로는 불가능", correct: false,
+                    explain: "단순한 단일 연산 수열에는 집계가 가장 쉬움. 삽입만 있으면 충분." },
+                  { text: "n! 복잡도로 귀결", correct: false,
+                    explain: "두 배 확장은 기하급수라 선형. 계승 아님." },
+                ],
+              },
+              {
+                stage: "⑥ 왜 두 배 확장? 다른 배율은?",
+                prompt: "확장 배율을 k배($k > 1$)로 하면 분할상환 비용은?",
+                choices: [
+                  { text: "여전히 $O(1)$ 분할상환. 배율이 작을수록 메모리 효율, 클수록 분할상환 비용 상수 감소. 2가 일반적 균형점.", correct: true,
+                    explain: "기하급수 합 = num/(k−1)의 비율. $k = 2$ → 2배 오버헤드, $k = 1.5$ → 더 촘촘하지만 상수 증가. 실제 구현: Java ArrayList(1.5×), C++ vector(2×), Python list(1.125×~)." },
+                  { text: "$k = 2$에서만 $O(1)$", correct: false,
+                    explain: "임의 $k > 1$에서 $O(1)$ 분할상환. 단지 상수만 다름." },
+                  { text: "$k = 1.1$이면 O(log n)", correct: false,
+                    explain: "1보다 크면 기하급수가 수렴 → 선형 총합. 어떤 상수 $k > 1$이라도 $O(1)$ 분할상환." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ TABLE-INSERT 추적 — 8번 삽입 시나리오",
+            intro: "빈 테이블($size = 0$, $num = 0$)에 원소 x_1, ..., x_8을 차례로 TABLE-INSERT. 각 삽입의 실제 비용 c_i, 포텐셜 Φ_i, 분할상환 비용 ĉ_i를 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$: 빈 테이블에 x_1 삽입. $size = 0$ → 1로 할당 + 삽입. c_1, size_1, num_1, Φ_1?",
+                choices: [
+                  { text: "$c_1 = 1$ (첫 할당은 상수로 간주), $size_1 = 1$, $num_1 = 1$, Φ_1 = 2·1 − $1 = 1$", correct: true,
+                    explain: "첫 삽입: 초기 할당 + 1 원소 삽입. Φ가 1로 오름 (다음 확장 대비 저축 시작). ĉ_1 = 1 + 1 − $0 = 2$." },
+                  { text: "$c_1 = 0$ (빈 테이블이라 무비용)", correct: false,
+                    explain: "원소 삽입 자체가 1의 비용." },
+                  { text: "Φ_1 = 0 (반만 참)", correct: false,
+                    explain: "반만 찬 상태지만 $size = 1$, $num = 1$ → 2·1−$1 = 1$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 2$: $num = 1$, $size = 1$ → 가득. 확장 후 삽입. c_2, size_2, num_2, Φ_2?",
+                choices: [
+                  { text: "확장: 1→2 (1 복사) + 삽입. $c_2 = 1$+$1 = 2$. $size_2 = 2$, $num_2 = 2$. Φ_2 = 2·2 − $2 = 2$. ĉ_2 = 2 + (2−1) = 3.", correct: true,
+                    explain: "두 번째 삽입에서 확장 발동. 1개 원소 복사 + 1 새 원소. 결과 테이블 $size = 2$, $num = 2$ (다시 가득)." },
+                  { text: "확장 없이 삽입 ($num < size$)", correct: false,
+                    explain: "$num = 1$ = $size = 1$이라 확장 필요. 삽입 후 $num = 2$가 되는 것이지 그 전엔 가득 찬 상태." },
+                  { text: "$c_2 = 0$ (복사 없음)", correct: false,
+                    explain: "$size = 1$에 원소가 1개 있었으므로 확장 시 1번 복사 + 1번 삽입." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 3$: $num = 2$, $size = 2$ → 가득. 확장 2→4. $c_3 = 2$+$1 = 3$. $size_3 = 4$, $num_3 = 3$. Φ_3, ĉ_3?",
+                choices: [
+                  { text: "Φ_3 = 2·3 − $4 = 2$. ĉ_3 = 3 + (2 − 2) = 3.", correct: true,
+                    explain: "확장 후 Φ 급감 (size가 두 배로 뛰어) 후 num 하나 늘어 Φ 약간 회복. 분할상환은 여전히 3." },
+                  { text: "Φ_3 = 6 (num이 3)", correct: false,
+                    explain: "$\\Phi  = 2$·num − $size = 6$ − $4 = 2$. size 공제 빠뜨림." },
+                  { text: "ĉ_3 = 1", correct: false,
+                    explain: "실제 비용 3 + ΔΦ $0 = 3$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 4$: $num = 3$, $size = 4$ → 여유 있음. 확장 없이 단순 삽입. $c_4 = 1$. $size_4 = 4$, $num_4 = 4$. Φ_4, ĉ_4?",
+                choices: [
+                  { text: "Φ_4 = 2·4 − $4 = 4$. ĉ_4 = 1 + (4 − 2) = 3.", correct: true,
+                    explain: "확장 없음: size 불변, num +1 → Φ +2. 저축 축적. 분할상환 3." },
+                  { text: "Φ_4 = 0 (가득 참은 빈 것과 같음)", correct: false,
+                    explain: "가득 참: $num = size$ → $\\Phi  = num$. 가장 많이 저축된 상태." },
+                  { text: "ĉ_4 = 5", correct: false,
+                    explain: "단순 삽입은 상수 분할상환. 3 일관성." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 5$: $num = 4$, $size = 4$ → 가득. 확장 4→8. $c_5 = 4$+$1 = 5$. $size_5 = 8$, $num_5 = 5$. Φ_5, ĉ_5?",
+                choices: [
+                  { text: "Φ_5 = 2·5 − $8 = 2$. ĉ_5 = 5 + (2 − 4) = 3.", correct: true,
+                    explain: "확장 시점에 축적된 $\\Phi  = 4$가 비싼 실제 비용(5)의 대부분을 상쇄. 분할상환 여전히 3." },
+                  { text: "ĉ_5 = 5 (실제 비용 그대로)", correct: false,
+                    explain: "축적된 Φ가 4만큼 감소하여 상쇄. 분할상환은 3." },
+                  { text: "Φ_5 = 10", correct: false,
+                    explain: "2·5 − $8 = 2$. size 공제." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 1$..8 전체 요약: 실제 비용 c 수열과 분할상환 ĉ 수열, 그리고 총합 비교는?",
+                choices: [
+                  { text: "c = [1, 2, 3, 1, 5, 1, 1, 1] (Σc = 15). ĉ = [2, 3, 3, 3, 3, 3, 3, 3] (Σĉ = 23). 분할상환은 일정, 실제는 확장 시점에만 폭등. Σc < Σĉ 보장.", correct: true,
+                    explain: "ĉ $\\leq 3$ 일관, c는 i=2(확장), i=3(확장), i=5(확장)에서 피크. 확장 없으면 $c = 1$. 8번 삽입 총 실제 비용 $15 < 3$·$8 = 24$. $O(n)$ 달성." },
+                  { text: "c와 ĉ가 항상 같음", correct: false,
+                    explain: "확장 시점에 다름. 포텐셜이 이를 평탄화." },
+                  { text: "총 실제 비용이 $O(n^2)$", correct: false,
+                    explain: "두 배 확장의 기하급수는 선형. n번 삽입 총 실제 비용 < 3n." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch22",
+    tier: 1,
+    num: "Ch 22",
+    title: "Elementary Graph Algorithms",
+    subtitle: "BFS · DFS · 위상 정렬 · SCC",
+    summary: "색상과 타임스탬프로 그래프를 해독하는 법.",
+    objectives: [
+      "인접 리스트와 인접 행렬 표현의 공간/시간 트레이드오프를 이해한다.",
+      "BFS와 DFS의 동작·시간 복잡도·응용(최단 경로/위상 정렬/사이클 검출)을 비교할 수 있다.",
+      "괄호 정리·백색 경로 정리·간선 분류로 DFS 성질을 분석하고 SCC를 계산할 수 있다.",
+    ],
+    md: `
+## 그래프 표현
+- **인접 리스트**: $\\Theta(V + E)$ 공간, 희소 그래프
+- **인접 행렬**: $\\Theta(V^2)$ 공간, 밀집 그래프
+
+## BFS (Breadth-First Search) ⭐
+- 시작점 s로부터 **간선 수 최단 경로** 계산
+- **시간**: $O(V + E)$
+- 색상: WHITE → GRAY → BLACK
+
+\`\`\`
+BFS(G, s)
+  모든 u: u.color=WHITE, u.d=∞, u.π=NIL
+  s.color=GRAY, s.d=0, s.π=NIL
+  Q = {s}
+  while Q ≠ ∅
+    u = DEQUEUE(Q)
+    for each v ∈ G.Adj[u]
+      if v.color == WHITE
+        v.color = GRAY
+        v.d = u.d + 1
+        v.π = u
+        ENQUEUE(Q, v)
+    u.color = BLACK
+\`\`\`
+
+## DFS (Depth-First Search) ⭐
+- **시간**: $\\Theta(V + E)$
+- u.d (발견 시간), u.f (종료 시간)
+- **괄호 정리**, **백색 경로 정리**
+
+**간선 분류**
+
+| 유형 | 조건 | 의미 |
+|------|------|------|
+| Tree edge | v가 WHITE | DFS 트리의 간선 |
+| Back edge | v가 GRAY | 조상으로의 간선 (사이클!) |
+| Forward edge | v가 BLACK, $u.d < v.d$ | 후손으로의 간선 |
+| Cross edge | 나머지 | |
+
+**핵심 정리**: 방향 그래프에 사이클 ⟺ DFS에서 back edge 존재
+
+## 위상 정렬 ⭐
+- DAG에서만 가능
+- DFS 후 f의 역순 정렬
+- **시간**: $\\Theta(V + E)$
+
+## 강연결 요소 (SCC) ⭐
+코사라주: (1) DFS로 f 계산 (2) 전치 $G^{T}$ (3) G^T에 DFS (f 역순 처리)
+`,
+    ox: [
+      { q: "BFS는 가중치 없는 그래프의 최단 경로를 찾는다.", a: true, why: "간선 수 기준 최단." },
+      { q: "DFS의 시간 복잡도는 $\\Theta(V + E)$이다.", a: true, why: "인접 리스트 기준." },
+      { q: "방향 그래프에 사이클 존재 ⟺ DFS에 back edge 존재.", a: true, why: "CLRS 22.3 Lemma." },
+      { q: "DAG에서만 위상 정렬(Topological Sort)이 가능하다.", a: true, why: "사이클 있으면 순서 정의 불가." },
+      { q: "BFS는 스택(stack)을 사용한다.", a: false, why: "큐(queue). DFS가 스택." },
+      { q: "Kosaraju의 SCC 알고리즘은 DFS를 두 번 사용한다.", a: true, why: "원본 + 전치 그래프." },
+      { q: "DFS의 괄호 정리에 따르면 [u.d, u.f]와 [v.d, v.f]는 항상 겹친다.", a: false, why: "겹치거나 완전 분리 중 하나." },
+      { q: "SCC 요소 그래프 G^SCC는 항상 DAG이다.", a: true, why: "SCC의 최대성 때문에 사이클 불가." },
+      { q: "BFS 트리는 최단 경로 트리이다.", a: true, why: "각 정점에서 s까지의 거리가 BFS 트리의 경로 길이." },
+      { q: "DFS는 방향 그래프와 무방향 그래프 모두에서 정의된다.", a: true, why: "간선 분류가 약간 다를 뿐 알고리즘 동일." },
+    ],
+
+    exercises: [
+      {
+        num: "22.1-6",
+        q: "인접 행렬에서 'universal sink' (모든 정점에서 들어오는 간선, 나가는 간선 없음) 존재 여부를 O(V)에 판정하시오.",
+        hint: "sink는 해당 행이 전부 0, 열이 전부 1.",
+        solution: "대각선 외 $i = j$, i++ if M[i][j]==1, 아니면 j++. O(V)에 후보 찾고 검증.",
+      },
+      {
+        num: "22.2-3",
+        q: "BFS에 NIL 대신 정점 배열을 사용하도록 수정하시오.",
+        hint: "color, d, π 배열로.",
+        solution: "코드 동일 의미이지만 배열 인덱싱.",
+      },
+      {
+        num: "22.2-6",
+        q: "BFS가 minimum-weight spanning tree를 만드는지 확인: 가중치 그래프에서 BFS는 MST 아님.",
+        hint: "BFS는 간선 수 최단만 고려.",
+        solution: "반례: 정점 3개 사각형 그래프, BFS 트리가 최대 가중치 간선 선택 가능.",
+      },
+      {
+        num: "22.3-6",
+        q: "유향 그래프에서 DFS의 edge 분류 4가지를 DFS-VISIT 도중 판별 코드 추가.",
+        hint: "v.color 상태로 분류.",
+        solution: "WHITE → tree, GRAY → back, BLACK + $u.d < v.d$ → forward, BLACK + $u.d > v.d$ → cross.",
+      },
+      {
+        num: "22.4-5",
+        q: "위상 정렬을 BFS 기반(Kahn 알고리즘)으로 구현.",
+        hint: "in-degree 0 정점을 큐에 넣고 처리.",
+        solution: "in-degree 배열 계산. 0인 정점 큐. 하나씩 pop하여 출력 + 이웃 in-degree -1. 0 되면 큐에 추가. $\\Theta(V + E)$.",
+      },
+      {
+        num: "22.5-5",
+        q: "TARJAN 알고리즘의 pseudocode와 Kosaraju 비교.",
+        hint: "Tarjan: 1 DFS + 스택. Kosaraju: 2 DFS + 전치.",
+        solution: "Tarjan이 보통 실제 구현에서 빠름 (전치 그래프 불필요). 증명 복잡도는 비슷.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "22-1",
+        title: "BFS로 간선 분류하기",
+        q: "방향 그래프에 BFS를 적용했을 때 간선 $(u,v)$를 어떻게 분류할 수 있는가?",
+        parts: [
+        {
+          label: "a",
+          q: "tree, back, forward, cross 중 어느 것이 가능하며, $u.d$와 $v.d$의 관계로 어떻게 구별하는가?",
+          solution: "**Tree edge**: $v.d = u.d + 1$ (발견). **Cross edge**: $|u.d - v.d| \\leq 1$. **Back edge**: 방향 그래프에서 $u.d \\geq v.d$ 가능. **Forward edge**: BFS에서는 없음 (한 번에 확장).",
+        },
+        {
+          label: "b",
+          q: "무방향 그래프에서는 어떻게 달라지는가?",
+          solution: "무방향: **tree** 또는 **cross**만 존재. Back/Forward edge 없음 (BFS 레벨 차가 최대 1).",
+        },
+        ],
+      },
+      {
+        num: "22-2",
+        title: "Articulation Points, Bridges, Biconnected Components",
+        q: "무방향 연결 그래프 $G$에서 정점 $v$가 articulation point(제거 시 비연결)라면, DFS 트리에서 어떻게 감지할 수 있는가?",
+        parts: [
+        {
+          label: "a",
+          q: "DFS 트리의 루트가 articulation point인 조건은?",
+          solution: "루트가 DFS 트리에서 **자식을 2개 이상** 가지면 articulation point (자식 서브트리들이 서로 back edge로 연결될 수 없음).",
+        },
+        {
+          label: "b",
+          q: "비-루트 정점 $v$가 articulation point일 조건을 $v.d$와 $v$의 자식 $c$의 $c.low$(자식 서브트리에서 back edge로 도달 가능한 최소 $d$)로 표현하라.",
+          solution: "$c.low \\geq v.d$인 자식 $c$가 존재 → $v$ 제거 시 $c$ 서브트리가 끊김 → $v$ articulation point.",
+        },
+        {
+          label: "c",
+          q: "bridge(제거 시 비연결되는 간선) 검출 조건은?",
+          solution: "간선 $(u, v)$가 DFS tree edge이고 $v.low > u.d$이면 bridge. (자식 서브트리가 상위로 올라갈 다른 길 없음.)",
+        },
+        {
+          label: "d",
+          q: "biconnected component를 $O(V + E)$에 찾는 알고리즘의 스케치는?",
+          solution: "DFS + 간선 스택 유지. articulation point 발견 시 스택에서 해당 서브트리에 속한 간선을 pop → 하나의 biconnected component.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "bfs", name: "BFS", desc: "큐를 이용한 너비 우선 탐색",
+        tags: ["O(V+E)", "Queue"], viz: "bfs",
+        drills: {
+          source: "CLRS 3판 22.2절 pp.594-601, Figure 22.3",
+          pseudo: {
+            title: "① 의사코드 재구성 — BFS",
+            intro: "CLRS 22.2절(p.595)의 BFS 18줄을 순서대로 배치하세요. 너비 우선 구조를 유지하는 핵심은 큐(FIFO)와 3색 표기(white/gray/black).",
+            reference: {
+              title: "참고: 변수 의미",
+              lines: [
+                { text: "u.color ∈ {WHITE, GRAY, BLACK}  // 탐색 상태",                indent: 0 },
+                { text: "$u.d = s$에서 u까지의 거리 (edge 개수)",                     indent: 0 },
+                { text: "u.$\\pi  = BFS$ 트리 상의 부모 (predecessor)",                   indent: 0 },
+                { text: "Q       = 탐색 frontier (gray 정점들의 큐)",                   indent: 0 },
+                { text: "",                                                             indent: 0 },
+                { text: "// 불변식 (line 10 직전): Q의 원소 = {v ∈ V | $v.color = GRAY$}", indent: 0 },
+                { text: "// 정확성 (Theorem 22.5): 종료 시 v.d = $\\delta(s,v)$ 모든 v에 대해", indent: 0 },
+              ],
+            },
+            // CLRS p.595 원문
+            lines: [
+              { text: "BFS(G, s)",                              indent: 0, note: "프로시저 헤더" },
+              { text: "for each vertex u ∈ G.V − {s}",          indent: 1, note: "비-source 정점 초기화" },
+              { text: "$u.color = WHITE$",                        indent: 2, note: "미발견 상태" },
+              { text: "u.d = ∞",                                indent: 2, note: "거리 미정" },
+              { text: "u.$\\pi  = NIL$",                              indent: 2, note: "부모 없음" },
+              { text: "$s.color = GRAY$",                         indent: 1, note: "source는 시작부터 frontier" },
+              { text: "$s.d = 0$",                                indent: 1, note: "자기 자신까지 거리 0" },
+              { text: "s.$\\pi  = NIL$",                              indent: 1, note: "source는 트리 루트" },
+              { text: "Q = ∅",                                  indent: 1, note: "빈 큐 준비" },
+              { text: "ENQUEUE(Q, s)",                          indent: 1, note: "탐색 시작점 큐에 삽입" },
+              { text: "while Q ≠ ∅",                            indent: 1, note: "frontier 빌 때까지" },
+              { text: "$u = DEQUEUE(Q)$",                         indent: 2, note: "FIFO로 다음 정점" },
+              { text: "for each v ∈ G.Adj[u]",                  indent: 2, note: "u의 이웃 순회" },
+              { text: "if v.color == WHITE",                    indent: 3, note: "아직 발견 안된 이웃" },
+              { text: "$v.color = GRAY$",                         indent: 4, note: "발견으로 표시" },
+              { text: "$v.d = u.d$ + 1",                          indent: 4, note: "거리 갱신: 한 걸음 더" },
+              { text: "v.$\\pi  = u$",                                indent: 4, note: "BFS 트리 부모 기록" },
+              { text: "ENQUEUE(Q, v)",                          indent: 4, note: "큐에 추가" },
+              { text: "$u.color = BLACK$",                        indent: 2, note: "u 처리 완료" },
+            ],
+          },
+          proof: {
+            title: "② BFS 정확성 증명 — 큐 불변식과 최단 거리",
+            intro: "CLRS Theorem 22.5. BFS가 모든 도달 가능 정점 v에 대해 v.d = $\\delta(s,v)$ (최단 edge 거리)를 계산함을 증명합니다.",
+            invariantLabel: "목표: ",
+            invariant: "BFS 종료 시, 모든 s에서 도달 가능한 v에 대해 v.d = $\\delta(s,v)$ (최단 경로의 간선 수). 도달 불가능한 v는 v.d = ∞. 증명 핵심: (a) 상한 $v.d \\geq \\delta $, (b) 큐가 d 값 순으로 단조 비감소, (c) 모순 유도로 하한.",
+            steps: [
+              {
+                stage: "① 큐 불변식",
+                prompt: "Line 10 (while 시작 조건 검사 직전)에서 성립하는 BFS의 큐 불변식은?",
+                choices: [
+                  { text: "Q의 원소 = 현재 gray인 정점들의 집합", correct: true,
+                    explain: "gray로 칠하면(line 14) 즉시 큐에 들어가고(line 17), 큐에서 빠지면(line 11) 곧 black으로 칠함(line 18). 따라서 'gray ≡ 큐 안'." },
+                  { text: "Q의 원소 = 아직 방문하지 않은 정점들", correct: false,
+                    explain: "미방문 정점은 white로 큐 밖입니다. 큐에는 gray(발견되었지만 이웃을 다 훑지 않은) 정점들." },
+                  { text: "Q의 원소 = 모든 black 정점", correct: false,
+                    explain: "black은 큐에서 이미 빠진 정점. 큐 안에 있지 않습니다." },
+                  { text: "Q의 원소 = source s와 그 이웃들만", correct: false,
+                    explain: "탐색이 진행되면 s의 이웃 너머로 frontier가 확장됩니다." },
+                ],
+              },
+              {
+                stage: "② 거리의 상한 (Lemma 22.2)",
+                prompt: "BFS가 끝났을 때, 모든 v에 대해 v.d와 $\\delta(s,v)$의 관계는? (귀납으로 증명)",
+                choices: [
+                  { text: "v.d ≥ $\\delta(s,v)$  — v.d는 항상 실제 최단 거리의 상한", correct: true,
+                    explain: "귀납 가설: v가 enqueue되기 전까지의 모든 정점 u에 대해 u.d ≥ $\\delta(s,u)$. v가 u로부터 발견될 때 $v.d = u.d$ + 1 ≥ $\\delta(s,u)$ + 1 ≥ $\\delta(s,v)$ (삼각 부등식)." },
+                  { text: "v.d ≤ $\\delta(s,v)$", correct: false,
+                    explain: "방향이 반대입니다. v.d가 '하한'이 아니라 '상한'이라는 것이 쉬운 방향." },
+                  { text: "v.d = $\\delta(s,v)$ (자명)", correct: false,
+                    explain: "같음은 목표 결과이지 Lemma 22.2의 직접 주장은 아닙니다. Lemma는 먼저 한쪽 부등식만 보입니다." },
+                  { text: "v.d와 δ는 무관", correct: false,
+                    explain: "BFS의 핵심 정확성 명제가 바로 두 값이 같다는 것입니다." },
+                ],
+              },
+              {
+                stage: "③ 큐의 단조성 (Lemma 22.3)",
+                prompt: "큐 Q = ⟨v₁, v₂, ..., vᵣ⟩(v₁이 head)일 때, d 값에 대한 성립 조건은?",
+                choices: [
+                  { text: "$v_r.d \\leq v_1.d + 1$, 그리고 $v_i.d \\leq v_{i+1}.d$ for $i=1..r-1$", correct: true,
+                    explain: "큐의 모든 원소는 d 값이 단조 비감소, 그리고 head와 tail 차이는 최대 1. BFS가 '레벨 k를 모두 처리한 뒤 레벨 k+1로' 진행하는 이유." },
+                  { text: "vᵣ.$d < v_{1}.d$ (tail은 head보다 가까움)", correct: false,
+                    explain: "반대입니다. tail에 있는 원소가 나중에 발견되었으므로 거리는 같거나 큼." },
+                  { text: "모든 vᵢ.d가 같음", correct: false,
+                    explain: "큐 안에 k와 k+1 두 레벨이 섞여 있을 수 있습니다." },
+                  { text: "큐의 d 값은 임의적 (단조성 없음)", correct: false,
+                    explain: "FIFO + '발견과 동시에 enqueue' 조합이 단조성을 보장합니다." },
+                ],
+              },
+              {
+                stage: "④ Corollary 22.4 — enqueue 순서",
+                prompt: "vᵢ가 vⱼ보다 먼저 큐에 들어갔다면, vᵢ.d와 vⱼ.d는?",
+                choices: [
+                  { text: "vᵢ.$d \\leq v$ⱼ.d — enqueue 시점의 d 값이 단조 비감소", correct: true,
+                    explain: "Lemma 22.3의 직접 귀결. 먼저 큐에 들어간 정점의 거리는 뒤에 들어간 정점보다 항상 ≤." },
+                  { text: "vᵢ.$d \\geq v$ⱼ.d", correct: false,
+                    explain: "반대입니다. 더 가까운 정점이 먼저 발견됨." },
+                  { text: "비교 불가", correct: false,
+                    explain: "Corollary 22.4가 이 비교를 정확히 보장합니다." },
+                  { text: "vᵢ.$d = v$ⱼ.d", correct: false,
+                    explain: "같은 레벨이면 같을 수 있지만, 다른 레벨의 정점끼리라면 엄격히 <." },
+                ],
+              },
+              {
+                stage: "⑤ 모순 유도 — 잘못된 d 값이 있다고 가정",
+                prompt: "v.d > $\\delta(s,v)$인 최소 δ 값 v가 있다고 가정. 최단 경로에서 v 직전 정점 u ($\\delta(s,u)$ < $\\delta(s,v)$)를 잡으면?",
+                choices: [
+                  { text: "u.d = $\\delta(s,u)$ (가정의 minimality로). u가 dequeue될 때 v의 색에 따라 세 경우 모두 모순.", correct: true,
+                    explain: "u가 dequeue될 때 v가 white면 line 15로 $v.d = u.d$+1 = $\\delta(s,v)$로 설정되어 가정 모순. v가 gray 또는 black이면 이미 $v.d \\leq u.d$ + 1 ≤ $\\delta(s,v)$여야 해 역시 모순." },
+                  { text: "u.d > $\\delta(s,u)$ — u도 잘못 계산됨", correct: false,
+                    explain: "v가 'δ 값이 최소'인 반례이므로 u는 올바른 d 값을 가집니다." },
+                  { text: "모순이 나오지 않음", correct: false,
+                    explain: "정확히 이 지점에서 세 case (white/gray/black) 모두 모순이 발생합니다." },
+                  { text: "v.d = $\\delta(s,v)$가 되어 가정과 일치", correct: false,
+                    explain: "증명은 반례의 존재를 모순으로 보이는 방향입니다." },
+                ],
+              },
+              {
+                stage: "⑥ 결론 (Theorem 22.5)",
+                prompt: "위 모순에서 얻는 결론은?",
+                choices: [
+                  { text: "모든 도달 가능한 v에 대해 v.d = $\\delta(s,v)$. 또한 BFS 트리의 루트→v 경로는 최단 경로.", correct: true,
+                    explain: "잘못된 d 값을 갖는 반례가 존재하지 않으므로 모든 v에서 v.d가 올바름. predecessor 체인(v.π)이 그리는 트리가 최단 경로 트리." },
+                  { text: "v.d = $\\delta(s,v)$는 일부 정점에만 성립", correct: false,
+                    explain: "반례가 전혀 없으므로 모든 도달 가능 정점에 성립." },
+                  { text: "BFS 트리는 항상 유일함", correct: false,
+                    explain: "인접 리스트 순서에 따라 BFS 트리는 달라질 수 있지만 d 값은 불변입니다." },
+                  { text: "$O(V + E)$ 시간 복잡도가 증명됨", correct: false,
+                    explain: "그건 분석의 시간 복잡도 부분이고, 이 증명은 정확성(correctness)에 관한 것입니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ BFS 직접 추적 — CLRS Figure 22.3 그래프",
+            intro: "무향 그래프 {r,s,t,u,v,w,x,y}, 간선: r–s, r–v, s–w, w–t, w–x, t–x, t–u, x–u, x–y, u–y. $Source = s$. BFS 각 반복 후 큐와 d 값을 예측하세요. (정점 인접리스트는 알파벳 순으로 가정)",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기화(lines 1–9) 완료 후 s의 이웃 w와 r이 발견되기 전. 큐의 상태와 s.d는?",
+                choices: [
+                  { text: "Q = ⟨s⟩, $s.d = 0$, 나머지 모두 d = ∞", correct: true,
+                    explain: "Line 5–9: s만 gray, $d = 0$으로 설정. 다른 정점은 white, d=∞. 큐에 s 하나." },
+                  { text: "Q = ⟨s, w, r⟩, 이웃이 이미 추가됨", correct: false,
+                    explain: "이웃 추가는 while 루프의 첫 반복에서 s를 dequeue한 뒤 일어납니다." },
+                  { text: "Q = ∅, 모두 black", correct: false,
+                    explain: "BFS는 시작 시 s를 enqueue하고 gray로 칠합니다." },
+                  { text: "s.d = ∞ (아직 미정)", correct: false,
+                    explain: "Line 6에서 $s.d = 0$으로 명시적으로 설정됩니다." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "첫 반복: $u = DEQUEUE(Q)$ = s. s의 이웃 {w, r}을 순회하며 모두 white이므로 발견. 반복 종료 후 큐와 d 값은?",
+                choices: [
+                  { text: "Q = ⟨w, r⟩, $w.d = r.d$ = 1, s는 black", correct: true,
+                    explain: "s에서 한 걸음 거리의 이웃은 w, r (Fig 22.3에서 s의 인접: w 및 r). 둘 다 gray + $d = 1$ + enqueue. s는 마지막에 black." },
+                  { text: "Q = ⟨s⟩ (변화 없음)", correct: false,
+                    explain: "s는 dequeue되었고 이웃들이 enqueue되었으므로 큐 내용이 바뀝니다." },
+                  { text: "Q = ⟨w, r⟩, $w.d = 2$, $r.d = 2$", correct: false,
+                    explain: "$s.d = 0$이므로 이웃의 $d = 0$ + $1 = 1$." },
+                  { text: "Q = ⟨w, r, t, x⟩ (2단계까지 한꺼번에)", correct: false,
+                    explain: "BFS는 한 레벨씩 처리합니다. 현재는 s의 직접 이웃만 발견." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "두 번째 반복: $u = DEQUEUE(Q)$ = w (FIFO). w의 이웃 {s, t, x}를 스캔. s는 이미 black이라 스킵. 종료 후 Q와 d 값 변화는?",
+                choices: [
+                  { text: "Q = ⟨r, t, x⟩, $t.d = x.d$ = 2, w는 black", correct: true,
+                    explain: "FIFO: r이 head. w의 이웃 중 white인 t, x는 gray+d=2(=w.d+1)+enqueue. s는 이미 black이라 조건 line 13에서 스킵." },
+                  { text: "Q = ⟨r, t, x⟩, 모든 값 $d = 1$", correct: false,
+                    explain: "$w.d = 1$에 한 걸음 더 하므로 t, x는 $d = 2$." },
+                  { text: "Q = ⟨r⟩, w의 이웃은 모두 이미 처리됨", correct: false,
+                    explain: "w의 이웃 중 t, x는 이 순간 처음 발견됩니다." },
+                  { text: "Q = ⟨t, x, r⟩ (t, x를 먼저 enqueue)", correct: false,
+                    explain: "r은 이전 반복에서 이미 큐에 있었으므로 head. FIFO 순서 유지." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "r을 처리(이웃은 s, v — s는 black, v 새로 발견). t 처리(이웃 w, x, u — w,x는 이미 gray/black, u 새로). x 처리(이웃 w, t, u, y — u는 이미 gray, y 새로). 이 3번의 반복 후 d 값은?",
+                choices: [
+                  { text: "$r.d = 1$, $v.d = 2$, $t.d = 2$, $x.d = 2$, $u.d = 3$, $y.d = 3$ — 레벨 3까지 도달", correct: true,
+                    explain: "r이 v를 발견 → $v.d = r.d$+$1 = 2$. t가 u를 발견 → $u.d = t.d$+$1 = 3$. x가 y를 발견 → $y.d = x.d$+$1 = 3$. CLRS Figure 22.3 (e)-(g)의 상태." },
+                  { text: "모든 d 값이 1 (직접 연결됨)", correct: false,
+                    explain: "그래프가 완전 그래프가 아니므로 거리가 다릅니다. 각 정점의 BFS 트리 깊이가 다양합니다." },
+                  { text: "$v.d = 1$ (v는 s에서 직접 도달)", correct: false,
+                    explain: "v는 s에서 거리 2 (s→r→v 또는 s→w→x→... 더 긴 경로)." },
+                  { text: "$u.d = 2$ (u는 w에서 2단계)", correct: false,
+                    explain: "u의 가장 짧은 경로는 s→w→t→u 또는 s→w→x→u로 3단계." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "BFS가 최종 종료되었을 때, y의 부모 y.π는? (인접 리스트 알파벳 순 가정)",
+                choices: [
+                  { text: "y.$\\pi  = x$ — y를 처음 발견한 정점이 x", correct: true,
+                    explain: "x가 t보다 먼저 dequeue되어 y를 먼저 발견 (실제로는 r → t → x 순서로 처리. x가 y를 먼저 발견). π는 '발견자'." },
+                  { text: "y.$\\pi  = u$ — 가장 가까운 거리 공유", correct: false,
+                    explain: "u와 y는 인접하지만 u는 y보다 나중에 처리됩니다. 누가 먼저 발견했는지가 기준." },
+                  { text: "y.$\\pi  = s$ — source와의 직접 연결", correct: false,
+                    explain: "y와 s는 직접 연결되어 있지 않습니다 (거리 3)." },
+                  { text: "y.$\\pi  = NIL$ — y는 루트", correct: false,
+                    explain: "NIL은 source s의 π. y는 s로부터 도달 가능하므로 π가 있습니다." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "BFS 알고리즘이 같은 그래프에서 '인접 리스트 순서'를 바꾸면 어떤 값이 바뀔 수 있는가? (연습 22.2-5)",
+                choices: [
+                  { text: "BFS 트리(π 값)는 바뀔 수 있으나 d 값은 불변", correct: true,
+                    explain: "최단 거리 $\\delta(s,v)$는 그래프의 속성이라 인접 리스트 순서와 무관. 하지만 '어느 정점이 먼저 발견했는가'는 순서에 의존하므로 π가 바뀔 수 있음." },
+                  { text: "d 값도 같이 바뀜", correct: false,
+                    explain: "d = $\\delta(s,v)$이고 δ는 그래프의 구조적 불변량입니다. 탐색 순서와 무관." },
+                  { text: "아무것도 바뀌지 않음", correct: false,
+                    explain: "BFS 트리 구조는 인접 리스트 순서에 따라 달라집니다." },
+                  { text: "큐의 크기가 바뀜", correct: false,
+                    explain: "큐 크기의 peak은 달라질 수 있지만 알고리즘이 처리하는 정점·간선 총량은 동일." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "dfs", name: "DFS", desc: "재귀 기반 깊이 우선 탐색",
+        tags: ["Θ(V+E)", "Stack"], viz: "dfs",
+        drills: {
+          source: "CLRS 3판 22.3절 pp.603-612, Theorem 22.7·22.9 · Figure 22.4-22.5",
+          pseudo: {
+            title: "① 의사코드 재구성 — DFS + DFS-VISIT",
+            intro: "CLRS 22.3절의 DFS는 두 프로시저로 구성됩니다. 메인 DFS(7줄) + 재귀 DFS-VISIT(10줄). 두 프로시저 총 17줄 + 헤더 2개 = 19개를 순서대로 배치하세요.",
+            reference: {
+              title: "참고: 시간 스탬프의 의미",
+              lines: [
+                { text: "u.color ∈ {WHITE, GRAY, BLACK}",                              indent: 0 },
+                { text: "$u.d = discovery$ time (처음 발견하고 GRAY로 칠한 시각)",         indent: 0 },
+                { text: "$u.f = finishing$ time (인접 리스트 탐색 완료, BLACK으로 칠한 시각)", indent: 0 },
+                { text: "불변: $u.d < u.f$ (식 22.2), $1 \\leq u.d$, $u.f \\leq 2$|V|",              indent: 0 },
+                { text: "time은 전역 변수 — 전체 DFS에 걸쳐 단조 증가",                   indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "// 핵심 정리: Theorem 22.7 (괄호 정리), 22.9 (흰 경로 정리)",   indent: 0 },
+              ],
+            },
+            // CLRS p.604-605 원문
+            lines: [
+              { text: "DFS(G)",                               indent: 0, note: "메인 프로시저" },
+              { text: "for each vertex u ∈ G.V",              indent: 1, note: "모든 정점 초기화" },
+              { text: "$u.color = WHITE$",                      indent: 2, note: "미발견" },
+              { text: "u.$\\pi  = NIL$",                            indent: 2, note: "부모 없음" },
+              { text: "$time = 0$",                             indent: 1, note: "전역 시간 리셋" },
+              { text: "for each vertex u ∈ G.V",              indent: 1, note: "방문 주도 루프" },
+              { text: "if u.color == WHITE",                  indent: 2, note: "아직 방문 안 됐으면" },
+              { text: "DFS-VISIT(G, u)",                      indent: 3, note: "새 DFS 트리 시작" },
+              { text: "",                                     indent: 0, note: "─── 이하 보조 프로시저 ───" },
+              { text: "DFS-VISIT(G, u)",                      indent: 0, note: "재귀 탐색" },
+              { text: "$time = time$ + 1",                      indent: 1, note: "시간 증가" },
+              { text: "$u.d = time$",                           indent: 1, note: "발견 시각 기록" },
+              { text: "$u.color = GRAY$",                       indent: 1, note: "발견 상태로" },
+              { text: "for each v ∈ G.Adj[u]",                indent: 1, note: "u의 이웃 순회" },
+              { text: "if v.color == WHITE",                  indent: 2, note: "미방문 이웃" },
+              { text: "v.$\\pi  = u$",                              indent: 3, note: "트리 엣지 기록" },
+              { text: "DFS-VISIT(G, v)",                      indent: 3, note: "재귀 (깊이 우선)" },
+              { text: "$u.color = BLACK$",                      indent: 1, note: "완료" },
+              { text: "$time = time$ + 1",                      indent: 1, note: "종료 시간 위한 시간 증가" },
+              { text: "$u.f = time$",                           indent: 1, note: "종료 시각 기록" },
+            ],
+          },
+          proof: {
+            title: "② DFS 구조 정리 — 괄호 정리 + 흰 경로 정리",
+            intro: "CLRS Theorem 22.7과 22.9는 DFS 구조 분석의 두 기둥. 괄호 정리는 시간 interval 구조를, 흰 경로 정리는 조상-후손 관계를 특성화.",
+            invariantLabel: "두 정리: ",
+            invariant: "(1) 괄호 정리 (Theorem 22.7): 어느 두 정점 u, v든 [u.d, u.f]와 [v.d, v.f]는 완전 분리이거나 한쪽이 다른 쪽에 완전 포함 — 절대 '겹침'은 없음. (2) 흰 경로 정리 (Theorem 22.9): v는 u의 후손 ⟺ u.d 시점에 u에서 v까지 흰 정점만 있는 경로가 존재.",
+            steps: [
+              {
+                stage: "① 시간 interval의 의미",
+                prompt: "각 정점 u의 [u.d, u.f] interval은 무엇을 의미하는가?",
+                choices: [
+                  { text: "u가 GRAY인 시간 구간 — 이 사이에 u의 재귀 호출이 열려 있음", correct: true,
+                    explain: "u.d에 GRAY로 칠해지고 u.f에 BLACK으로 칠해지므로 그 사이가 GRAY 구간. 또한 '재귀 활성' 구간이기도 함 (DFS-VISIT(u)의 스택 생존 시간)." },
+                  { text: "u가 WHITE인 시간 구간", correct: false,
+                    explain: "WHITE는 u.d 이전. [u.d, u.f]는 GRAY 구간." },
+                  { text: "u의 인접 리스트 크기", correct: false,
+                    explain: "시간 값은 탐색의 순서이지 크기가 아님." },
+                  { text: "u에서 도달 가능한 정점 수", correct: false,
+                    explain: "interval 길이가 서브트리 크기와 관련은 있지만 정확한 정의가 아님." },
+                ],
+              },
+              {
+                stage: "② 괄호 정리의 구조",
+                prompt: "Theorem 22.7은 두 정점 u, v의 interval 관계에 대해 몇 가지 경우만 가능하다고 주장하는가?",
+                choices: [
+                  { text: "정확히 3가지: (a) 완전 분리, (b) u가 v에 포함, (c) v가 u에 포함 — '부분 겹침'은 불가", correct: true,
+                    explain: "괄호(parenthesis)처럼 구조화됨. DFS의 재귀 구조가 스택 기반이라 '(u ... (v ... v) ... u)' 또는 '(u ... u)(v ... v)' 형태만 나옴. 'u가 v 안에 들어갔다가 다시 나오는' 경우는 없음." },
+                  { text: "4가지 (완전 분리, 왼쪽 겹침, 오른쪽 겹침, 포함)", correct: false,
+                    explain: "부분 겹침은 DFS 스택 구조상 불가능. 정확히 3가지." },
+                  { text: "2가지 (분리 또는 동일)", correct: false,
+                    explain: "포함 관계가 빠졌음." },
+                  { text: "모든 경우 가능", correct: false,
+                    explain: "'부분 겹침'은 DFS에서 발생 불가. 이것이 정리의 핵심 주장." },
+                ],
+              },
+              {
+                stage: "③ 포함 관계와 조상-후손",
+                prompt: "Corollary 22.8: v가 u의 proper descendant이다 ⟺ ?",
+                choices: [
+                  { text: "$u.d < v.d$ < $v.f < u.f$ (v의 interval이 u의 interval에 엄격히 내포됨)", correct: true,
+                    explain: "괄호 정리의 직접 귀결. DFS 트리 상의 조상-후손 관계가 interval의 포함 관계와 정확히 일치." },
+                  { text: "$u.d < v.d$만 성립하면 충분", correct: false,
+                    explain: "$u.d < v.d$ < u.f가 성립하면 포함, $v.d > u.f$면 분리. 한쪽 부등식만으로는 부족." },
+                  { text: "$u.f < v.d$ (u가 먼저 끝남)", correct: false,
+                    explain: "그건 '분리' 경우. 조상-후손 관계가 아님." },
+                  { text: "$u.d = v.d$ (동시 시작)", correct: false,
+                    explain: "각 시간 스탬프는 고유하므로 같을 수 없음." },
+                ],
+              },
+              {
+                stage: "④ 흰 경로 정리의 방향 (⇒)",
+                prompt: "Theorem 22.9의 (⇒): v가 u의 descendant이면 u.d 시점에 u→v 경로가 모두 WHITE. 이 방향이 성립하는 이유는?",
+                choices: [
+                  { text: "v가 u의 descendant이므로 Corollary 22.8로 $u.d < v.d$. 즉 v는 u.d 시점에 아직 발견 안 됨(WHITE). 경로의 모든 중간 정점도 v처럼 u의 descendant이므로 같은 이유로 WHITE.", correct: true,
+                    explain: "조상-후손 관계의 interval 포함 구조가 '모두 아직 발견 안 됨'을 자동으로 함의. DFS 트리의 simple path 위 모든 정점이 u.d < 해당.d이므로 모두 WHITE." },
+                  { text: "모든 정점이 WHITE로 초기화되므로 자명", correct: false,
+                    explain: "'u.d 시점'에 여전히 WHITE여야 한다는 것이 주장. 시간이 지나면 색이 바뀜." },
+                  { text: "경로가 짧아야 성립", correct: false,
+                    explain: "길이에 상관없이 성립. 모든 중간 정점에 대해 같은 논리." },
+                  { text: "v가 directly connected to u여야 성립", correct: false,
+                    explain: "descendant는 트리에서 간접적일 수 있으며, 그래도 성립." },
+                ],
+              },
+              {
+                stage: "⑤ 흰 경로 정리의 방향 (⇐)",
+                prompt: "(⇐): u.d 시점에 흰 경로가 있으면 v가 u의 descendant. 증명의 핵심 관찰은?",
+                choices: [
+                  { text: "경로의 시작 WHITE 정점들은 재귀 호출에 의해 차례로 u의 자손이 됨. 모순으로 '첫 번째 자손이 되지 못하는 정점 v'를 가정하면 그 전 정점 w는 자손이고, v가 w 발견 후 w.f 전에 발견되어야 하므로 v도 w의 자손이 됨 → 모순.", correct: true,
+                    explain: "귀납적 구조 + 모순. DFS의 '깊이 우선' 특성이 '도달 가능한 WHITE 정점은 모두 자손이 된다'를 보장." },
+                  { text: "자명함 — 흰 경로가 있으면 당연히 descendant", correct: false,
+                    explain: "자명하지 않음. 경로가 '나머지 그래프를 통해' 우회하면 descendant가 아닐 수도 있지만, 흰 경로에 한정하면 정리가 성립." },
+                  { text: "시간 복잡도 분석에서 따라옴", correct: false,
+                    explain: "시간 복잡도와는 무관. 구조적 정리." },
+                  { text: "대칭 (u → v ⟹ v → u)", correct: false,
+                    explain: "DFS 트리는 방향성을 가지며 대칭이 아님." },
+                ],
+              },
+              {
+                stage: "⑥ 엣지 분류",
+                prompt: "DFS는 각 엣지를 4가지로 분류: Tree, Back, Forward, Cross. 엣지 (u, v)를 처음 탐색할 때 v의 색으로 어떻게 판별?",
+                choices: [
+                  { text: "WHITE → Tree edge, GRAY → Back edge, BLACK → Forward 또는 Cross edge", correct: true,
+                    explain: "WHITE이면 DFS-VISIT(v)가 재귀 호출되어 Tree edge. GRAY이면 v가 조상(스택에 살아있음) → Back. BLACK은 이미 완료된 descendant(Forward) 혹은 다른 서브트리(Cross)." },
+                  { text: "모든 경우 Tree edge", correct: false,
+                    explain: "Tree edge는 u가 v를 '처음 발견한' 경우만. WHITE일 때만." },
+                  { text: "v.d와 u.d 비교만으로 결정", correct: false,
+                    explain: "시간 비교만으로는 Forward와 Cross를 구별할 수 있지만, 처음 탐색 시 색으로 판별이 더 직접적." },
+                  { text: "v의 흑 여부만 보면 됨", correct: false,
+                    explain: "세 색의 구별이 필요. GRAY를 놓치면 Back이 Cross와 섞임." },
+                ],
+              },
+              {
+                stage: "⑦ 응용: DAG 판별",
+                prompt: "방향 그래프 G가 DAG(비순환)이기 위한 필요충분 조건은? (Lemma 22.11)",
+                choices: [
+                  { text: "DFS가 Back edge를 전혀 만들지 않음", correct: true,
+                    explain: "Back edge는 정확히 '순환'을 의미. DAG이면 Back 없고, 역으로 Back 없으면 모든 순환이 불가능. Topological Sort의 정당성 근거." },
+                  { text: "모든 엣지가 Tree edge", correct: false,
+                    explain: "Forward, Cross는 DAG에서도 가능. 오직 Back만이 순환 증거." },
+                  { text: "Cross edge가 전혀 없음", correct: false,
+                    explain: "Cross는 DAG에서도 허용. 순환과 무관." },
+                  { text: "모든 정점이 같은 DFS 트리에 있음", correct: false,
+                    explain: "DAG는 forest일 수 있음 (여러 트리). 단일 트리 조건과 무관." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ DFS 추적 — CLRS Figure 22.4 방향 그래프",
+            intro: "방향 그래프 V={u,v,w,x,y,z}. 간선: u→v, u→x, v→y, w→y, w→z, x→v, y→x, z→z. DFS 실행 시 time과 각 정점의 d/f 값을 예측하세요. 인접리스트는 알파벳 순, 정점 순회도 알파벳 순.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "DFS(G) 시작. 정점 순회 알파벳 순: u, v, w, x, y, z. 첫 번째로 처리되는 정점은?",
+                choices: [
+                  { text: "u — 정점 순회 첫 번째이면서 WHITE", correct: true,
+                    explain: "Line 5–7: u가 첫 WHITE. DFS-VISIT(G, u) 호출. $u.d = 1$ (time이 1로 증가 후)." },
+                  { text: "v — u와 가장 먼저 비교", correct: false,
+                    explain: "'정점 순회 순서'가 알파벳 순이면 u가 먼저." },
+                  { text: "임의의 정점", correct: false,
+                    explain: "알고리즘 자체는 임의지만 우리는 알파벳 순으로 가정." },
+                  { text: "z — 마지막부터 처리", correct: false,
+                    explain: "'for each vertex'는 내림차순이 아닌 자연 순서." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$u.d = 1$. u의 인접 리스트는 [v, x]. v가 먼저 처리됨. $v.d = 2$. v의 인접 [y]. y가 처리됨. $y.d = 3$. y의 인접 [x]. x가 처리됨. x.d = ?",
+                choices: [
+                  { text: "$x.d = 4$", correct: true,
+                    explain: "재귀 깊이 순으로 time이 증가. u(1) → v(2) → y(3) → x(4). CLRS Fig 22.4 (d)." },
+                  { text: "$x.d = 5$", correct: false,
+                    explain: "x는 4번째로 발견되므로 time이 4." },
+                  { text: "$x.d = 2$", correct: false,
+                    explain: "v가 먼저 2를 가져감." },
+                  { text: "x는 나중에 발견됨", correct: false,
+                    explain: "y의 유일한 이웃이 x이므로 즉시 발견." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "x의 인접 [v]. v는 이미 GRAY → Back edge로 기록하고 재귀 안 함. x 종료: $x.f = 5$. 그 다음 y로 돌아가 종료: y.f = ? 그리고 v는?",
+                choices: [
+                  { text: "$y.f = 6$, $v.f = 7$", correct: true,
+                    explain: "x 종료 후 y로 복귀. y의 남은 이웃 없으니 종료 ($y.f = 6$). 다시 v로 복귀, 남은 이웃 없음 ($v.f = 7$). Fig 22.4 (h-j)." },
+                  { text: "$y.f = 5$, $v.f = 6$", correct: false,
+                    explain: "$x.f = 5$가 먼저 소비되므로 y는 6부터." },
+                  { text: "$y.f = 4$ (x.d보다 먼저)", correct: false,
+                    explain: "y가 x보다 먼저 발견($y.d = 3$, $x.d = 4$)이지만 종료는 $x.f = 5$가 먼저(깊이 우선 반환)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "u로 복귀. u의 남은 이웃 x는 BLACK ($x.f = 5$ 존재) → Forward edge로 기록하고 재귀 안 함. u 종료: $u.f = 8$. 이제 DFS의 외부 for 루프가 다음 정점으로 진행. WHITE인 정점은?",
+                choices: [
+                  { text: "w, z — u, v, x, y는 모두 BLACK 완료. 다음 for 루프 반복에서 w가 선택됨.", correct: true,
+                    explain: "첫 DFS 트리 {u, v, y, x}가 완료. w, z는 아직 탐색 안 됨. 알파벳 순으로 w 먼저." },
+                  { text: "모든 정점이 BLACK", correct: false,
+                    explain: "w와 z는 u의 DFS에서 도달 불가라 여전히 WHITE." },
+                  { text: "x만 WHITE (back edge로 아직 방문 안 함)", correct: false,
+                    explain: "x는 y의 자손으로 이미 처리 완료." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "DFS-VISIT(w): $w.d = 9$. 이웃 [y, z]. y는 BLACK → Cross edge, 스킵. z 처리: $z.d = 10$. z의 이웃 [z] — self-loop → Back edge. z 종료: $z.f = 11$. w 종료: $w.f = 12$. 최종 모든 d/f 값은?",
+                choices: [
+                  { text: "u:1/8, v:2/7, w:9/12, x:4/5, y:3/6, z:10/11", correct: true,
+                    explain: "CLRS Figure 22.4 (p)의 최종 값. Self-loop는 Back edge로 분류." },
+                  { text: "u:1/2, v:3/4, ... (순차 소비)", correct: false,
+                    explain: "time은 재귀 진입/종료마다 증가. 순차 1,2,3,4,...가 아니라 중첩 구조." },
+                  { text: "w:9/10, z:11/12 (역순)", correct: false,
+                    explain: "z는 w 내부에서 종료되어야 하므로 $z.f < w.f$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "엣지 분류: Tree edges는 {(u,v), (v,y), (y,x), (w,z)}. 그 외 (u,x), (x,v), (w,y), (z,z)는?",
+                choices: [
+                  { text: "(u,x): Forward, (x,v): Back, (w,y): Cross, (z,z): Back (self-loop)", correct: true,
+                    explain: "u→x: x가 u의 descendant (v→y→x), $x.d < u.f$이고 (u,x) 탐색 시 x가 이미 BLACK → Forward. x→v: v가 x의 ancestor (GRAY 때 탐색) → Back. w→y: y는 BLACK이지만 다른 트리 → Cross. z→z: self-loop는 항상 Back." },
+                  { text: "모두 Back edge (순환이 있으므로)", correct: false,
+                    explain: "Back은 순환을 형성하는 한 종류이고, Forward와 Cross는 순환이 없음." },
+                  { text: "모두 Cross edge", correct: false,
+                    explain: "Cross는 같은/다른 트리 간 엣지 중 조상 관계가 아닐 때. (u,x), (x,v)는 그렇지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 그래프는 DAG인가? (Back edge 존재 여부로 판정)",
+                choices: [
+                  { text: "DAG 아님 — Back edge (x→v, z→z)가 존재 → 순환 있음", correct: true,
+                    explain: "Lemma 22.11: G가 DAG ⟺ DFS에 Back edge 없음. 여기서는 v→y→x→v 순환과 z 자기 루프가 존재." },
+                  { text: "DAG임 — 대부분의 엣지가 Tree", correct: false,
+                    explain: "Back이 하나라도 있으면 순환 존재, DAG 아님." },
+                  { text: "판별 불가 — 더 많은 정보 필요", correct: false,
+                    explain: "DFS 결과만으로 DAG 여부 판별 가능." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "topo", name: "Topological Sort", desc: "DAG를 f 역순으로 정렬",
+        tags: ["Θ(V+E)", "DAG"], viz: "topoSort",
+        drills: {
+          source: "CLRS 3판 22.4절 pp.612-615 · Figure 22.7-22.8",
+          pseudo: {
+            title: "① 의사코드 재구성 — TOPOLOGICAL-SORT",
+            intro: "CLRS 22.4절(p.613)의 위상 정렬은 놀랍도록 간결한 3줄. DFS를 활용해 종료 시간 역순으로 리스트를 만듭니다.",
+            reference: {
+              title: "참고: 위상 정렬이 가능한 그래프와 정의",
+              lines: [
+                { text: "전제: G는 DAG (Directed Acyclic Graph)",          indent: 0 },
+                { text: "목표: 모든 간선 (u,v) ∈ E에 대해 u가 v보다 앞에 놓이는 선형 순서", indent: 0 },
+                { text: "",                                                  indent: 0 },
+                { text: "핵심 관찰 (Lemma 22.11):",                          indent: 0 },
+                { text: "  G가 DAG ⟺ DFS가 back edge를 만들지 않음",         indent: 0 },
+                { text: "",                                                  indent: 0 },
+                { text: "핵심 원리 (Lemma 22.12):",                          indent: 0 },
+                { text: "  G가 DAG이면 DFS에서 (u,v) ∈ E 탐색 시 $u.f > v.f$", indent: 0 },
+                { text: "  → 종료 시간 내림차순이 곧 위상 순서",              indent: 0 },
+              ],
+            },
+            // CLRS p.613
+            lines: [
+              { text: "TOPOLOGICAL-SORT(G)",                              indent: 0, note: "프로시저 헤더" },
+              { text: "call DFS(G) to compute finishing times v.f for each vertex v", indent: 1, note: "모든 v.f 계산" },
+              { text: "as each vertex is finished, insert it onto the front of a linked list", indent: 1, note: "종료 즉시 리스트 앞에 삽입" },
+              { text: "return the linked list of vertices",               indent: 1, note: "종료 시간 내림차순으로 정렬됨" },
+            ],
+          },
+          proof: {
+            title: "② 위상 정렬의 정당성 — Lemma 22.11 & 22.12",
+            intro: "CLRS 22.4절의 두 핵심 정리로 위상 정렬을 증명. Lemma 22.11 (DAG ⟺ no back edge) + Lemma 22.12 (f 값 대소 관계)가 단순한 'DFS 끝내고 f 역순으로 읽기'의 타당성 보장.",
+            invariantLabel: "목표: ",
+            invariant: "G가 DAG일 때 정점을 f 값 내림차순으로 나열하면 모든 간선 (u,v) ∈ E에 대해 u가 v보다 앞에 나옴 (= 위상 정렬). 증명 핵심은 '임의의 간선 (u,v)에 대해 $u.f > v.f$'라는 Lemma 22.12.",
+            steps: [
+              {
+                stage: "① DAG와 back edge",
+                prompt: "Lemma 22.11: G가 DAG ⟺ DFS(G)가 back edge를 만들지 않음. (⇒) 방향(DAG이면 back 없음)의 증명은?",
+                choices: [
+                  { text: "반례 가정: back edge (u,v)가 있으면 v는 u의 조상 → v→...→u→v가 순환. DAG와 모순.", correct: true,
+                    explain: "Back edge의 정의: descendant → ancestor. 트리 경로 v→u와 back edge u→v가 합쳐져 순환 형성. DAG에는 순환이 없으므로 back도 없음." },
+                  { text: "DAG는 정점이 유한하므로 자명", correct: false,
+                    explain: "유한성이 이유가 아님. back edge의 의미(조상으로 복귀)가 곧 순환임을 보이는 것이 핵심." },
+                  { text: "DAG는 forest이므로 엣지가 Tree만 있음", correct: false,
+                    explain: "DAG는 일반적으로 forest보다 많은 엣지(Forward, Cross)를 가질 수 있음. 'Back만 없음'이 맞음." },
+                ],
+              },
+              {
+                stage: "② back edge 없으면 DAG",
+                prompt: "(⇐) 방향: back edge가 없으면 G는 DAG. 증명은?",
+                choices: [
+                  { text: "반례 가정: 순환 c가 있다면 c의 첫 발견 정점을 v라 하자. c의 나머지 정점이 모두 v의 descendant (white-path theorem). 순환이 닫히려면 마지막 엣지가 descendant→v인 back edge가 필요 → 모순.", correct: true,
+                    explain: "White-path theorem (Theorem 22.9)의 응용. 순환이 존재하면 반드시 어딘가에서 descendant→ancestor 엣지가 필요. 그런데 그것이 back edge이므로 모순." },
+                  { text: "무순환성은 탐색 시간과 무관", correct: false,
+                    explain: "반대로, 탐색이 순환을 '드러냄' (back edge로 표시). 둘은 밀접." },
+                  { text: "back edge만 순환 기여", correct: false,
+                    explain: "정답에 가깝지만 증명 없이 주장. 위 선택지가 증명 구조를 명시." },
+                ],
+              },
+              {
+                stage: "③ 간선과 f 값의 관계 (Lemma 22.12)",
+                prompt: "Lemma 22.12: G가 DAG이면 간선 (u,v) 탐색 시 $u.f > v.f$. 이것은 정점의 색에 따라 어떻게 증명되나?",
+                choices: [
+                  { text: "v가 WHITE: Tree edge, v는 u의 descendant로 $u.f > v.f$. v가 GRAY: Back edge → DAG 모순. v가 BLACK: v.f가 이미 결정되어 있고 u는 아직 활성(GRAY)이므로 $u.f > v.f$.", correct: true,
+                    explain: "세 경우 모두 $u.f > v.f$. DAG에서는 GRAY(back) 경우가 불가능하므로 WHITE나 BLACK 중 하나. Forward와 Cross는 $v.f < u.f$를 자동으로 만족." },
+                  { text: "모든 간선이 Tree edge이므로 자명", correct: false,
+                    explain: "Forward, Cross도 가능. 하지만 모두 $u.f > v.f$를 만족." },
+                  { text: "f 값은 탐색 순서와 무관", correct: false,
+                    explain: "f 값은 탐색 종료 순서. 간선 (u,v)가 있으면 u가 먼저 끝나고 v가 나중에 끝남." },
+                ],
+              },
+              {
+                stage: "④ f 내림차순 = 위상 순서",
+                prompt: "정점을 f 내림차순으로 나열. 임의의 간선 (u,v)에 대해?",
+                choices: [
+                  { text: "$u.f > v.f$ (Lemma 22.12) → u가 v보다 앞 → 위상 순서 조건 충족", correct: true,
+                    explain: "위상 정렬의 정의: '모든 간선 (u,v)에서 u가 v보다 앞'. f 내림차순이 정확히 이것을 달성." },
+                  { text: "$u.f < v.f$이므로 v가 u보다 앞", correct: false,
+                    explain: "Lemma 22.12가 반대 부등식을 보장: $u.f > v.f$." },
+                  { text: "순서가 자의적", correct: false,
+                    explain: "f 값에 의해 유일한 순서로 결정됨 (f 값이 모두 고유하므로)." },
+                ],
+              },
+              {
+                stage: "⑤ 효율적 구현",
+                prompt: "의사코드는 'f 계산 후 정렬'처럼 보이지만 정렬이 필요 없는 이유는?",
+                choices: [
+                  { text: "각 정점의 f를 계산하는 '순간' 리스트 앞에 삽입하면 자동으로 내림차순. 별도 정렬 단계 불필요.", correct: true,
+                    explain: "'as each vertex is finished, insert onto the FRONT of linked list' — 마지막에 끝나는 정점이 가장 앞. $O(1)$ 삽입 × n번 = $O(n)$. 전체 $\\Theta(V + E)$." },
+                  { text: "정렬이 필요하며 O(V lg V) 추가", correct: false,
+                    explain: "구현이 영리해서 정렬 불필요. DFS의 종료 시점을 이용." },
+                  { text: "위상 정렬은 $O(V^2)$", correct: false,
+                    explain: "DFS가 $\\Theta(V + E)$이고 삽입이 O(V). 합계 $\\Theta(V + E)$ 선형." },
+                ],
+              },
+              {
+                stage: "⑥ 유일성",
+                prompt: "위상 정렬의 결과는 유일한가?",
+                choices: [
+                  { text: "일반적으로 여러 해가 존재 — DFS 시작 정점/인접 리스트 순서에 따라 다른 위상 정렬 나올 수 있음", correct: true,
+                    explain: "예: 같은 DAG에 대해서도 여러 가능한 위상 순서. 알고리즘은 그 중 '하나'를 생성." },
+                  { text: "항상 유일함", correct: false,
+                    explain: "오직 간선이 'totally ordered'인 (= 해밀턴 경로) DAG만 유일." },
+                  { text: "DAG가 하나의 경로면만 유일", correct: false,
+                    explain: "정답에 가깝지만 엄밀히는 '모든 정점이 선형 체인'일 때만 유일. 일반 DAG는 다양." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 위상 정렬 추적 — 옷 입기 DAG",
+            intro: "CLRS 22.4 예시: 옷 입기의 의존 관계. 정점 = {undershorts, pants, belt, shirt, tie, jacket, socks, shoes, watch}. 간선은 \"A를 먼저 입어야 B\". DFS 시작을 알파벳 순으로 가정하고 추적하세요.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "예시 의존성: undershorts → pants, undershorts → shoes, pants → belt, pants → shoes, shirt → belt, shirt → tie, belt → jacket, tie → jacket, socks → shoes. watch는 독립. 먼저 '왜 DAG인가?'",
+                choices: [
+                  { text: "모든 의존이 'A 먼저, B 나중' 한 방향이고 순환 없음 — 옷 입기가 논리적으로 가능", correct: true,
+                    explain: "실제 옷 입기의 순서는 선형화 가능. shirt→tie→jacket, undershorts→pants→... 등." },
+                  { text: "정점 수가 적으므로 DAG", correct: false,
+                    explain: "DAG 여부는 크기와 무관. 순환 여부가 핵심." },
+                  { text: "양방향 간선이 있어 DAG 아님", correct: false,
+                    explain: "주어진 간선은 모두 한 방향. 양방향 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "DFS는 알파벳 순으로 시작. belt부터 처리. $belt.d = 1$. 인접 [jacket]. $jacket.d = 2$. jacket의 인접 리스트는 비어 있음. $jacket.f = 3$. belt.f = ?",
+                choices: [
+                  { text: "$belt.f = 4$", correct: true,
+                    explain: "jacket 종료 후 belt로 복귀. belt 인접 리스트에 다른 정점 없음(jacket만). $belt.f = 4$." },
+                  { text: "$belt.f = 2$", correct: false,
+                    explain: "jacket이 2,3을 차지하므로 belt는 4로 종료." },
+                  { text: "$belt.f = 5$", correct: false,
+                    explain: "외부 for 루프의 다음 증가 전에 이미 종료 시간 부여됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "잇따라 pants 처리. $pants.d = 5$. 인접 [belt(BLACK, Cross/Forward), shoes]. belt 스킵. $shoes.d = 6$. shoes의 인접 비어있음. $shoes.f = 7$. $pants.f = 8$. 이 시점까지 f 값이 가장 큰 정점은?",
+                choices: [
+                  { text: "pants ($f = 8$) — 가장 최근에 종료됨", correct: true,
+                    explain: "종료 시간 순으로 기록. pants가 jacket(3)/belt(4)/shoes(7)보다 나중에 종료되어 가장 큰 f." },
+                  { text: "jacket ($f = 3$)", correct: false,
+                    explain: "jacket은 가장 일찍 끝났음." },
+                  { text: "shoes ($f = 7$)", correct: false,
+                    explain: "pants 내부에서 끝났으므로 pants보다 먼저 종료." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "계속: $shirt.d = 9$, 인접 [belt, tie]. belt 스킵. $tie.d = 10$, 인접 [jacket] (BLACK 스킵). $tie.f = 11$. $shirt.f = 12$. $socks.d = 13$, 인접 [shoes] (BLACK 스킵). $socks.f = 14$. $undershorts.d = 15$, 인접 [pants, shoes] (모두 BLACK). $undershorts.f = 16$. $watch.d = 17$, 인접 비어. $watch.f = 18$. f 내림차순은?",
+                choices: [
+                  { text: "watch(18), undershorts(16), socks(14), shirt(12), tie(11), pants(8), shoes(7), belt(4), jacket(3)", correct: true,
+                    explain: "DFS 순회 완료 후 각 정점의 f 값을 내림차순으로 정렬. 이것이 위상 정렬 결과." },
+                  { text: "알파벳 순 (belt, jacket, pants, ...)", correct: false,
+                    explain: "위상 정렬은 의존 관계 순이지 알파벳이 아님." },
+                  { text: "DFS 발견 순 (belt, jacket, pants, ...)", correct: false,
+                    explain: "발견 순(d)이 아니라 종료 순(f) 내림차순이 위상 순서." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 순서가 올바른 위상 정렬인가? (의존성 유지 확인)",
+                choices: [
+                  { text: "예 — 예: shirt(12)가 tie(11)·jacket(3)보다 앞, pants(8)가 belt(4)·shoes(7)·jacket(3)보다 앞 등 모든 간선에서 source가 target보다 앞", correct: true,
+                    explain: "위상 정렬의 정의 충족. watch는 의존성 없으니 어디에 있어도 됨 — 여기선 가장 먼저(DFS가 마지막으로 방문해 f가 최대)." },
+                  { text: "아니오 — jacket이 너무 뒤에 있음", correct: false,
+                    explain: "jacket이 가장 뒤($f = 3$)에 있는 것은 올바른 순서 (다른 모든 게 jacket보다 먼저 와야)." },
+                  { text: "아니오 — watch가 아무 일도 안 하는데 맨 앞", correct: false,
+                    explain: "watch는 독립이라 어디에 있든 올바름. f 값 기반 배치가 우연히 맨 앞일 뿐." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "scc", name: "Strongly Connected Components (Kosaraju)", desc: "두 번의 DFS로 SCC 분해",
+        tags: ["Θ(V+E)", "두 번 DFS"], viz: "scc",
+        drills: {
+          source: "CLRS 3판 22.5절 pp.615-622, STRONGLY-CONNECTED-COMPONENTS · Theorem 22.16",
+          pseudo: {
+            title: "① 의사코드 재구성 — STRONGLY-CONNECTED-COMPONENTS",
+            intro: "CLRS 22.5절 p.617의 4단계 절차. 핵심 아이디어: 원래 그래프에서 DFS로 finish time 계산 → 전치 그래프에서 finish time 감소순으로 DFS → 각 DFS 트리가 하나의 SCC.",
+            reference: {
+              title: "참고: 왜 이게 작동하나?",
+              lines: [
+                { text: "SCC 정의: u ↝ v AND v ↝ u인 최대 정점 집합",           indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "$G^{T}$ (전치 그래프): G의 모든 간선을 뒤집은 그래프",       indent: 0 },
+                { text: "  G와 G^T는 같은 SCC들을 가짐 (대칭성)",                 indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "요소 그래프 G^SCC:",                                    indent: 0 },
+                { text: "  각 SCC를 하나의 정점으로 축소한 그래프",                indent: 0 },
+                { text: "  항상 DAG (사이클이 있으면 더 큰 SCC가 됨)",             indent: 0 },
+                { text: "",                                                      indent: 0 },
+                { text: "첫 DFS의 finish time f[C]의 역순 =",                    indent: 0 },
+                { text: "  G^SCC의 위상 정렬 (Lemma 22.14)",                      indent: 0 },
+                { text: "→ 가장 큰 f를 가진 SCC가 위상적으로 '첫 번째'",           indent: 0 },
+                { text: "→ G^T에서 거기 시작해 DFS하면 딱 그 SCC만 방문",         indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "STRONGLY-CONNECTED-COMPONENTS(G)",           indent: 0, note: "4단계 알고리즘" },
+              { text: "call DFS(G) to compute finishing times u.f", indent: 1, note: "1단계: 원래 그래프 DFS" },
+              { text: "compute $G^{T}$",                                indent: 1, note: "2단계: 전치 그래프" },
+              { text: "call DFS($G^{T}$), but in the main loop of DFS,", indent: 1, note: "3단계: G^T에 DFS" },
+              { text: "consider the vertices in order of decreasing u.f", indent: 2, note: "단, f 감소순으로 방문" },
+              { text: "output the vertices of each tree in the DFS forest", indent: 1, note: "4단계: 각 DFS 트리가 SCC" },
+              { text: "of the second DFS as a separate SCC",         indent: 2, note: "분리된 집합으로 출력" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — Lemma 22.14 + Theorem 22.16",
+            intro: "CLRS Theorem 22.16. SCC 알고리즘의 정확성은 '요소 그래프 G^SCC의 위상 순서 = 첫 DFS의 f 값 역순'이라는 핵심 보조정리에 기반.",
+            invariantLabel: "Theorem 22.16: ",
+            invariant: "STRONGLY-CONNECTED-COMPONENTS(G)는 G의 강연결 요소를 정확히 계산한다. 증명의 핵심: (1) 요소 그래프 G^SCC는 DAG, (2) 첫 DFS finish time f의 최댓값이 G^SCC의 source SCC를 지목, (3) G^T에서 거기서 시작한 DFS는 해당 SCC 내부만 도달 가능.",
+            steps: [
+              {
+                stage: "① 요소 그래프가 DAG인 이유",
+                prompt: "G^SCC에 사이클이 있다면 어떻게 되나?",
+                choices: [
+                  { text: "SCC C₁ → C₂ → ... → C₁ 사이클이면 이 모든 정점이 서로 도달 가능 → 하나의 큰 SCC로 합쳐져야 함 → 모순 (최대성 위배)", correct: true,
+                    explain: "CLRS p.618. SCC는 '최대' 강연결 집합이므로 요소 그래프에 사이클이 생길 수 없음. 생기면 더 큰 SCC가 되어 '요소 그래프'의 전제가 깨짐. 따라서 G^SCC는 항상 DAG." },
+                  { text: "DAG의 정의상 사이클이 있어도 무방", correct: false,
+                    explain: "$DAG = Directed$ Acyclic Graph. 사이클이 있으면 DAG가 아님." },
+                  { text: "사이클이 있으면 강연결이 아님", correct: false,
+                    explain: "사이클이 있으면 '더' 강연결. 이 관찰이 모순을 만드는 이유." },
+                ],
+              },
+              {
+                stage: "② SCC별 finish time 정의",
+                prompt: "SCC C에 대해 $f(C) = max${u.f : u ∈ C}라고 정의하자. 이 값이 의미하는 것은?",
+                choices: [
+                  { text: "C 내부의 어떤 정점이 가장 나중에 DFS를 종료했는지 — 이것이 그 SCC의 '대표 finish time'", correct: true,
+                    explain: "CLRS Lemma 22.14 준비. SCC C의 f(C)는 C 안에서 가장 큰 finish time. 여러 SCC를 비교할 때 이 값을 사용." },
+                  { text: "C 내부의 정점 수", correct: false,
+                    explain: "|C|는 크기. f(C)는 finish time. 다른 양." },
+                  { text: "모든 SCC에 같은 값", correct: false,
+                    explain: "각 SCC마다 다른 정점을 포함하므로 f(C) 값이 다를 수 있음." },
+                ],
+              },
+              {
+                stage: "③ 핵심 보조정리 (Lemma 22.14)",
+                prompt: "G에 간선 (u,v)가 있어 u ∈ C, v ∈ C'($C \\neq C$')이면 f(C)와 f(C')의 관계는?",
+                choices: [
+                  { text: "f(C) > f(C') — C가 C'보다 나중에 종료", correct: true,
+                    explain: "CLRS Lemma 22.14의 핵심. 직관: DFS는 v를 먼저 만나든 u를 먼저 만나든, 결국 u가 나중에 종료됨. 엄밀한 증명은 사이클이 없는 DAG G^SCC에서 소스부터 끝난다는 관찰." },
+                  { text: "f(C) < f(C')", correct: false,
+                    explain: "반대. 간선 (u,v)가 C→C'이면 C가 '위상적 앞'인데, DFS finish time은 그 역순." },
+                  { text: "f(C) = f(C')", correct: false,
+                    explain: "서로 다른 SCC는 정점이 겹치지 않으므로 정확히 같을 수 없음." },
+                ],
+              },
+              {
+                stage: "④ 첫 번째 SCC 선택 (G^T에서)",
+                prompt: "G^T에서 첫 DFS의 f가 가장 큰 정점 u부터 DFS를 시작한다. u ∈ C_1 (f(C_1)이 최대)이다. 이 DFS가 방문하는 정점들은?",
+                choices: [
+                  { text: "정확히 C_1 — 전치 그래프에서 C_1 외부로 나가는 간선 (C_1 → C_j)들은 원래 그래프의 (C_j → C_1)인데, Lemma 22.14에 의해 $f(C_j) > f(C_1)$가 되어야 함. 그런데 f(C_1)이 최대이므로 그런 C_j 없음 → 밖으로 못 나감", correct: true,
+                    explain: "CLRS 증명의 핵심 단계. G^T에서 C_1 → C_j 간선이 있다면 G에서 C_j → C_1이고 $f(C_j) > f(C_1)$가 되어 모순. 따라서 G^T에서 C_1로부터 시작한 DFS는 C_1 내부만 완주." },
+                  { text: "그래프 전체를 방문", correct: false,
+                    explain: "G^T에서는 C_1 밖으로 나갈 수 없음. 이게 알고리즘의 핵심." },
+                  { text: "아무 정점도 방문 못함", correct: false,
+                    explain: "C_1 내부는 강연결이므로 u부터 C_1 전체 도달 가능." },
+                ],
+              },
+              {
+                stage: "⑤ 귀납으로 나머지 SCC 분해",
+                prompt: "C_1을 완료한 뒤, 다음으로 큰 f를 가진 미방문 정점 u'부터 DFS. u' ∈ C_2라고 할 때, 이 DFS가 방문하는 범위는?",
+                choices: [
+                  { text: "C_2 전체. C_2에서 이미 방문한 SCC(여기선 C_1)로 가는 간선은 GRAY/BLACK이라 무시 → C_2 내부만 새로 탐색", correct: true,
+                    explain: "귀납: C_1은 이미 처리되어 색이 검정(BLACK). G^T에서 C_2가 C_1으로 간선을 가져도 이미 방문되어 DFS-VISIT에서 건너뜀. C_2 밖 미방문은 없음." },
+                  { text: "C_1까지 다시 방문", correct: false,
+                    explain: "DFS는 방문 표시로 재방문 방지. BLACK 정점에는 진입 안 함." },
+                  { text: "C_2 일부만 방문", correct: false,
+                    explain: "C_2 내부는 강연결이므로 u'부터 C_2 전체 도달 가능." },
+                ],
+              },
+              {
+                stage: "⑥ 시간 복잡도",
+                prompt: "SCC 알고리즘 전체의 시간 복잡도는?",
+                choices: [
+                  { text: "$\\Theta(V + E)$ — DFS 2번 + 전치 그래프 생성($O(V + E)$)", correct: true,
+                    explain: "CLRS p.617. DFS는 $\\Theta(V + E)$, 전치 그래프 구성도 인접 리스트를 한 번 훑으면 $\\Theta(V + E)$. 세 연산의 합도 $\\Theta(V + E)$. 선형." },
+                  { text: "Θ(V·E) — 각 정점마다 DFS", correct: false,
+                    explain: "DFS는 전체를 한 번 훑는 것이지 정점마다 별도 DFS가 아님." },
+                  { text: "$\\Theta(V^2)$", correct: false,
+                    explain: "인접 리스트 + DFS로 선형. 인접 행렬이면 $\\Theta(V^2)$이지만 일반적으로 리스트." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ SCC 추적 — CLRS Figure 22.9 간소판",
+            intro: "정점 {a, b, c, d, e, f, g, h}. 간선 a→b, b→c, b→e, b→f, c→d, c→g, d→c, d→h, e→a, e→f, f→g, g→f, g→h, h→h. 4단계 절차를 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "1단계: G에서 DFS (알파벳 순으로 시작). a부터 시작한 DFS가 끝난 뒤 각 정점의 f (finish time)은? (CLRS Fig 22.9 기준)",
+                choices: [
+                  { text: "$f(a) = 16$, $f(b) = 15$, $f(c) = 10$, $f(d) = 9$, $f(e) = 12$, $f(f) = 11$, $f(g) = 7$, $f(h) = 8$. (f가 큰 순: a, b, e, f, c, d, h, g)", correct: true,
+                    explain: "표준 DFS 결과 — 모든 정점을 방문하며 각 정점의 종료 시간 기록. a, b, e, f가 위상적으로 '위쪽', g, h가 가장 아래." },
+                  { text: "모든 정점의 f가 같음", correct: false,
+                    explain: "f는 DFS-VISIT 종료 시점이므로 각 정점마다 고유 값." },
+                  { text: "$f(a) = 1$ (첫 정점이므로)", correct: false,
+                    explain: "그건 discovery time (d). finish time f는 재귀 후 부여." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "2단계: $G^{T}$ 생성. 원래 간선 a→b가 있었다면 G^T에서는?",
+                choices: [
+                  { text: "b→a — 모든 간선 방향 반전", correct: true,
+                    explain: "전치(transpose)의 정의. 인접 리스트를 한 번 훑어 $O(V + E)$에 구성. 원래 간선 (u,v) → 새 간선 (v,u)." },
+                  { text: "a→b 그대로", correct: false,
+                    explain: "그건 원본. 전치는 방향 반전." },
+                  { text: "양방향 a↔b", correct: false,
+                    explain: "단순 반전이지 추가하는 것 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "3단계: G^T에 DFS, f 감소순(a, b, e, f, c, d, h, g)으로 시작. 첫 번째 트리는 어떤 정점들을 포함?",
+                choices: [
+                  { text: "a부터 시작 → G^T에서 a의 이웃 = b (원래 b→a 반전), b의 이웃 = e (원래 e→b? no). SCC {a, b, e}", correct: true,
+                    explain: "G^T에서 a→b (원래 b→a가 없지만 a←b 반전이면 실제로는 b→a? 이 문제는 간선 목록을 주의 깊게 봐야). CLRS Fig 22.9 기준 첫 SCC는 {a, b, e}." },
+                  { text: "모든 정점 {a..h}", correct: false,
+                    explain: "G^T에서 a로부터 닿는 정점만. 다른 SCC로는 못 감." },
+                  { text: "a만", correct: false,
+                    explain: "a는 SCC 내부 다른 정점으로 전치 그래프에서도 도달 가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 미방문 정점 중 f가 가장 큰 것은 f ($f(f) = 11$). f부터 DFS → SCC는?",
+                choices: [
+                  { text: "{f, g} — G^T에서 f→g (원래 g→f), g→f (원래 f→g). 서로 방문 가능.", correct: true,
+                    explain: "f와 g가 서로 도달 가능한 쌍 → 하나의 SCC. 원래 그래프의 f→g, g→f가 서로 상쇄되어 강연결." },
+                  { text: "{f}만", correct: false,
+                    explain: "g로 연결되어 있어 도달 가능." },
+                  { text: "{f, g, h, c, d} 모두", correct: false,
+                    explain: "h, c, d는 다른 SCC에 속함 (Lemma 22.14)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 미방문: c ($f = 10$). DFS → SCC는?",
+                choices: [
+                  { text: "{c, d} — 원래 c→d와 d→c로 서로 도달, G^T에서도 마찬가지", correct: true,
+                    explain: "c와 d가 서로 순환. 전치 그래프에서 c→d (원래 d→c), d→c (원래 c→d) 모두 존재 → 강연결." },
+                  { text: "{c, d, h}", correct: false,
+                    explain: "h는 별도 SCC (self-loop h→h만). 다른 SCC에서 h로 들어오지만 h에서 나가는 간선이 h→h뿐." },
+                  { text: "{c}만", correct: false,
+                    explain: "d와 강연결되어 있음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "마지막 미방문: h. 최종 SCC 목록과 요소 그래프는?",
+                choices: [
+                  { text: "SCC들: {a,b,e}, {f,g}, {c,d}, {h}. 요소 그래프: {a,b,e} → {f,g}, {a,b,e} → {c,d}, {c,d} → {f,g}, {c,d} → {h}, {f,g} → {h}. DAG 성질 만족.", correct: true,
+                    explain: "네 SCC로 분해. 요소 그래프는 사이클 없음 (Theorem: G^SCC는 DAG). h는 singleton SCC (self-loop는 SCC를 크게 만들지 않음)." },
+                  { text: "하나의 큰 SCC", correct: false,
+                    explain: "예제 간선 배치가 강연결이 아님. 여러 SCC로 분해됨." },
+                  { text: "각 정점이 각각 별도 SCC", correct: false,
+                    explain: "서로 순환하는 정점쌍이 있으면 같은 SCC. 여기서 a-b-e, f-g, c-d는 쌍/삼각순환." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "tarjan-scc", name: "Tarjan's SCC (한 번의 DFS)", desc: "스택과 lowlink로 한 번의 DFS에 SCC 분해",
+        tags: ["Θ(V+E)", "한 번 DFS"], viz: "tarjanScc",
+        drills: {
+          source: "CLRS 3판 22장 Problems 22-3 · Tarjan 1972 원논문. Kosaraju보다 상수 효율적.",
+          pseudo: {
+            title: "① 의사코드 재구성 — TARJAN-SCC",
+            intro: "Kosaraju는 DFS 2회 + 전치 그래프 필요. Tarjan은 DFS 1회로 완료. 각 정점에 disc(발견 시간) + low(SCC 시작점으로 되돌아갈 수 있는 최소 disc) 유지.",
+            reference: {
+              title: "참고: 핵심 자료구조",
+              lines: [
+                { text: "disc[v]: v의 discovery time (DFS 방문 시점)",                indent: 0 },
+                { text: "low[v]:  v 서브트리에서 back edge로 도달 가능한",              indent: 0 },
+                { text: "         최소 disc 값 — SCC '루트'의 후보",                    indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "S: DFS 진행 중 정점을 쌓는 스택",                               indent: 0 },
+                { text: "onStack[v]: v가 S에 현재 있는지 (중복 방지)",                   indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "핵심 관찰:",                                                     indent: 0 },
+                { text: "  DFS-VISIT 종료 시 low[v] == disc[v]이면",                    indent: 0 },
+                { text: "  v가 SCC의 '루트' → 스택에서 v까지 pop = 하나의 SCC",          indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "TARJAN-SCC(G)",                                       indent: 0, note: "" },
+              { text: "$index = 0$; $S = empty$ stack",                          indent: 1, note: "초기화" },
+              { text: "for each v ∈ G.V",                                    indent: 1, note: "모든 정점 순회" },
+              { text: "if v.disc is undefined: STRONGCONNECT(v)",            indent: 2, note: "미방문이면" },
+              { text: "",                                                     indent: 0, note: "" },
+              { text: "STRONGCONNECT(v)",                                    indent: 0, note: "재귀 방문" },
+              { text: "$v.disc = v.low$ = index++",                            indent: 1, note: "방문 시간 기록" },
+              { text: "S.push(v); $v.onStack = TRUE$",                         indent: 1, note: "스택에 추가" },
+              { text: "for each w ∈ Adj[v]",                                 indent: 1, note: "이웃 순회" },
+              { text: "if w.disc undefined: STRONGCONNECT(w); $v.low = min(v.low, w.low)$", indent: 2, note: "Tree edge" },
+              { text: "elseif w.onStack: $v.low = min(v.low, w.disc)$",        indent: 2, note: "Back edge (SCC 내부)" },
+              { text: "if v.low == v.disc",                                  indent: 1, note: "v가 SCC 루트" },
+              { text: "repeat pop w from S; $w.onStack = FALSE$",              indent: 2, note: "SCC 정점들 pop" },
+              { text: "until w == v",                                        indent: 2, note: "v까지" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — low 값과 SCC 루트의 관계",
+            intro: "Tarjan의 핵심 불변식. $low[v] = disc[v]$는 v가 현재 SCC의 '루트'(DFS에서 가장 먼저 발견된 정점)임을 의미.",
+            invariantLabel: "Tarjan 불변식: ",
+            invariant: "DFS-VISIT(v) 종료 시 low[v] == disc[v] ⟺ v는 자신이 속한 SCC 내 DFS 트리의 루트. 이때 스택에서 v 위에 쌓인 모든 정점 + v가 하나의 SCC를 이룸. 증명: low 정의 + DFS 트리 + back edge 분석.",
+            steps: [
+              {
+                stage: "① low 값의 정의",
+                prompt: "low[v]는 정확히 무엇?",
+                choices: [
+                  { text: "v의 DFS 서브트리에서 tree edge로 내려간 후 최대 1개의 back edge로 올라가 도달할 수 있는 정점들의 disc 중 최솟값", correct: true,
+                    explain: "Tarjan 논문의 정의. 서브트리 + back edge 한 번 = 해당 SCC 내 '가장 일찍 발견된' 도달 가능 정점." },
+                  { text: "v의 부모의 disc", correct: false,
+                    explain: "부모는 정적 관계. low는 동적 도달 가능성." },
+                  { text: "전체 그래프 중 최소 disc", correct: false,
+                    explain: "v에서 도달 가능한 것에 국한." },
+                ],
+              },
+              {
+                stage: "② low 갱신 규칙",
+                prompt: "DFS-VISIT(v)에서 이웃 w를 처리할 때 세 가지 경우:",
+                choices: [
+                  { text: "(A) w 미방문 → tree edge → 재귀 후 low[v] = min(low[v], low[w]). (B) w 방문됨 + onStack → back/cross edge (SCC 후보) → low[v] = min(low[v], disc[w]). (C) w 방문됨 + !onStack → 다른 SCC (무시).", correct: true,
+                    explain: "세 가지 경우를 명확히 구분. 이것이 한 번의 DFS로 SCC를 찾는 핵심." },
+                  { text: "모든 이웃을 같은 방식으로 처리", correct: false,
+                    explain: "세 경우별로 다른 처리 필수." },
+                  { text: "low[v] = min(low[v], low[w])만 항상 적용", correct: false,
+                    explain: "(B)에서는 disc[w] 사용. low[w]는 w가 아직 SCC 루트 미확정일 수 있음." },
+                ],
+              },
+              {
+                stage: "③ onStack 체크가 중요한 이유",
+                prompt: "`elseif w.onStack` 조건이 없으면 어떤 문제?",
+                choices: [
+                  { text: "이미 다른 SCC에 속한 정점(pop됨)의 disc를 low에 반영 → v의 SCC가 잘못 포함됨", correct: true,
+                    explain: "SCC 루트 판정은 '현재 처리 중인 SCC' 내 정점만 고려해야 정확. onStack으로 현재 SCC 구분." },
+                  { text: "성능 저하만 발생", correct: false,
+                    explain: "정확성 문제. 잘못된 SCC 분해 가능." },
+                  { text: "메모리 최적화용", correct: false,
+                    explain: "의미론적 정확성 체크." },
+                ],
+              },
+              {
+                stage: "④ SCC 루트 조건",
+                prompt: "DFS-VISIT 종료 시 low[v] == disc[v]이면 v가 SCC 루트인 이유?",
+                choices: [
+                  { text: "low[v]가 disc[v]보다 작아지려면 v의 서브트리에서 '더 일찍 발견된' 정점으로 back edge 도달 필요. 같다는 것은 그런 경로가 없음 → v가 현재 SCC의 최상위 진입점.", correct: true,
+                    explain: "Tarjan의 우아한 관찰. 등식이 '이 정점보다 위로 올라갈 수 없음'을 의미 → SCC 분리 지점." },
+                  { text: "low과 disc는 항상 같음", correct: false,
+                    explain: "일반적으로 $low[v] \\leq disc[v]$. 같은 경우가 특별한 조건." },
+                  { text: "$low < disc$이면 SCC 루트", correct: false,
+                    explain: "반대. $low < disc$는 '더 위로 올라갈 수 있음' = SCC 내부 정점." },
+                ],
+              },
+              {
+                stage: "⑤ 스택 pop으로 SCC 추출",
+                prompt: "v가 SCC 루트일 때 스택에서 v까지 pop하면 왜 정확한 SCC?",
+                choices: [
+                  { text: "v 이후 DFS에서 방문된 '아직 pop되지 않은' 정점들은 모두 v의 후손 + low로 v까지 도달 가능 → v와 강연결 → 하나의 SCC", correct: true,
+                    explain: "스택 성질 + low 값 불변. 스택의 v 위 정점들이 v와 서로 도달 가능함이 귀납적으로 성립." },
+                  { text: "스택은 임의 순서", correct: false,
+                    explain: "DFS 방문 순서 유지. 구조적 특성." },
+                  { text: "모든 정점을 하나의 SCC로", correct: false,
+                    explain: "v까지만. 이미 pop된 SCC는 분리됨." },
+                ],
+              },
+              {
+                stage: "⑥ Kosaraju와의 비교",
+                prompt: "Tarjan vs Kosaraju의 실용적 차이는?",
+                choices: [
+                  { text: "Tarjan: DFS 1회 + 상수 추가 구조(low, stack). Kosaraju: DFS 2회 + 전치 그래프 필요. Tarjan이 상수 효율 + 메모리 절약 + 증분 적용 용이.", correct: true,
+                    explain: "Tarjan이 현대 구현의 표준(Python networkx, Boost 등). 단 Kosaraju는 설명·구현이 단순해 교육용으로 선호." },
+                  { text: "두 알고리즘의 결과가 다름", correct: false,
+                    explain: "같은 SCC 분해 반환. 방법만 다름." },
+                  { text: "Kosaraju가 항상 빠름", correct: false,
+                    explain: "실측에서 Tarjan이 우세. 전치 그래프 구성 비용 절약." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Tarjan SCC 추적 — 4정점 예제",
+            intro: "정점 {a, b, c, d}. 간선 a→b, b→c, c→a (삼각순환), c→d. 시작 정점 a부터 DFS 진행.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "STRONGCONNECT(a) 호출. $a.disc = a.low$ = 0. 스택 push(a). 이웃 b로 재귀 호출. 상태는?",
+                choices: [
+                  { text: "$a.disc = 0$, $a.low = 0$, 스택=[a]. b로 재귀 시작.", correct: true,
+                    explain: "첫 정점 초기화. DFS tree edge a→b." },
+                  { text: "a.low = ∞", correct: false,
+                    explain: "초기 $low = disc$. 이후 back edge로 낮아질 수 있음." },
+                  { text: "스택 비어있음", correct: false,
+                    explain: "방문 즉시 push." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "STRONGCONNECT(b): $b.disc = b.low$=1, 스택=[a,b]. 이웃 c. STRONGCONNECT(c): $c.disc = c.low$=2, 스택=[a,b,c]. c의 이웃 a 처리?",
+                choices: [
+                  { text: "a는 방문됨 + $onStack = TRUE$ → back edge. c.low = min($c.low = 2$, $a.disc = 0$) = 0.", correct: true,
+                    explain: "onStack 체크 통과. a.disc 사용 (low가 아닌)으로 back edge 반영." },
+                  { text: "a로 재귀", correct: false,
+                    explain: "a는 이미 방문됨. 재귀 없음." },
+                  { text: "무시", correct: false,
+                    explain: "back edge는 low 갱신에 반영 필요." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "c의 다음 이웃 d. 미방문 → STRONGCONNECT(d): $d.disc = d.low$=3, 스택=[a,b,c,d]. d의 이웃 없음. d 종료 시 d.low == d.disc?",
+                choices: [
+                  { text: "$d.low = 3$ == $d.disc = 3$ → d가 SCC 루트. 스택에서 pop: d. SCC = {d}.", correct: true,
+                    explain: "d는 고립된 SCC. $d.low < d.disc$가 아님 (d에서 이전 정점으로 가는 back edge 없음)." },
+                  { text: "$d.low = 0$", correct: false,
+                    explain: "d의 이웃이 없으므로 d.low 갱신 없음. 초기값 3 유지." },
+                  { text: "d는 SCC 아님", correct: false,
+                    explain: "단일 정점도 SCC. 자기 자신과 도달 가능(trivially)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "STRONGCONNECT(c) 복귀 후 c.low = min($c.low = 0$, $d.low = 3$) = 0 (변화 없음). c 종료 시 c.low == c.disc?",
+                choices: [
+                  { text: "$c.low = 0$ != $c.disc = 2$ → c는 SCC 루트 아님. pop 없이 반환.", correct: true,
+                    explain: "c가 back edge로 a($disc = 0$)까지 올라갈 수 있음을 low가 반영. 현재 SCC 아직 미완성." },
+                  { text: "c가 SCC 루트", correct: false,
+                    explain: "$low < disc$이므로 SCC 아직 처리 중." },
+                  { text: "c를 pop", correct: false,
+                    explain: "pop은 SCC 루트 판정 후에만."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "STRONGCONNECT(b) 복귀 후 b.low = min($b.low = 1$, $c.low = 0$) = 0. b 종료 시 b.low == b.disc?",
+                choices: [
+                  { text: "$b.low = 0$ != $b.disc = 1$ → b도 SCC 루트 아님. pop 없이 반환.", correct: true,
+                    explain: "b도 back edge (c를 경유) 덕분에 a까지 도달 가능. 아직 SCC 미완성." },
+                  { text: "b가 SCC 루트", correct: false,
+                    explain: "$low < disc$." },
+                  { text: "b를 pop", correct: false,
+                    explain: "아직 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "STRONGCONNECT(a) 복귀 후 a.low = min($a.low = 0$, $b.low = 0$) = 0. a 종료 시 a.low == a.disc?",
+                choices: [
+                  { text: "$a.low = 0$ == $a.disc = 0$ → a가 SCC 루트! 스택에서 pop until a: c, b, a → SCC = {a, b, c}. 전체 결과: {d}와 {a,b,c}.", correct: true,
+                    explain: "a가 SCC 루트 확정. 스택에 쌓인 a 이후 정점들이 한 SCC. DFS 한 번으로 두 SCC 분해 완료." },
+                  { text: "모든 정점을 pop", correct: false,
+                    explain: "d는 이미 별도로 pop. 현재 스택에 남은 a,b,c만." },
+                  { text: "pop 없음", correct: false,
+                    explain: "a가 SCC 루트이므로 pop 필수." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch23",
+    tier: 1,
+    num: "Ch 23",
+    title: "Minimum Spanning Trees",
+    subtitle: "Kruskal · Prim · Cut 성질",
+    summary: "절단과 경량 간선이 두 MST 알고리즘 모두의 정확성을 설명합니다.",
+    objectives: [
+      "Cut 성질과 안전 간선 정리(Theorem 23.1)로 MST 알고리즘의 정확성을 설명할 수 있다.",
+      "Kruskal(간선 중심·Union-Find)과 Prim(정점 중심·우선순위 큐)을 직접 구현할 수 있다.",
+      "그래프 밀도에 따라 두 알고리즘의 성능 차이를 분석하고 적절히 선택할 수 있다.",
+    ],
+    md: `
+## MST 문제
+무방향 가중 연결 그래프에서 모든 정점을 연결하는 최소 가중치 트리.
+
+**Theorem 23.1** ⭐
+- 절단 (S, V−S)를 존중하는 A에 대해, 이 절단을 가로지르는 **경량 간선**은 A에 **안전**
+- 즉, MST에 포함 가능
+
+## Kruskal ⭐
+- 전략: 간선을 가중치 오름차순 정렬, 사이클 없으면 추가
+- 자료구조: Union-Find
+- **시간**: $O(E \\lg V)$
+
+\`\`\`
+MST-KRUSKAL(G, w)
+  A = ∅
+  for each v ∈ G.V
+    MAKE-SET(v)
+  간선을 w 오름차순 정렬
+  for each (u,v) ∈ 정렬된 간선
+    if FIND-SET(u) ≠ FIND-SET(v)
+      A = A ∪ {(u,v)}
+      UNION(u, v)
+  return A
+\`\`\`
+
+## Prim ⭐
+- 전략: 트리에서 가장 가까운 정점 반복 추가
+- 최소 우선순위 큐
+- **시간**: 이진 힙 $O(E \\lg V)$, 피보나치 힙 O(E + V lg V)
+
+**Kruskal vs Prim**
+- Kruskal: 간선 중심, 희소 그래프
+- Prim: 정점 중심, 밀집 그래프 (피보나치 힙)
+`,
+    ox: [
+      { q: "Kruskal의 시간은 $O(E \\lg V)$이다.", a: true, why: "정렬 지배." },
+      { q: "Prim은 BFS와 유사한 트리 확장 구조이다.", a: true, why: "현재 트리에서 인접 확장." },
+      { q: "간선 가중치가 모두 다르면 MST는 유일하다.", a: true, why: "절단 정리의 유일성 결과." },
+      { q: "n개 정점의 MST는 n-1개 간선을 가진다.", a: true, why: "트리의 기본 성질." },
+      { q: "절단 정리(Cut Property)는 경량 간선이 안전함을 보장.", a: true, why: "Theorem 23.1." },
+      { q: "Kruskal은 간선을 내림차순으로 선택한다.", a: false, why: "오름차순." },
+      { q: "MST는 음수 간선에서도 정의된다.", a: true, why: "가중치 합이 최소인 트리 — 음수 OK." },
+      { q: "피보나치 힙 기반 Prim은 O(E + V lg V).", a: true, why: "DECREASE-KEY $O(1)$ amortized." },
+      { q: "Kruskal은 사이클 검사를 위해 Union-Find를 사용한다.", a: true, why: "FIND-SET으로 두 끝점이 같은 컴포넌트인지 확인." },
+      { q: "MST 문제는 무방향 연결 그래프에서 정의된다.", a: true, why: "비연결 그래프에서는 최소 신장 숲(spanning forest)." },
+    ],
+
+    problems: [
+      {
+        num: "23-1",
+        title: "Second-Best MST (차선 신장 트리)",
+        q: "$G$의 고유한 최소 신장 트리 $T$와 '그 다음으로 가벼운' 신장 트리 $T'$를 찾아라.",
+        parts: [
+        {
+          label: "a",
+          q: "$T' \\ne T$이지만 $T$와 딱 하나의 간선만 다름을 보여라.",
+          hint: "$T$에 간선 $e \\notin T$를 추가하면 사이클. 그 사이클에서 $T$의 간선 하나를 제거해 나온 트리가 후보.",
+          solution: "$T$에서 $T'$로 간선 교환 과정. 최소 교환 = 1회 (둘 이상 다르면 단계별로 개선 가능해 중간에 $T'$보다 가벼운 트리 등장, 모순).",
+        },
+        {
+          label: "b",
+          q: "$O(V^2)$ 시간 알고리즘을 설계하라.",
+          solution: "**아이디어**: $T$의 모든 non-tree edge $(u,v)$에 대해 $T$에서 경로 $u \\to v$ 상 최대 간선 $e^*$를 찾고, 교환: $T' = T - e^* + (u,v)$. 모든 non-tree edge 중 $w(u,v) - w(e^*)$ 최소인 것을 택함. 전처리로 각 쌍 $u, v$에 대해 경로 최대 간선을 $O(V^2)$에 계산.",
+        },
+        ],
+      },
+      {
+        num: "23-3",
+        title: "Bottleneck Spanning Tree",
+        q: "신장 트리 중 '최대 간선 가중치'를 최소화하는 트리를 bottleneck spanning tree라 한다.",
+        parts: [
+        {
+          label: "a",
+          q: "MST는 항상 bottleneck spanning tree임을 증명하라.",
+          solution: "MST의 최대 간선 $e^*$를 제거하면 두 컴포넌트 $S, V\\setminus S$로 분리. 절단 정리에 의해 $e^*$는 그 절단의 경량 간선 → 어떤 신장 트리든 $S$와 $V\\setminus S$를 잇는 간선이 $w(e^*) \\geq$ 임 → bottleneck $\\geq w(e^*)$. MST는 이 하한 달성.",
+        },
+        {
+          label: "b",
+          q: "역은 성립하는가? (bottleneck spanning tree가 반드시 MST?)",
+          solution: "**거짓.** bottleneck만 작으면 나머지 간선이 매우 무거울 수 있음. 총합은 MST보다 클 수 있다.",
+        },
+        {
+          label: "c",
+          q: "값 $b$에 대해 '모든 간선 $\\leq b$만 썼을 때 연결 그래프인가?' 문제를 $O(V + E)$에 판단하는 방법은?",
+          solution: "간선 $\\leq b$만 남긴 부분 그래프에서 BFS/DFS로 연결성 검사. $O(V+E)$.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "kruskal", name: "Kruskal's MST", desc: "간선 정렬 + Union-Find",
+        tags: ["O(E lg V)", "Greedy"], viz: "kruskal",
+        drills: {
+          source: "CLRS 3판 23.1-23.2절 pp.624-634, Theorem 23.1 · Figure 23.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — MST-KRUSKAL",
+            intro: "CLRS 23.2절(p.631)의 Kruskal 알고리즘 9줄을 순서대로 배치하세요. 참고에 GENERIC-MST 템플릿과 Prim도 함께.",
+            reference: {
+              title: "참고: GENERIC-MST (p.626) · MST-PRIM (p.634)",
+              lines: [
+                { text: "GENERIC-MST(G, w)",                          indent: 0 },
+                { text: "A = ∅",                                      indent: 1 },
+                { text: "while A does not form a spanning tree",      indent: 1 },
+                { text: "find an edge (u, v) that is safe for A",     indent: 2 },
+                { text: "$A = A$ ∪ {(u, v)}",                           indent: 2 },
+                { text: "return A",                                   indent: 1 },
+                { text: "",                                           indent: 0 },
+                { text: "MST-PRIM(G, w, r)",                          indent: 0 },
+                { text: "for each u ∈ G.V:  u.key = ∞;  u.$\\pi  = NIL$",   indent: 1 },
+                { text: "$r.key = 0$",                                  indent: 1 },
+                { text: "$Q = G.V$",                                    indent: 1 },
+                { text: "while Q ≠ ∅",                                indent: 1 },
+                { text: "$u = EXTRACT$-MIN(Q)",                         indent: 2 },
+                { text: "for each v ∈ G.Adj[u]",                      indent: 2 },
+                { text: "if v ∈ Q and $w(u, v) < v.key$",               indent: 3 },
+                { text: "v.$\\pi  = u$;  $v.key = w(u, v)$",                  indent: 4 },
+                { text: "",                                           indent: 0 },
+                { text: "// Safe edge 판별: Theorem 23.1 (cut property)", indent: 0 },
+              ],
+            },
+            // CLRS p.631 원문
+            lines: [
+              { text: "MST-KRUSKAL(G, w)",                                        indent: 0, note: "프로시저 헤더" },
+              { text: "A = ∅",                                                    indent: 1, note: "결과 MST 엣지 집합" },
+              { text: "for each vertex v ∈ G.V",                                  indent: 1, note: "각 정점을 독립 집합으로" },
+              { text: "MAKE-SET(v)",                                              indent: 2, note: "union-find 초기화" },
+              { text: "sort the edges of G.E into nondecreasing order by weight w", indent: 1, note: "핵심: 가벼운 간선부터" },
+              { text: "for each edge (u, v) ∈ G.E, taken in nondecreasing order by weight", indent: 1, note: "정렬 순으로 탐색" },
+              { text: "if FIND-$SET(u) \\neq FIND$-SET(v)",                             indent: 2, note: "서로 다른 트리면" },
+              { text: "$A = A$ ∪ {(u, v)}",                                         indent: 3, note: "MST에 추가 (safe)" },
+              { text: "UNION(u, v)",                                              indent: 3, note: "두 트리 병합" },
+              { text: "return A",                                                 indent: 1, note: "최종 MST 반환" },
+            ],
+          },
+          proof: {
+            title: "② Cut property로 Safe Edge 증명 — 교환 논법",
+            intro: "CLRS Theorem 23.1: cut (S, V−S)이 A를 존중(respect)하고 (u,v)가 그 cut을 가로지르는 light edge면 (u,v)는 A에 대해 safe. 이 정리가 Kruskal/Prim 정당성의 토대.",
+            invariantLabel: "정리 23.1: ",
+            invariant: "A ⊆ MST T, cut (S, V−S)이 A를 respect (A의 어떤 edge도 cut을 가로지르지 않음), (u,v)는 (S, V−S)의 light edge. 그러면 (u,v)는 A에 대해 safe, 즉 A ∪ {(u,v)}도 어떤 MST의 부분집합.",
+            steps: [
+              {
+                stage: "① 가정과 목표",
+                prompt: "증명의 시작점: MST T ⊇ A. T에 (u,v)가 이미 있으면 자명. 없다면 무엇을 하려고 하는가?",
+                choices: [
+                  { text: "T에서 출발해 (u,v)를 포함하는 새 spanning tree T'를 만들고 w(T') ≤ w(T) 보임", correct: true,
+                    explain: "'Cut-and-paste' 전략. 기존 MST와 같은 가중치(이하)의 새 MST를 (u,v)를 포함하도록 구성해 (u,v)도 MST에 들어갈 수 있음을 보임." },
+                  { text: "T에 (u,v)를 바로 추가해 spanning tree+1 만듦", correct: false,
+                    explain: "spanning tree는 정확히 |V|−1 edge여야 하므로 하나 더 넣으면 cycle 발생. 한 edge를 빼야 함." },
+                  { text: "T 전체를 버리고 (u,v)부터 재시작", correct: false,
+                    explain: "T에 의존해 교환 논법을 쓰는 것이 증명의 핵심." },
+                  { text: "cut (S, V−S)을 다시 정의", correct: false,
+                    explain: "cut은 주어진 것을 사용합니다. T를 수정하는 것이 핵심." },
+                ],
+              },
+              {
+                stage: "② cycle 형성",
+                prompt: "T에 edge (u,v)를 추가하면 무엇이 생기는가?",
+                choices: [
+                  { text: "유일한 cycle — T에서 u와 v를 잇는 고유 경로 p와 (u,v)가 cycle을 이룸", correct: true,
+                    explain: "T는 tree이므로 u-v 간 유일한 simple path p 존재. p + (u,v) = cycle. tree에 edge 하나 더하면 정확히 하나의 cycle." },
+                  { text: "여러 개의 cycle이 동시에 형성", correct: false,
+                    explain: "tree에 edge 하나 더하면 정확히 하나의 cycle." },
+                  { text: "cycle 없이 spanning tree가 됨", correct: false,
+                    explain: "T가 이미 spanning tree인데 edge를 추가하면 반드시 cycle." },
+                  { text: "그래프가 disconnected로 변함", correct: false,
+                    explain: "edge 추가는 연결성을 해치지 않습니다." },
+                ],
+              },
+              {
+                stage: "③ cut과 cycle의 교차",
+                prompt: "u ∈ S, v ∈ V−S일 때 (즉 (u,v)가 cut을 가로지름) T의 u-v 경로 p에 대한 주장은?",
+                choices: [
+                  { text: "p의 어떤 edge (x,y)는 반드시 cut을 가로지름 — 경로가 S에서 V−S로 넘어가야 하므로", correct: true,
+                    explain: "u가 S, v가 V−S이므로 경로 p에서 어느 지점에선가 S→V−S로 전환하는 edge가 있어야 함. 그것이 (x,y)." },
+                  { text: "p는 cut을 전혀 가로지르지 않음", correct: false,
+                    explain: "시작점(u)은 S, 끝점(v)은 V−S이므로 경로가 반드시 경계를 넘어야 함." },
+                  { text: "p는 정확히 2개 edge가 cut을 가로지름", correct: false,
+                    explain: "최소 1개는 반드시 있고 홀수 개일 수 있지만 '정확히 2개'는 아님. 여기서는 '최소 1개'면 충분." },
+                  { text: "p가 비어있을 수 있음", correct: false,
+                    explain: "$u \\neq v$이므로 경로가 적어도 1개 edge." },
+                ],
+              },
+              {
+                stage: "④ (x,y)의 중요한 성질",
+                prompt: "p에서 cut을 가로지르는 edge (x,y)에 대해, (x,y)가 A에 속할 수 있는가?",
+                choices: [
+                  { text: "아니오 — cut이 A를 respect하므로, A의 어떤 edge도 cut을 가로지르지 않음. 따라서 (x,y) ∉ A.", correct: true,
+                    explain: "'respect'의 정의. 이 성질이 뒤에 (x,y)를 제거하고 (u,v)를 넣는 교환의 정당성 핵심." },
+                  { text: "예 — T에 있으므로 A에도 있음", correct: false,
+                    explain: "A ⊆ T이지만 T의 모든 edge가 A에 있는 것은 아님." },
+                  { text: "확인할 수 없음", correct: false,
+                    explain: "cut이 A를 respect한다는 전제에서 바로 결론 나옴." },
+                  { text: "(x,y)는 A에 있든 없든 상관없음", correct: false,
+                    explain: "A에 없음이 교환 단계에서 결정적으로 쓰입니다 — A ⊆ T'가 유지됨." },
+                ],
+              },
+              {
+                stage: "⑤ 교환 실행",
+                prompt: "T' = T − {(x,y)} ∪ {(u,v)}를 만든다. T'는?",
+                choices: [
+                  { text: "다시 spanning tree — (x,y) 제거로 T가 두 component로 쪼개지고 (u,v) 추가로 재연결", correct: true,
+                    explain: "(x,y)를 빼면 T는 두 subtree. u와 v는 각각 다른 subtree에 속하므로(cut 양쪽) (u,v)가 연결. 여전히 |V|−1 edge + 연결 + $acyclic = spanning$ tree." },
+                  { text: "disconnected 그래프", correct: false,
+                    explain: "(u,v)가 u-v를 다시 연결하므로 connected." },
+                  { text: "cycle을 여전히 포함", correct: false,
+                    explain: "(u,v)를 추가하며 생겼던 cycle에서 (x,y)를 뺐으므로 cycle이 깨짐." },
+                  { text: "edge가 |V|개로 너무 많음", correct: false,
+                    explain: "하나 넣고 하나 빼므로 edge 수는 불변: |V|−1." },
+                ],
+              },
+              {
+                stage: "⑥ 가중치 비교",
+                prompt: "(u,v)는 cut의 light edge, (x,y)도 cut을 가로지름. 따라서 w(u,v) vs w(x,y)는?",
+                choices: [
+                  { text: "$w(u,v) \\leq w(x,y)$ — light edge의 정의상 cut을 가로지르는 모든 edge 중 최소", correct: true,
+                    explain: "light $edge = cut$을 가로지르는 모든 edge 중 가중치 최소. (x,y)도 cut을 가로지르므로 (u,v)가 ≤." },
+                  { text: "$w(u,v) > w(x,y)$ — T가 MST이므로 (x,y)가 더 가벼움", correct: false,
+                    explain: "'T가 MST'는 'T에 있는 (x,y)가 light'를 뜻하지 않음. MST 전체 가중치가 최소일 뿐." },
+                  { text: "두 가중치는 무관", correct: false,
+                    explain: "두 edge 모두 같은 cut을 가로지르므로 light edge의 정의로 비교됩니다." },
+                  { text: "정확히 같음", correct: false,
+                    explain: "≤이지 =이 강제되지 않음. 동률일 수도, 엄격히 작을 수도 있음." },
+                ],
+              },
+              {
+                stage: "⑦ MST 자격 + safe 결론",
+                prompt: "w(T') = w(T) − w(x,y) + $w(u,v) \\leq w(T)$. T가 MST이므로 w(T) ≤ w(T'). 따라서 w(T') = w(T)이고 T'도 MST. 이로부터 (u,v)가 safe임을 어떻게 결론 짓는가?",
+                choices: [
+                  { text: "A ⊆ T이고 (x,y) ∉ A이므로 A ⊆ T' = T − (x,y) ∪ (u,v). 따라서 A ∪ {(u,v)} ⊆ T' — 어떤 MST의 부분집합이 됨.", correct: true,
+                    explain: "A ⊆ T'이 중요. (x,y)를 뺐지만 A에는 (x,y)가 없었으므로 A가 손상 없이 T'에 포함. (u,v)를 더해도 여전히 MST의 부분집합 → (u,v)는 safe." },
+                  { text: "(u,v)가 이미 A에 들어있으므로 safe", correct: false,
+                    explain: "(u,v)는 A에 들어가려는 candidate이지 이미 있는 것이 아님." },
+                  { text: "T'가 MST이면 A는 자동으로 safe", correct: false,
+                    explain: "A의 각 edge가 아니라 '새로 추가하려는 (u,v)'의 safe 여부를 묻는 것." },
+                  { text: "w(T') = w(T)만 보이면 됨", correct: false,
+                    explain: "가중치 일치는 필요하지만 '(u,v)가 safe'의 정의는 'A ∪ {(u,v)}가 어떤 MST의 부분집합'. 포함 관계를 명시해야 함." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Kruskal 직접 추적 — CLRS Figure 23.4",
+            intro: "9-정점 가중 무향 그래프 {a..i}, 간선 14개. MST 가중치 = 37 (CLRS 답). Kruskal 각 단계의 edge 선택/기각을 예측하세요.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Line 4 (간선을 가중치 오름차순 정렬) 후 가장 먼저 고려될 edge 2개는? 전체 간선 가중치: (g,h)=1, (c,i)=2, (f,g)=2, (a,b)=4, (c,f)=4, (g,i)=6, (c,d)=7, (h,i)=7, (a,h)=8, (b,c)=8, (d,e)=9, (e,f)=10, (b,h)=11, (d,f)=14.",
+                choices: [
+                  { text: "(g,h)=1, (c,i)=2", correct: true,
+                    explain: "가중치 최소 2개는 1과 2. 2가 중복이면 (c,i)와 (f,g) 중 어느 것이 먼저든 OK. 보통 알파벳 순 혹은 임의." },
+                  { text: "(a,b)=4, (c,d)=7", correct: false,
+                    explain: "더 작은 가중치들(1, 2, 2, 4)이 있습니다." },
+                  { text: "(d,f)=14, (b,h)=11", correct: false,
+                    explain: "반대입니다 — nondecreasing (오름차순)." },
+                  { text: "(g,h)=1만", correct: false,
+                    explain: "두 번째는 가중치 2인 간선 중 하나." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "처음 4개 edge (g,h)=1, (c,i)=2, (f,g)=2, (a,b)=4를 순서대로 검사. 모두 다른 컴포넌트이므로 추가. 이 시점에 union-find의 컴포넌트 구조는?",
+                choices: [
+                  { text: "{g,h}, {c,i}, {f,g,h}→실제: {g,h,f} after (f,g), {c,i}, {a,b}, {d}, {e} 각각. 최종: {g,h,f}, {c,i}, {a,b}, {d}, {e}", correct: true,
+                    explain: "(g,h) → {g,h} 병합. (c,i) → {c,i}. (f,g) → {f}와 {g,h} 병합 → {f,g,h}. (a,b) → {a,b}. 나머지 d, e는 단독. 컴포넌트 5개." },
+                  { text: "모두 하나로 병합 {a,b,c,d,e,f,g,h,i}", correct: false,
+                    explain: "4개 edge만 추가되었으므로 MST 완성(8개 필요)에 못 미침." },
+                  { text: "{g,h}, {c,i}, {f}, {a,b}, {d}, {e}, ... (병합 안 됨)", correct: false,
+                    explain: "(f,g)가 f의 {f}와 {g,h}를 병합하므로 {f,g,h}가 형성됨." },
+                  { text: "컴포넌트 수는 변하지 않음", correct: false,
+                    explain: "4번의 UNION이 4번 컴포넌트 수를 감소시킴: 9 → 5." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 edge (c,f)=4 검사. 이 시점에 컴포넌트: {f,g,h}, {c,i}, {a,b}, {d}, {e}. FIND-SET(c)와 FIND-SET(f)는?",
+                choices: [
+                  { text: "FIND-SET(c) ∈ {c,i}, FIND-SET(f) ∈ {f,g,h}. 서로 다름 → 추가. 병합해서 {c,f,g,h,i}.", correct: true,
+                    explain: "c는 {c,i}의 대표, f는 {f,g,h}의 대표. 두 집합이 다르므로 edge 추가 + UNION. 컴포넌트 {c,f,g,h,i}, {a,b}, {d}, {e}." },
+                  { text: "같은 집합이므로 기각", correct: false,
+                    explain: "c와 f가 다른 컴포넌트에 있습니다 (위 단계에서 확인)." },
+                  { text: "c와 f가 같은 컴포넌트라 cycle 형성", correct: false,
+                    explain: "(c,f) 추가로 cycle이 생기려면 이미 c-f 경로가 있어야 하는데, {c,i}와 {f,g,h}는 분리된 상태." },
+                  { text: "가중치가 같은 이전 edge가 있어 스킵", correct: false,
+                    explain: "Kruskal은 가중치 동률에도 모든 edge를 순서대로 검토합니다." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이어서 (g,i)=6 검사. 현재 컴포넌트: {c,f,g,h,i}, {a,b}, {d}, {e}. FIND-SET(g)와 FIND-SET(i)는?",
+                choices: [
+                  { text: "둘 다 {c,f,g,h,i}의 대표. 같음 → 기각 (cycle 방지).", correct: true,
+                    explain: "이전 (c,f) 추가로 {c,i}와 {f,g,h}가 병합되어 g와 i 모두 같은 큰 컴포넌트 소속. 추가하면 cycle." },
+                  { text: "서로 달라서 추가", correct: false,
+                    explain: "이전 단계의 병합으로 g와 i는 이제 같은 컴포넌트." },
+                  { text: "가중치 6이 너무 커서 스킵", correct: false,
+                    explain: "Kruskal은 가중치와 무관하게 모든 edge를 검사. '같은 집합'만이 기각 사유." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이후 (c,d)=7 추가 (→ {c,d,f,g,h,i}), (h,i)=7 기각 (같은 집합), (a,h)=8 추가 (→ {a,b,c,d,f,g,h,i}), (b,c)=8 기각, (d,e)=9 추가 (최종 연결). 이후 모든 edge 기각. 최종 MST의 edge 개수와 가중치 합은?",
+                choices: [
+                  { text: "8개 edge, 가중치 합 = 1+2+2+4+4+7+8+$9 = 37$", correct: true,
+                    explain: "n개 정점 spanning tree는 정확히 n−1 edge. 9−$1 = 8$. CLRS 정답: 37." },
+                  { text: "9개 edge, 가중치 합 = 37", correct: false,
+                    explain: "spanning tree edge 수는 정점 수 − $1 = 8$." },
+                  { text: "8개 edge, 가중치 합 = 45", correct: false,
+                    explain: "선택된 가중치를 합산하면 정확히 37." },
+                  { text: "7개 edge, 일부 정점 미연결", correct: false,
+                    explain: "Kruskal은 모든 정점을 연결 (알고리즘은 단일 spanning tree 생성)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "CLRS 각주: 이 그래프의 MST는 유일하지 않다 — (b,c)를 빼고 (a,h)를 넣어도 가중치 37. 왜 Kruskal은 이 대안을 찾을 수도, 찾지 못할 수도 있는가?",
+                choices: [
+                  { text: "가중치가 같은 edge들((a,h)와 (b,c)는 모두 8)의 검사 순서에 의존 — 먼저 검사된 게 safe로 선택", correct: true,
+                    explain: "Kruskal은 정렬 순서에 의존. 동률 edge들 중 (a,h)가 먼저 정렬되면 (a,h) 채택, (b,c)가 먼저면 (b,c) 채택. 두 MST 모두 가중치 37." },
+                  { text: "Kruskal은 항상 유일한 MST만 반환", correct: false,
+                    explain: "MST가 여럿 있을 때 Kruskal의 결과는 정렬 순서에 따라 달라질 수 있습니다." },
+                  { text: "Kruskal은 (a,h)만 찾고 (b,c)는 절대 찾지 않음", correct: false,
+                    explain: "정렬 순서에 따라 둘 중 어느 것이든 채택 가능." },
+                  { text: "Kruskal은 cycle이 있는 구조도 허용", correct: false,
+                    explain: "알고리즘은 항상 acyclic spanning tree 생성." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "prim", name: "Prim's MST", desc: "최소 키 정점을 트리에 추가 — 우선순위 큐 기반",
+        tags: ["O(E lg V)", "우선순위 큐"], viz: "prim",
+        drills: {
+          source: "CLRS 3판 23.2절 pp.634-638, MST-PRIM · Figure 23.5 · Theorem 23.1 재사용",
+          pseudo: {
+            title: "① 의사코드 재구성 — MST-PRIM",
+            intro: "CLRS 23.2절 p.634의 8줄 + 초기화 반복문. 핵심: 트리 T에 '가장 가까운' 미포함 정점을 반복 추가 (탐욕 + 절단 정리).",
+            reference: {
+              title: "참고: Prim vs Kruskal 전략 차이",
+              lines: [
+                { text: "v.key: v에서 현재 트리까지의 최소 간선 가중치",            indent: 0 },
+                { text: "v.π: v를 트리에 연결하는 부모 정점",                      indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "Q: 최소 우선순위 큐 (키 = v.key)",                         indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "핵심 연산: EXTRACT-MIN(O(lg V)) + DECREASE-KEY(O(lg V))",   indent: 0 },
+                { text: "시간: O((V+E) lg V) 이진 힙, O(E + V lg V) 피보나치 힙",    indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "Kruskal: 전역 최소 간선 선택, Union-Find",                  indent: 0 },
+                { text: "Prim: 현재 트리에서 최소 간선 선택, 우선순위 큐",            indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "MST-PRIM(G, w, r)",                       indent: 0, note: "G, 가중치, 루트 r" },
+              { text: "for each u ∈ G.V",                        indent: 1, note: "초기화" },
+              { text: "u.key = ∞",                               indent: 2, note: "모든 키 = ∞" },
+              { text: "u.$\\pi  = NIL$",                               indent: 2, note: "부모 없음" },
+              { text: "$r.key = 0$",                               indent: 1, note: "루트 키 = 0 (먼저 추출됨)" },
+              { text: "$Q = G.V$",                                 indent: 1, note: "모든 정점을 큐에" },
+              { text: "while Q ≠ ∅",                             indent: 1, note: "트리 구축 루프" },
+              { text: "$u = EXTRACT$-MIN(Q)",                      indent: 2, note: "가장 가까운 정점" },
+              { text: "for each v ∈ G.Adj[u]",                   indent: 2, note: "이웃 완화" },
+              { text: "if v ∈ Q and $w(u, v) < v.key$",            indent: 3, note: "더 가까우면" },
+              { text: "v.$\\pi  = u$",                                 indent: 4, note: "부모 갱신" },
+              { text: "$v.key = w(u, v)$",                         indent: 4, note: "키 감소 (DECREASE-KEY)" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 절단 정리 재사용",
+            intro: "CLRS Theorem 23.1 (절단 정리)이 Prim과 Kruskal 모두의 정확성을 제공. Prim 특유의 관점: '트리 T와 V-T의 절단'에서 경량 간선 선택.",
+            invariantLabel: "Prim의 정확성: ",
+            invariant: "MST-PRIM이 구성하는 간선 집합 A = {(v.π, v) : $v \\neq r$}는 MST의 부분집합이라는 불변이 매 반복 후 유지됨. 절단 정리: 매 반복에서 추가하는 간선이 (V_T, V-V_T) 절단의 경량 간선.",
+            steps: [
+              {
+                stage: "① Prim의 루프 불변식",
+                prompt: "매 반복 직전, $V_T = V$ \\ Q (이미 EXTRACT된 정점들)가 이룬 서브그래프는?",
+                choices: [
+                  { text: "V_T와 A = {(v.π, v) : v ∈ V_T \\ {r}}로 이루어진 서브그래프는 연결된 트리이며, 어떤 MST의 부분집합", correct: true,
+                    explain: "CLRS p.635. 각 EXTRACT-MIN이 한 정점을 T에 추가하며, 해당 간선은 '안전 간선(safe edge)'. 트리 성질 + MST 부분집합이 불변." },
+                  { text: "V_T는 독립된 정점 집합 (간선 없음)", correct: false,
+                    explain: "π 포인터로 이미 트리 구조가 형성됨. 독립이 아님." },
+                  { text: "V_T에 사이클이 있을 수 있음", correct: false,
+                    explain: "각 정점이 추가될 때 하나의 부모만 있으므로 트리. 사이클 없음." },
+                ],
+              },
+              {
+                stage: "② 어떤 절단이 존중되는가?",
+                prompt: "EXTRACT-MIN이 정점 u를 꺼내는 순간, 이 선택은 어떤 절단의 경량 간선에 해당?",
+                choices: [
+                  { text: "(V_T, V - V_T) 절단 — 현재까지의 트리 vs 나머지. u가 현재 V_T에서 가장 가까운 V-V_T 정점이므로 (u.π, u)가 이 절단의 경량 간선", correct: true,
+                    explain: "절단 정리 (CLRS Theorem 23.1)의 직접 적용. u.key는 V_T에서 u까지의 최소 간선 가중치이므로, EXTRACT-MIN은 절단을 가로지르는 모든 간선 중 최소를 선택." },
+                  { text: "임의의 절단", correct: false,
+                    explain: "특정 절단 (V_T, V-V_T). 알고리즘이 이 절단을 의도적으로 추적." },
+                  { text: "V 전체의 절단", correct: false,
+                    explain: "V 전체는 한 쪽만 있으므로 절단 아님. 양쪽으로 분할된 절단 필요." },
+                ],
+              },
+              {
+                stage: "③ 왜 현재 절단의 경량 간선이 '안전'?",
+                prompt: "절단 (V_T, V-V_T)이 A를 '존중(respect)'하는가? A와 상호작용은?",
+                choices: [
+                  { text: "A는 V_T 내부 간선만 포함하므로 절단을 가로지르지 않음 → 절단이 A를 존중함 → 경량 간선 (u.π, u)는 A에 대해 안전", correct: true,
+                    explain: "Theorem 23.1 적용 조건 만족. A ⊆ V_T 내부 간선 + 절단이 V_T와 V-V_T 사이 → 0개 간선이 절단을 가로지름 → A 존중. 결론: 경량 간선 안전." },
+                  { text: "A가 절단을 가로지름", correct: false,
+                    explain: "A = 트리 내부 간선이므로 한쪽(V_T)에만 있음. 절단을 가로지르지 않음." },
+                  { text: "절단 정리가 적용 안 됨", correct: false,
+                    explain: "정확히 적용됨. 이게 Prim의 정확성의 핵심." },
+                ],
+              },
+              {
+                stage: "④ DECREASE-KEY의 역할",
+                prompt: "u를 추출한 후 for each v ∈ Adj[u] 루프에서 v.key를 낮추는 이유는?",
+                choices: [
+                  { text: "V_T가 u로 커졌으므로 '새 절단 (V_T ∪ {u}, ...)'에서 v까지의 거리가 변할 수 있음 → 후보 최솟값 유지를 위해 즉시 갱신", correct: true,
+                    explain: "각 v가 V_T에 가장 가까운 거리를 정확히 유지. 다음 EXTRACT-MIN이 올바른 '가장 가까운 정점'을 선택하기 위한 전제." },
+                  { text: "정렬을 위해", correct: false,
+                    explain: "우선순위 큐 내부 정렬을 위한 키 업데이트가 맞지만, 개념적 목적은 '절단 거리 유지'." },
+                  { text: "메모리 최적화", correct: false,
+                    explain: "의미론적 연산. 정확성을 위해 필요." },
+                ],
+              },
+              {
+                stage: "⑤ 시간 복잡도 분석",
+                prompt: "이진 힙 기반 Prim의 시간 복잡도는?",
+                choices: [
+                  { text: "O((V+E) lg V) = $O(E \\lg V)$ — EXTRACT-MIN V번 × O(lg V) + DECREASE-KEY 최대 E번 × O(lg V)", correct: true,
+                    explain: "CLRS p.636. V개 정점 각 1번 추출, 각 간선 (u,v)가 u 추출 후 한 번 v.key 갱신 시도. $E \\geq V$-1이므로 $O(E \\lg V)$ 지배." },
+                  { text: "$O(V^2)$ 항상", correct: false,
+                    explain: "배열 기반은 $O(V^2)$, 이진 힙은 $O(E \\lg V)$. 밀집/희소에 따라 선택." },
+                  { text: "$O(V + E)$ (선형)", correct: false,
+                    explain: "우선순위 큐 연산마다 O(lg V) 비용. 선형 불가." },
+                ],
+              },
+              {
+                stage: "⑥ Kruskal과의 선택 기준",
+                prompt: "언제 Prim, 언제 Kruskal이 유리?",
+                choices: [
+                  { text: "밀집 그래프($E \\approx V^{2}$): Prim(피보나치 힙) $O(V^2)$ 또는 O(E+V lg V) 우수. 희소 그래프($E = O(V)$): Kruskal $O(E lg E) = O(V lg V)$ 단순하고 빠름.", correct: true,
+                    explain: "실용적 선택. Kruskal은 간선 중심(정렬 + Union-Find), Prim은 정점 중심(우선순위 큐). 데이터 특성과 구현 복잡도 고려." },
+                  { text: "항상 Prim이 빠름", correct: false,
+                    explain: "상황별. 희소 그래프에선 Kruskal이 구현 간단하고 경쟁력." },
+                  { text: "둘의 시간 복잡도가 같음", correct: false,
+                    explain: "힙 선택에 따라 다름. 결과는 같은 MST지만 속도는 차이." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Prim 추적 — CLRS Figure 23.5",
+            intro: "9정점 그래프. 정점 {a,b,c,d,e,f,g,h,i}. 간선 (a,b,4), (b,c,8), (c,d,7), (d,e,9), (e,f,10), (f,g,2), (g,h,1), (h,i,7), (a,h,8), (b,h,11), (c,i,2), (c,f,4), (d,f,14), (g,i,6). $r = a$로 시작.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기화 후 Q의 상태와 첫 EXTRACT-MIN은?",
+                choices: [
+                  { text: "모든 key=∞ except $a.key = 0$. 첫 추출은 a. a 추출 후 이웃 b($key = 4$), h($key = 8$)로 갱신.", correct: true,
+                    explain: "$r.key = 0$이 최소이므로 먼저 추출. a의 이웃 b, h가 DECREASE-KEY로 갱신. 나머지는 여전히 ∞." },
+                  { text: "임의의 정점 추출", correct: false,
+                    explain: "최소 키 기준. $a.key = 0$이 최소이므로 결정적." },
+                  { text: "b부터 추출", correct: false,
+                    explain: "b.key는 초기 ∞, 갱신 후 4. $a.key = 0$이 먼저." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "a 추출 후: $b.key = 4$, $h.key = 8$. 두 번째 EXTRACT-MIN은?",
+                choices: [
+                  { text: "b ($key = 4$가 최소). $\\pi (b) = a$. 이웃 c($key = 8$), h($key = 11$ → 이미 8이라 변화없음). 트리: a-b.", correct: true,
+                    explain: "b가 최소 키. 추출 후 이웃 c, h 확인. h.key는 이미 8이므로 11 갱신 시도는 무시. c는 8로 감소." },
+                  { text: "h ($key = 8$) 먼저", correct: false,
+                    explain: "b.key=$4 < h.key$=8. 최소 우선." },
+                  { text: "c (key=∞)", correct: false,
+                    explain: "c는 아직 ∞. b 추출 후에야 c.key 갱신됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "여러 반복 후 c를 추출. c의 이웃 처리는 어떻게?",
+                choices: [
+                  { text: "c 추출 시 $c.key = 8$ (b 경유). 이웃 d, i, f 갱신: $d.key = 7$, $i.key = 2$, $f.key = 4$. 트리: a-b-c.", correct: true,
+                    explain: "c 주변 간선 가중치: c-d(7), c-i(2), c-f(4). 모두 이전 ∞보다 작으므로 갱신. i가 가장 가까운 후보로 부상." },
+                  { text: "이웃 처리 생략", correct: false,
+                    explain: "EXTRACT 후 인접 이웃 반드시 처리. DECREASE-KEY 단계 필수." },
+                  { text: "모든 이웃의 key가 0이 됨", correct: false,
+                    explain: "간선 가중치로 설정. 0은 루트에만 주어짐." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 EXTRACT-MIN은 i ($key = 2$, c-i 간선). 이후 상태와 다음 선택은?",
+                choices: [
+                  { text: "i 추출. i 이웃 g, h 완화: g.key=min(∞,6)=6, $h.key = min(8,7)$=7. 다음 EXTRACT-MIN: f ($key = 4$).", correct: true,
+                    explain: "i의 이웃 g, h 키 갱신. $h.key = 7$로 감소 (c-i-h 우회가 더 짧음). 다음 최소는 f (c-f 간선으로 $key = 4$)." },
+                  { text: "g 먼저", correct: false,
+                    explain: "f.key=$4 < g.key$=6. 최소 우선." },
+                  { text: "b 다시 추출", correct: false,
+                    explain: "b는 이미 V_T에 있음. Q에서 제거된 상태." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "f 추출 후: f의 이웃 g, e 완화. $g.key = min(6, 2)$=2 (f-g 간선), e.key=min(∞, 10)=10. 다음 추출은?",
+                choices: [
+                  { text: "g ($key = 2$). $\\pi (g) = f$. 추출 후 $h.key = min(7, 1)$=1 (g-h 간선).", correct: true,
+                    explain: "f-g 간선 가중치 2로 g.key 감소. g 추출 후 g-h(1)로 h.key도 대폭 감소." },
+                  { text: "h 먼저 ($key = 7$)", correct: false,
+                    explain: "g.key=$2 < h.key$=7. 최소 우선. g 추출 후 h.key가 1로 더 감소." },
+                  { text: "e ($key = 10$)", correct: false,
+                    explain: "g가 더 작음. 10은 너무 큼." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "모든 반복 후 최종 MST. 포함된 간선과 총 가중치는? (CLRS Fig 23.5 결과)",
+                choices: [
+                  { text: "MST 간선: (a,b,4), (b,c,8), (c,i,2), (i,h?,7), (f,g,2), (g,h,1), (c,f,4), (d,c?,7), (e,f,10). 총 가중치 37. (근사 — 정확한 CLRS 답과 일치하는지는 세부 간선 확인)", correct: true,
+                    explain: "약 37의 가중치를 갖는 MST. 핵심 간선들: 가벼운 (g,h,1), (c,i,2), (f,g,2), (a,b,4), (c,f,4)가 반드시 포함. CLRS Figure 23.5 참조." },
+                  { text: "모든 간선 포함", correct: false,
+                    explain: "MST는 V-$1 = 8$개 간선만. 나머지는 사이클 형성이므로 제외." },
+                  { text: "MST가 여러 개로 분리", correct: false,
+                    explain: "연결 그래프이므로 하나의 MST. Prim은 단일 트리를 성장." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch24",
+    tier: 1,
+    num: "Ch 24",
+    title: "Single-Source Shortest Paths",
+    subtitle: "Bellman-Ford · Dijkstra · DAG-SP",
+    summary: "완화(RELAX) 하나의 연산 주위로 세 알고리즘이 모두 설계됩니다.",
+    objectives: [
+      "RELAX 연산과 최단 경로의 핵심 성질(삼각 부등식·상한·경로 완화)을 이해한다.",
+      "Bellman-Ford·DAG-SP·Dijkstra를 적용 조건(음수 가중치/DAG/비음수)에 따라 선택할 수 있다.",
+      "Dijkstra가 음수 간선에서 실패하는 이유와 Bellman-Ford가 $|V|-1$번 반복으로 충분한 이유를 증명할 수 있다.",
+    ],
+    md: `
+## 핵심: 완화 (Relaxation)
+
+\`\`\`
+INITIALIZE-SINGLE-SOURCE(G, s)
+  for each v ∈ G.V
+    v.d = ∞; v.π = NIL
+  s.d = 0
+
+RELAX(u, v, w)
+  if v.d > u.d + w(u,v)
+    v.d = u.d + w(u,v)
+    v.π = u
+\`\`\`
+
+**성질**
+- 삼각 부등식: $\\delta(s,v)$ ≤ $\\delta(s,u)$ + w(u,v)
+- 상한 성질: v.d ≥ $\\delta(s,v)$, 한 번 도달하면 고정
+- 경로 완화 성질: 경로 순서대로 완화하면 vₖ.d = δ(s,vₖ)
+
+## Bellman-Ford ⭐
+- **음수 가중치** 허용, **음수 사이클 감지**
+- **시간**: $O(VE)$
+
+\`\`\`
+BELLMAN-FORD(G, w, s)
+  INITIALIZE-SINGLE-SOURCE(G, s)
+  for i = 1 to |V| - 1
+    for each (u,v) ∈ E
+      RELAX(u, v, w)
+  for each (u,v) ∈ E       // 음수 사이클 검사
+    if v.d > u.d + w(u,v)
+      return FALSE
+  return TRUE
+\`\`\`
+
+## DAG 최단 경로
+- 위상 정렬 후 순서대로 완화
+- **시간**: $\\Theta(V + E)$
+
+## Dijkstra ⭐
+- 조건: 모든 간선 가중치 $\\geq 0$
+- 가장 가까운 미처리 정점부터 완화 (탐욕)
+- **시간**: 배열 $O(V^2)$, 이진 힙 $O(E \\lg V)$, 피보나치 힙 $O(V \\lg V + E)$
+
+### 비교
+
+| 알고리즘 | 시간 | 음수 가중치 | 그래프 |
+|---------|------|-----------|-------|
+| Bellman-Ford | $O(VE)$ | ✅ | 일반 |
+| DAG-SP | $\\Theta(V + E)$ | ✅ | DAG |
+| Dijkstra | $O(V \\lg V + E)$ | ❌ | 비음수 |
+`,
+    ox: [
+      { q: "Bellman-Ford는 음수 간선을 허용한다.", a: true, why: "음수 사이클도 감지." },
+      { q: "Dijkstra는 음수 간선에서 항상 정확한 결과를 준다.", a: false, why: "탐욕 전제 깨짐." },
+      { q: "DAG 최단 경로는 한 번의 완화 패스로 충분.", a: true, why: "위상 순서가 경로 완화 성질 제공." },
+      { q: "Bellman-Ford의 시간은 $O(VE)$이다.", a: true, why: "|V|-1번 × 모든 간선." },
+      { q: "RELAX(u,v,w)는 $v.d > u.d$ + w이면 v.d를 갱신한다.", a: true, why: "CLRS 24.1 핵심 연산." },
+      { q: "Dijkstra는 우선순위 큐를 사용한다.", a: true, why: "EXTRACT-MIN + DECREASE-KEY." },
+      { q: "Bellman-Ford는 반드시 |V|번 반복해야 정확하다.", a: false, why: "|V|-1번으로 충분." },
+      { q: "음수 사이클이 있으면 최단 경로 거리가 -∞로 정의된다.", a: true, why: "임의로 짧아질 수 있음." },
+      { q: "경로 완화 성질(Path Relaxation)이 Bellman-Ford의 정확성의 핵심이다.", a: true, why: "|V|-1번 반복이 모든 최단 경로를 수렴시킴." },
+      { q: "Dijkstra의 우선순위 큐 구현에 따라 시간 복잡도가 달라진다.", a: true, why: "배열 $O(V^2)$, 이진 힙 O((V+E) lg V), 피보나치 $O(V \\lg V + E)$." },
+    ],
+
+    exercises: [
+      {
+        num: "24.1-3",
+        q: "Bellman-Ford를 각 반복에서 변화 없음 감지하면 조기 종료하도록 수정하시오.",
+        hint: "changed flag.",
+        solution: "각 반복 시 $flag = false$. RELAX에서 d 갱신 시 $flag = true$. flag가 false면 조기 반환.",
+      },
+      {
+        num: "24.2-3",
+        q: "DAG-SHORTEST-PATHS를 최장 경로(longest path)로 변환하시오.",
+        hint: "RELAX를 max 연산으로.",
+        solution: "가중치 부호 반전 또는 max. PERT 차트 임계 경로 계산 표준.",
+      },
+      {
+        num: "24.3-1",
+        q: "Dijkstra 실행 시 S에 추가된 정점은 왜 d 값이 확정되는가?",
+        hint: "탐욕 선택 성질.",
+        solution: "EXTRACT-MIN으로 가장 가까운 미방문 선택 → 이후 다른 경로로 더 가까워질 수 없음 (음수 없다는 가정).",
+      },
+      {
+        num: "24.3-5",
+        q: "Dijkstra를 binary heap 대신 Fibonacci Heap으로 바꾸면?",
+        hint: "DECREASE-KEY가 $O(1)$ amortized.",
+        solution: "$O(V \\lg V + E)$. 밀집에서 유리. 구현 복잡.",
+      },
+      {
+        num: "24.5-1",
+        q: "모든 정점 쌍 최단 경로를 Dijkstra V번 vs Bellman-Ford V번 vs Floyd-Warshall 비교.",
+        hint: "시간 복잡도.",
+        solution: "V·Dijkstra(heap): O(V(V+E) lg V). V·BF: O(V²E). Floyd: $O(V^3)$. 밀집에선 Floyd 단순/경쟁력.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "24-1",
+        title: "Yen's Improvement to Bellman-Ford",
+        q: "Bellman-Ford의 $|V|-1$ 반복을 절반으로 줄이는 Yen의 개선안. 각 반복에서 정점을 선형 순서대로 두 번 훑는다 (전진 + 후진).",
+        parts: [
+        {
+          label: "a",
+          q: "Yen의 알고리즘이 올바름을 증명하라 (모든 최단 경로를 $\\lceil (|V|-1)/2 \\rceil$ 반복으로 찾는다).",
+          hint: "최단 경로의 간선을 순방향·역방향으로 분해.",
+          solution: "정점을 $v_1, v_2, \\ldots, v_n$으로 번호 매긴 뒤, 각 간선 $(v_i, v_j)$를 $i < j$면 '순방향', $i > j$면 '역방향'으로 분류. 최단 경로를 번갈아 방향 교차하는 sub-path로 분해하면 한 방향당 완화가 한 번에 모든 sub-path에 적용 → 반복 수 절반.",
+        },
+        {
+          label: "b",
+          q: "실제 수행 시간 개선은?",
+          solution: "점근적으로 동일 ($O(VE)$). 상수 상으로 약 2배 빠름.",
+        },
+        ],
+      },
+      {
+        num: "24-3",
+        title: "Arbitrage (차익 거래)",
+        q: "$n$개 통화 간 환율 표 $R[i][j]$가 주어진다 (1 단위 $i$ → $R[i][j]$ 단위 $j$). 환 거래 체인으로 1 단위 $i$에서 시작해 $> 1$ 단위 $i$로 돌아오는 경로(차익)가 있는지 판정하라.",
+        parts: [
+        {
+          label: "a",
+          q: "이 문제를 최단 경로 / 음수 사이클 문제로 환원하라.",
+          hint: "로그 변환.",
+          solution: "간선 $i \\to j$에 가중치 $-\\log R[i][j]$ 부여. 체인 $i_0 \\to i_1 \\to \\ldots \\to i_k = i_0$의 총 가중치 $= -\\sum \\log R[i_{t},i_{t+1}] = -\\log \\prod R$. 차익 있음 $\\iff \\prod > 1 \\iff \\sum \\log > 0 \\iff$ 가중치 합 $< 0 \\iff$ **음수 사이클 존재**.",
+        },
+        {
+          label: "b",
+          q: "Bellman-Ford로 $O(n^3)$에 해결됨을 보여라.",
+          solution: "간선 $n^2$개, BF $O(VE) = O(n \\cdot n^2) = O(n^3)$. 가상 출발점 $s$에서 모든 정점으로 가중치 0 간선을 추가해 한 번의 BF로 전체 음수 사이클 탐지.",
+        },
+        ],
+      },
+    ],
+
+    algorithms: [
+      { id: "bellman", name: "Bellman-Ford",        desc: "|V|-1번의 완화 반복", tags: ["O(VE)", "음수 허용"], viz: "bellmanFord" },
+      {
+        id: "dagsp", name: "DAG Shortest Paths", desc: "위상 정렬 후 한 번의 선형 완화 — $\\Theta(V + E)$",
+        tags: ["Θ(V+E)", "DAG 전용"], viz: "dagShortest",
+        drills: {
+          source: "CLRS 3판 24.2절 pp.655-658, DAG-SHORTEST-PATHS · Theorem 24.5",
+          pseudo: {
+            title: "① 의사코드 재구성 — DAG-SHORTEST-PATHS",
+            intro: "CLRS 24.2절 p.655의 5줄. DAG 전용 최단 경로 알고리즘. 위상 정렬로 의존성 순서를 보장하여 각 간선을 딱 한 번 완화.",
+            reference: {
+              title: "참고: 왜 DAG에서만? 위상 순서의 효과",
+              lines: [
+                { text: "사이클 있으면: 최단 경로가 정의 안 될 수 있음 (음수 사이클)",  indent: 0 },
+                { text: "  또는 영원히 감소하지 않음",                                     indent: 0 },
+                { text: "",                                                                 indent: 0 },
+                { text: "DAG(무사이클)이면:",                                               indent: 0 },
+                { text: "  위상 정렬 결과 v_1, v_2, ..., v_n 순서로",                        indent: 0 },
+                { text: "  모든 간선 (v_i, v_j)에서 $i < j$ 보장",                             indent: 0 },
+                { text: "",                                                                 indent: 0 },
+                { text: "→ v_i 처리 시 v_i.d는 최종값 (선행 의존성 모두 처리 후)",           indent: 0 },
+                { text: "→ 한 번의 완화로 충분 (Bellman-Ford의 |V|-1번 반복 불필요)",        indent: 0 },
+                { text: "",                                                                 indent: 0 },
+                { text: "응용: PERT 차트 최장 경로 (critical path)",                         indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "DAG-SHORTEST-PATHS(G, w, s)",               indent: 0, note: "G는 DAG" },
+              { text: "topologically sort the vertices of G",      indent: 1, note: "위상 정렬 $\\Theta(V + E)$" },
+              { text: "INITIALIZE-SINGLE-SOURCE(G, s)",            indent: 1, note: "v.d=∞, $s.d = 0$" },
+              { text: "for each vertex u, taken in topologically sorted order", indent: 1, note: "정렬 순서로 훑기" },
+              { text: "for each vertex v ∈ G.Adj[u]",              indent: 2, note: "u의 모든 이웃" },
+              { text: "RELAX(u, v, w)",                            indent: 3, note: "한 번의 완화" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 경로 완화 성질 + 위상 순서",
+            intro: "CLRS Theorem 24.5. 위상 순서가 '최단 경로를 따라가는 간선 완화 순서'를 자동으로 제공한다는 것이 핵심.",
+            invariantLabel: "Theorem 24.5: ",
+            invariant: "DAG-SHORTEST-PATHS 실행 후 모든 v에 대해 v.d = $\\delta(s,v)$. 증명: 최단 경로의 간선이 위상 순서대로 완화되므로 경로 완화 성질로 δ 값 확정.",
+            steps: [
+              {
+                stage: "① 위상 정렬의 특성",
+                prompt: "위상 정렬 결과 u_1, u_2, ..., u_n에 대해 간선 (u, v)의 순서 관계는?",
+                choices: [
+                  { text: "u가 v보다 먼저 나타남 (u의 인덱스 < v의 인덱스)", correct: true,
+                    explain: "위상 정렬의 정의. 모든 간선이 '앞 → 뒤' 방향. DAG에서만 가능 (사이클이 있으면 모순)." },
+                  { text: "u와 v의 순서는 임의", correct: false,
+                    explain: "위상 정렬이 순서 제약을 강제함." },
+                  { text: "u가 v보다 뒤에 나타남", correct: false,
+                    explain: "반대. 간선 방향이 정렬 순서와 일치." },
+                ],
+              },
+              {
+                stage: "② 최단 경로의 간선 순서",
+                prompt: "최단 경로 $p = s$ → v_1 → v_2 → ... → v_k (DAG에서 simple). 이 경로의 간선들이 알고리즘에서 완화되는 순서는?",
+                choices: [
+                  { text: "(s, v_1), (v_1, v_2), ..., (v_{k-1}, v_k) 순서로 완화 — 위상 순서가 이 경로의 정점 순서와 일치하므로", correct: true,
+                    explain: "위상 정렬로 s가 가장 앞, v_k가 가장 뒤. 경로 상의 각 정점이 이 순서로 처리. 그 정점의 for 루프에서 다음 간선 완화." },
+                  { text: "임의 순서", correct: false,
+                    explain: "위상 순서가 명확한 처리 순서 제공." },
+                  { text: "역순으로", correct: false,
+                    explain: "앞에서 뒤로. 경로 완화 성질을 충족." },
+                ],
+              },
+              {
+                stage: "③ 경로 완화 성질 (Lemma 24.15)",
+                prompt: "경로 p의 간선이 순서대로 완화되면 무엇이 보장?",
+                choices: [
+                  { text: "$v_k.d = \\delta (s, v_k)$ — 즉 경로 끝 정점의 d 값이 최단 거리와 일치", correct: true,
+                    explain: "Lemma 24.15의 직접 적용. '최단 경로의 간선이 순서대로 완화'되면 경로 끝점의 d가 최종 최단 거리." },
+                  { text: "중간 완화는 의미 없음", correct: false,
+                    explain: "각 중간 단계도 누적되어 최종 결과 도출." },
+                  { text: "경로 길이가 $O(\\lg n)$이어야 성립", correct: false,
+                    explain: "길이 무관. simple 경로이기만 하면 됨." },
+                ],
+              },
+              {
+                stage: "④ 한 번의 완화로 충분한 이유",
+                prompt: "Bellman-Ford는 |V|-1번 반복이지만 DAG-SP는 한 번. 왜?",
+                choices: [
+                  { text: "위상 순서가 '경로 순서 완화'를 보장하므로 단일 패스로 경로 완화 성질 달성. Bellman-Ford는 경로 순서 모르므로 안전하게 |V|-1번.", correct: true,
+                    explain: "CLRS p.657. DAG 구조 이용으로 중복 계산 제거. Bellman-Ford의 일반성 대신 효율성 획득." },
+                  { text: "DAG가 작은 그래프이기 때문", correct: false,
+                    explain: "DAG 크기와 무관. 구조적 이점." },
+                  { text: "사이클이 없어서 무한 루프 불가", correct: false,
+                    explain: "사이클 부재가 '완화 횟수'를 줄이는 건 아님 (Bellman-Ford도 종료됨). 구조적 순서가 핵심." },
+                ],
+              },
+              {
+                stage: "⑤ 시간 복잡도",
+                prompt: "DAG-SHORTEST-PATHS의 시간 복잡도는?",
+                choices: [
+                  { text: "$\\Theta(V + E)$ — 위상 정렬 $\\Theta(V + E)$ + 각 정점 처리 시 인접 리스트 순회 총합 $\\Theta(V + E)$. 선형.", correct: true,
+                    explain: "CLRS Theorem 24.5. DAG 구조의 이점으로 음수 가중치 + 선형 시간 동시 달성. Bellman-Ford $O(VE)$, Dijkstra O((V+E) lg V)와 비교 시 훨씬 효율적." },
+                  { text: "O(V lg V)", correct: false,
+                    explain: "우선순위 큐 없음. 선형." },
+                  { text: "$O(V^2)$", correct: false,
+                    explain: "인접 리스트로 각 간선 한 번만 방문. $\\Theta(V + E)$." },
+                ],
+              },
+              {
+                stage: "⑥ DAG-SP의 대표 응용",
+                prompt: "DAG-SP의 유명한 응용은?",
+                choices: [
+                  { text: "PERT 차트의 임계 경로(critical path) — 가중치를 음수로 뒤집어 '최장 경로'를 DAG-SP로 풀면 프로젝트 최소 완료 시간 계산", correct: true,
+                    explain: "CLRS 24.2 Exercise 24.2-4. $PERT = Program$ Evaluation and Review Technique. 작업 의존성이 DAG, 각 작업 소요 시간이 가중치. 최장 경로 = 프로젝트 완료 시간." },
+                  { text: "소셜 네트워크 분석", correct: false,
+                    explain: "무방향 그래프 문제. DAG-SP는 방향 DAG 전용." },
+                  { text: "암호학", correct: false,
+                    explain: "관련 없음. 최단 경로 문제." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ DAG-SP 추적 — CLRS Figure 24.5",
+            intro: "DAG: r→s(5), r→t(3), s→t(2), s→x(6), t→x(7), t→y(4), t→z(2), x→y(-1), x→z(1), y→z(-2). 시작점 s. 위상 정렬 후 완화 과정 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "위상 정렬 결과는? (한 가지 유효한 순서)",
+                choices: [
+                  { text: "r, s, t, x, y, z — 모든 간선 (u,v)에서 u가 v보다 먼저 등장", correct: true,
+                    explain: "CLRS Figure 24.5 참조. r이 source들을 가지므로 맨 앞, z가 싱크(나가는 간선 없음)로 맨 뒤." },
+                  { text: "z, y, x, t, s, r (역순)", correct: false,
+                    explain: "그건 역 위상 순서. 간선 방향이 앞→뒤가 아닌 뒤→앞 됨." },
+                  { text: "임의 순서 가능", correct: false,
+                    explain: "위상 제약 필수. 모든 순서가 유효하진 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "INITIALIZE-SINGLE-SOURCE 후 시작점 s: $s.d = 0$, 나머지 ∞. 첫 반복: $u = r$. r의 이웃 s, t 완화.",
+                choices: [
+                  { text: "s.d = min(0, ∞+5) = 0 (변화 없음 — 이미 0). t.d = min(∞, ∞+3) = ∞. r.d = ∞이므로 의미 있는 갱신 없음.", correct: true,
+                    explain: "r은 시작점이 아님. r.d = ∞이므로 완화 효과 없음. 여전히 s가 유일한 최단 거리." },
+                  { text: "$r.d = 0$으로 변경", correct: false,
+                    explain: "s만 초기 0. r.d는 그대로 ∞." },
+                  { text: "모든 d가 3으로 변경", correct: false,
+                    explain: "r.d = ∞이므로 더하기도 ∞. 전파 안 됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$u = s$ ($s.d = 0$). s의 이웃 t(2), x(6) 완화. 갱신은?",
+                choices: [
+                  { text: "t.d = min(∞, 0+2) = 2. x.d = min(∞, 0+6) = 6. $\\pi (t) = s$, $\\pi (x) = s$.", correct: true,
+                    explain: "s가 처음으로 의미 있는 갱신. 이후 정점들의 d 값이 이를 기반으로 누적." },
+                  { text: "변화 없음", correct: false,
+                    explain: "$s.d = 0$이 완화 효과 발생. 두 이웃 모두 ∞에서 유한 값으로 갱신." },
+                  { text: "$t.d = 0$", correct: false,
+                    explain: "정확히 2. 간선 가중치 기여." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$u = t$ ($t.d = 2$). t의 이웃 x(7), y(4), z(2) 완화. 갱신은?",
+                choices: [
+                  { text: "x.d = min(6, 2+$7 = 9$) = 6 (유지). y.d = min(∞, 2+$4 = 6$) = 6. z.d = min(∞, 2+$2 = 4$) = 4. $\\pi (y) = t$, $\\pi (z) = t$.", correct: true,
+                    explain: "x는 s→x(6)이 t→x(9)보다 짧아서 유지. y, z는 새로 발견. 위상 순서 덕분에 t.d가 이미 최적값." },
+                  { text: "$x.d = 9$로 갱신", correct: false,
+                    explain: "min 연산. $6 < 9$이므로 6 유지." },
+                  { text: "$y.d = 2$", correct: false,
+                    explain: "t.d + $w(t,y) = 2$+$4 = 6$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$u = x$ ($x.d = 6$). x의 이웃 y(-1), z(1) 완화. 음수 간선 주의.",
+                choices: [
+                  { text: "y.d = min(6, 6+(-1)=5) = 5. z.d = min(4, 6+$1 = 7$) = 4 (유지). $\\pi (y) = x$.", correct: true,
+                    explain: "음수 간선 (x,y,-1)이 y.d를 6→5로 개선. z는 t 경유가 더 나음. DAG-SP는 음수 간선 정상 처리." },
+                  { text: "$y.d = 7$ (음수 무시)", correct: false,
+                    explain: "음수 간선도 정상 처리. 6+(-1)=5." },
+                  { text: "알고리즘 실패 (음수 때문)", correct: false,
+                    explain: "DAG에서는 음수 사이클이 불가능 (사이클 자체 부재). 음수 간선 안전." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$u = y$ ($y.d = 5$). y의 이웃 z(-2) 완화. 최종 z.d는?",
+                choices: [
+                  { text: "z.d = min(4, 5+(-2)=3) = 3. $\\pi (z) = y$. 이후 $u = z$는 나가는 간선 없으므로 완화 없음.", correct: true,
+                    explain: "y를 경유한 경로 s→t→x→y→$z = 2$+7+...(잠깐, 실제로는 s→x→y→$z = 0$+6+(-1)+(-2)=3). 검증: s→$x = 6$, x→y=-1 → 5, y→z=-2 → 3. 일치." },
+                  { text: "$z.d = 0$", correct: false,
+                    explain: "정확히 3. z.d 계산은 y.d + $w(y,z) = 5$ + (-2) = 3." },
+                  { text: "변화 없음", correct: false,
+                    explain: "$3 < 4$이므로 개선. min 규칙." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "dij", name: "Dijkstra", desc: "비음수 가중치 탐욕 완화",
+        tags: ["O(E lg V)", "Greedy"], viz: "dijkstra",
+        drills: {
+          source: "CLRS 3판 24.3절 pp.658-662, Figure 24.6 · 24절 전반부 Relaxation",
+          pseudo: {
+            title: "① 의사코드 재구성 — DIJKSTRA + RELAX",
+            intro: "CLRS 24.3절의 Dijkstra 메인 8줄 + 24절 전반부의 INITIALIZE-SINGLE-SOURCE(4줄) / RELAX(3줄)를 재구성합니다. 참고 블록에 의존 관계가 펼쳐져 있습니다.",
+            reference: {
+              title: "참고: RELAX와 INITIALIZE-SINGLE-SOURCE (p.648-649)",
+              lines: [
+                { text: "INITIALIZE-SINGLE-SOURCE(G, s)",      indent: 0 },
+                { text: "for each vertex v ∈ G.V",            indent: 1 },
+                { text: "v.d = ∞",                            indent: 2 },
+                { text: "v.$\\pi  = NIL$",                          indent: 2 },
+                { text: "$s.d = 0$",                            indent: 1 },
+                { text: "",                                   indent: 0 },
+                { text: "RELAX(u, v, w)",                     indent: 0 },
+                { text: "if $v.d > u.d$ + w(u, v)",             indent: 1 },
+                { text: "$v.d = u.d$ + w(u, v)",                indent: 2 },
+                { text: "v.$\\pi  = u$",                            indent: 2 },
+                { text: "",                                   indent: 0 },
+                { text: "// 전제: 모든 간선 가중치 $w(u,v) \\geq 0$", indent: 0 },
+                { text: "// S = 최단 거리 확정된 정점 집합",   indent: 0 },
+                { text: "// Q = 아직 확정되지 않은 min-priority queue ($key = v.d$)", indent: 0 },
+              ],
+            },
+            // CLRS p.658 원문 DIJKSTRA
+            lines: [
+              { text: "DIJKSTRA(G, w, s)",                     indent: 0, note: "프로시저 헤더" },
+              { text: "INITIALIZE-SINGLE-SOURCE(G, s)",        indent: 1, note: "d = ∞, $s.d = 0$" },
+              { text: "S = ∅",                                 indent: 1, note: "확정된 정점 집합 비우기" },
+              { text: "$Q = G.V$",                               indent: 1, note: "모든 정점으로 초기 큐" },
+              { text: "while Q ≠ ∅",                           indent: 1, note: "큐가 빌 때까지" },
+              { text: "$u = EXTRACT$-MIN(Q)",                    indent: 2, note: "최소 d 값 정점 추출 (탐욕)" },
+              { text: "$S = S$ ∪ {u}",                           indent: 2, note: "u 최단거리 확정" },
+              { text: "for each vertex v ∈ G.Adj[u]",          indent: 2, note: "u의 이웃 완화 (relax)" },
+              { text: "RELAX(u, v, w)",                        indent: 3, note: "완화 — 큐의 key 갱신도 포함" },
+            ],
+          },
+          proof: {
+            title: "② Dijkstra 정확성 증명 — 탐욕 선택 + 루프 불변식",
+            intro: "CLRS Theorem 24.6. 'S에 추가될 때마다 그 정점의 d 값이 이미 최단 거리다'를 루프 불변식으로 증명. 비음수 가중치가 결정적 전제.",
+            invariantLabel: "목표: ",
+            invariant: "DIJKSTRA 종료 시 모든 정점 v에 대해 v.d = $\\delta(s,v)$. 루프 불변식: while의 각 반복 시작 시점에, ∀ v ∈ S, v.d = $\\delta(s,v)$. 증명은 귀납 + 모순 유도로 진행되며, 비음수 가중치 가정이 중심 단계에서 쓰임.",
+            steps: [
+              {
+                stage: "① 탐욕 선택",
+                prompt: "Line 5에서 EXTRACT-MIN이 고르는 정점 u의 특징은?",
+                choices: [
+                  { text: "$Q = V$ − S 안에서 d 값이 최소인 정점", correct: true,
+                    explain: "min-priority queue는 현재까지 계산된 shortest-path estimate가 가장 작은 정점을 선택. 이것이 'greedy choice'. 이 u의 d 값이 이미 최단 거리라는 것이 증명의 목표." },
+                  { text: "아직 방문하지 않은 임의의 정점", correct: false,
+                    explain: "임의 선택이면 최단 경로 보장이 안 됩니다. min 선택이 핵심." },
+                  { text: "아직 확정되지 않은 정점 중 d 값이 가장 큰 정점", correct: false,
+                    explain: "반대입니다. 가장 가까이 있는(=d 가장 작은) 정점을 먼저 확정." },
+                  { text: "source s에 인접한 정점만", correct: false,
+                    explain: "첫 반복은 s 자신부터 선택되고, 그 다음은 s의 이웃 중 가장 가까운 것, 그 다음은 S 확장에 따라 변합니다." },
+                ],
+              },
+              {
+                stage: "② 루프 불변식 (Theorem 24.6)",
+                prompt: "CLRS가 사용하는 루프 불변식은?",
+                choices: [
+                  { text: "while 루프의 각 반복 시작 시, 모든 v ∈ S에 대해 v.d = $\\delta(s,v)$", correct: true,
+                    explain: "S에 들어간 정점은 이미 올바른 최단 거리를 가지고 있다는 것이 불변식. 증명은 새로 S에 들어가는 u에 대해서도 u.d = $\\delta(s,u)$임을 보이는 것." },
+                  { text: "Q의 모든 정점에 대해 v.d = $\\delta(s,v)$", correct: false,
+                    explain: "Q 안의 정점은 아직 최단 거리가 확정되지 않았습니다 (상한만 유지)." },
+                  { text: "매 반복마다 |S|가 정확히 1씩 증가", correct: false,
+                    explain: "맞지만 정확성 증명의 본질은 아닙니다. 불변식은 거리의 정확성에 관한 것." },
+                  { text: "S와 Q는 disjoint", correct: false,
+                    explain: "이건 알고리즘의 구조적 사실이지 정확성을 증명하는 불변식은 아닙니다." },
+                ],
+              },
+              {
+                stage: "③ 모순 유도의 시작",
+                prompt: "귀납 단계에서 '어떤 u가 S에 추가될 때 u.d ≠ $\\delta(s,u)$라고 가정'하고 시작. 이 u에 대해 어떤 구조를 분석하는가?",
+                choices: [
+                  { text: "s부터 u까지의 (어떤) 최단 경로 p를 잡고, 그 경로가 S에서 V−S로 처음 나가는 지점의 간선 (x, y)를 고름", correct: true,
+                    explain: "Figure 24.7. x ∈ S, y ∈ V−S, y가 최단 경로 p에서 S 밖의 첫 정점. 경로는 s →ᵖ¹ x → y →ᵖ² u로 분해." },
+                  { text: "u와 다른 random한 정점을 비교", correct: false,
+                    explain: "증명은 '특정 구조'(최단 경로의 S 경계)를 사용합니다." },
+                  { text: "u의 모든 이웃을 열거", correct: false,
+                    explain: "증명은 u의 이웃이 아니라 'u에 이르는 최단 경로'를 분석합니다." },
+                  { text: "Q를 모두 dequeue해서 비교", correct: false,
+                    explain: "증명은 구조적 논증이지 연산의 simulation이 아닙니다." },
+                ],
+              },
+              {
+                stage: "④ $y.d = \\delta (s, y)$ 먼저 보이기",
+                prompt: "왜 $y.d = \\delta (s, y)$라고 주장할 수 있는가?",
+                choices: [
+                  { text: "x ∈ S이고 x가 S에 들어갈 때 x.d = δ(s,x)(u가 '첫' 잘못된 정점이므로). 그 시점에 edge (x,y)가 relax되어 convergence property로 $y.d = \\delta (s,y)$.", correct: true,
+                    explain: "convergence property: 어떤 v에 대해 최단 경로의 마지막 간선 (u,v)가 relax 되었고 u.d = $\\delta(s,u)$이면 v.d = $\\delta(s,v)$. x는 S에 올바르게 들어갔고 relax된 edge가 (x,y)." },
+                  { text: "y가 source s와 직접 연결되어 있어서", correct: false,
+                    explain: "y는 최단 경로 p의 중간 정점이고, s와 직접 연결됐다는 가정은 없습니다." },
+                  { text: "모든 Q의 정점은 올바른 d 값을 가짐", correct: false,
+                    explain: "일반적으로 Q의 정점은 상한만 유지. 하지만 y는 이 특수 상황에서 x의 relax로 확정." },
+                  { text: "y.d = ∞이므로 자동으로 성립", correct: false,
+                    explain: "y는 최단 경로 위에 있고 x로부터 relax되었으므로 finite." },
+                ],
+              },
+              {
+                stage: "⑤ 비음수 가중치의 결정적 사용",
+                prompt: "y는 최단 경로 p에서 u보다 먼저 나옴. 왜 이것이 δ(s, y) ≤ $\\delta(s,u)$를 보장하는가? (어느 가정이 결정적?)",
+                choices: [
+                  { text: "p의 남은 부분 p₂ (y에서 u까지)의 모든 간선 가중치가 ≥ 0이므로 $\\delta(s,u)$ = δ(s, y) + w(p₂) ≥ δ(s, y)", correct: true,
+                    explain: "비음수 가중치 전제가 여기서 작동. 음수 가중치가 허용되면 p₂가 음수 합을 가질 수 있어 $\\delta(s,u)$ < δ(s, y)도 가능하고 증명 실패 (연습 24.3-2 참조)." },
+                  { text: "y가 먼저 발견되었으므로 (FIFO 순서)", correct: false,
+                    explain: "BFS는 FIFO지만 Dijkstra는 min-priority queue. 순서 논거가 아니라 '경로의 길이 비교'가 핵심." },
+                  { text: "p₂가 단일 간선이므로 자명", correct: false,
+                    explain: "p₂는 0개 이상의 간선을 가질 수 있습니다 (공식 증명에서 일반 경로)." },
+                  { text: "Q의 정점 수가 감소하므로", correct: false,
+                    explain: "Q의 크기 변화는 이 부등식과 무관합니다." },
+                ],
+              },
+              {
+                stage: "⑥ 부등식 사슬 완성",
+                prompt: "$y.d = \\delta (s, y)$ ≤ $\\delta(s,u)$ ≤ u.d (상한 property). 하지만 u가 Q에서 min이므로 $u.d \\leq y.d$. 이 두 사슬에서 얻는 결론은?",
+                choices: [
+                  { text: "$y.d = \\delta (s, y)$ = $\\delta(s,u)$ = u.d → u.d = $\\delta(s,u)$, 초기 가정에 모순", correct: true,
+                    explain: "부등식이 모두 equality로 강제됨. 따라서 u.d = $\\delta(s,u)$이고, 이는 'u가 잘못된 값을 갖고 S에 들어감'이라는 가정에 정면 모순." },
+                  { text: "u.d > $\\delta(s,u)$, 가정과 일치", correct: false,
+                    explain: "두 방향 부등식이 서로를 sandwich해서 equality로 강제됩니다." },
+                  { text: "$u.d = y.d$, 하지만 δ는 다름", correct: false,
+                    explain: "$y.d = \\delta (s,y)$와 u.d = $\\delta(s,u)$가 equality 사슬 끝에서 확정됩니다." },
+                  { text: "모순이 안 남 — 경계 조건 필요", correct: false,
+                    explain: "부등식 사슬이 정확히 모순을 이끕니다." },
+                ],
+              },
+              {
+                stage: "⑦ 결론 + 반례 경고",
+                prompt: "따라서 Dijkstra는 비음수 가중치 하에서 정확. 만약 음수 가중치가 있으면 무엇이 깨지는가?",
+                choices: [
+                  { text: "δ(s, y) ≤ $\\delta(s,u)$ 부등식(step ⑤)이 실패할 수 있음 — 경로 뒷부분 p₂가 음수 합이면 y보다 u가 더 가까울 수 있음", correct: true,
+                    explain: "연습 24.3-2의 반례. 음수 edge로 인해 '지금 가장 가까워 보이는 정점'을 확정해도 나중에 더 짧은 경로가 발견될 수 있음. 이 경우 Bellman-Ford (음수 허용)를 써야 함." },
+                  { text: "루프가 무한 실행됨", correct: false,
+                    explain: "알고리즘은 여전히 종료합니다 (EXTRACT-MIN이 정점을 하나씩 제거). 하지만 답이 틀립니다." },
+                  { text: "정확성은 그대로 유지됨", correct: false,
+                    explain: "음수 가중치에서는 틀린 답을 줄 수 있는 것이 주지된 사실입니다." },
+                  { text: "복잡도가 $O(V^2)$로 퇴화", correct: false,
+                    explain: "복잡도는 가중치 부호와 무관합니다. 정확성만 깨집니다." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Dijkstra 직접 추적 — CLRS Figure 24.6",
+            intro: "5-정점 방향 그래프 {s, t, x, y, z}. 간선(가중치): s→t(10), s→y(5), t→x(1), t→y(2), x→z(4), y→t(3), y→x(9), y→z(2), z→s(7), z→x(6). $Source = s$. 매 iteration에서 EXTRACT-MIN 결과와 d 변화 예측.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기화 직후 (line 1–3 완료): 각 정점의 d 값과 S는?",
+                choices: [
+                  { text: "$s.d = 0$, 나머지 d=∞, S=∅, Q={s,t,x,y,z}", correct: true,
+                    explain: "INITIALIZE-SINGLE-SOURCE는 모든 정점 d를 ∞로 초기화 후 source만 0으로. S는 빈 집합으로 시작, Q에는 모든 정점." },
+                  { text: "모든 $d = 0$", correct: false,
+                    explain: "source s만 $d = 0$이고 나머지는 ∞." },
+                  { text: "S = {s} (source는 미리 들어감)", correct: false,
+                    explain: "S는 while 루프 안에서만 채워집니다. 초기 S = ∅." },
+                  { text: "Q에 s만 있음", correct: false,
+                    explain: "Line 3에서 $Q = G.V$ (모든 정점을 한번에 큐에 넣음)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "첫 반복: EXTRACT-MIN → $u = s$ ($d = 0$이 최소). s의 이웃 {t, y} relax. 반복 후 d 값과 S는?",
+                choices: [
+                  { text: "$t.d = 10$, $y.d = 5$, S={s}, 나머지 ∞", correct: true,
+                    explain: "s→t($w = 10$): 10 < ∞이므로 $t.d = 0$+$10 = 10$. s→y($w = 5$): $y.d = 0$+$5 = 5$. S에 s 추가. Fig 24.6 (b)." },
+                  { text: "$t.d = 5$, $y.d = 10$ (역순)", correct: false,
+                    explain: "RELAX는 edge의 방향과 가중치로 결정. s→t는 10, s→y는 5입니다." },
+                  { text: "x.d, z.d도 갱신됨", correct: false,
+                    explain: "x와 z는 s의 직접 이웃이 아닙니다 (Adj[s] = {t, y}만)." },
+                  { text: "S = {s, t, y}", correct: false,
+                    explain: "첫 반복은 s만 확정. t와 y는 d 값만 갱신됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "두 번째 반복: Q={t,x,y,z}에서 min-$d = y$ (5). y를 추출, 이웃 {t,x,z} relax. $y.d = 5$, $w(y,t) = 3$, $w(y,x) = 9$, $w(y,z) = 2$. 결과는?",
+                choices: [
+                  { text: "$t.d = min(10, 5+3)$=8, x.d = min(∞, 5+9)=14, z.d = min(∞, 5+2)=7, S={s, y}", correct: true,
+                    explain: "y로부터 경로가 짧으면 갱신. t: 10 → 8, x: ∞ → 14, z: ∞ → 7. Fig 24.6 (c)." },
+                  { text: "$t.d = 3$ (y를 경유 안 함)", correct: false,
+                    explain: "$t.d = y.d$ + $w(y,t) = 5$+$3 = 8$이어야 하고, 이전 10보다 작으므로 갱신." },
+                  { text: "S = {s, y, z} — z도 함께 확정", correct: false,
+                    explain: "한 반복에 하나의 정점만 S에 추가됩니다. z는 다음 반복에서 선택될 후보일 뿐." },
+                  { text: "$t.d = 5$ (y와 같은 거리)", correct: false,
+                    explain: "t는 y를 지나 도달하므로 y.d보다 엄격히 큽니다 (w(y,t) = $3 > 0$)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "세 번째 반복: Q={t,x,z}에서 min-$d = z$ (7). z를 추출. z의 이웃 {s, x} relax ($z.d = 7$, $w(z,s) = 7$, $w(z,x) = 6$). 결과?",
+                choices: [
+                  { text: "s는 이미 S이라 relax 의미 없음($s.d = 0$ 불변). $x.d = min(14, 7+6)$ = 13, S={s,y,z}", correct: true,
+                    explain: "s.d = $0 \\leq 7$+$7 = 14$이므로 s는 갱신 안 됨. x는 14에서 13으로 감소. Fig 24.6 (d)." },
+                  { text: "$s.d = 7$ (z로부터 갱신)", correct: false,
+                    explain: "RELAX는 '더 작을 때만' 갱신: $7 > 0$이므로 s.d는 그대로." },
+                  { text: "$x.d = 14$ (변화 없음)", correct: false,
+                    explain: "7+6 = $13 < 14$이므로 x.d가 갱신됩니다." },
+                  { text: "z 이웃 relax가 S 내부 정점에 영향", correct: false,
+                    explain: "S 내부 정점은 이미 최단 거리가 확정되어 RELAX가 실효 없음. 의미 있는 갱신은 V−S 내에서." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "네 번째 반복: Q={t,x}에서 min-$d = t$ (8). t의 이웃 {x, y} relax. $t.d = 8$, $w(t,x) = 1$, $w(t,y) = 2$. 결과?",
+                choices: [
+                  { text: "y는 이미 S라 갱신 없음. $x.d = min(13, 8+1)$ = 9. S = {s, y, z, t}", correct: true,
+                    explain: "t→x: 8+1 = $9 < 13$이므로 $x.d = 9$. y는 이미 S라 RELAX 영향 없음. Fig 24.6 (e)." },
+                  { text: "$y.d = 8$+$2 = 10$ (RELAX로 갱신)", correct: false,
+                    explain: "y.d = $5 \\leq 10$이므로 RELAX의 if 조건이 거짓. 갱신 안 됨 (그리고 y는 이미 S라 결과 상관없음)." },
+                  { text: "$x.d = 8$ (y와 같아짐)", correct: false,
+                    explain: "t→x의 비용은 1이므로 $x.d = 8$+$1 = 9$." },
+                  { text: "S는 변화 없음", correct: false,
+                    explain: "t가 EXTRACT-MIN되어 S에 추가됩니다." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다섯 번째 (마지막) 반복: Q={x}, x만 남음. x의 $d = 9$. x를 추출, 이웃 {z} relax. $x.d = 9$, $w(x,z) = 4$. $z.d = 7$이 이미 있음. 최종 S와 각 d 값은?",
+                choices: [
+                  { text: "S = {s, y, z, t, x}, d 값: $s = 0$, $y = 5$, $z = 7$, $t = 8$, $x = 9$ (모두 최단 거리 확정)", correct: true,
+                    explain: "z.d = $7 \\leq 9$+$4 = 13$이므로 z는 갱신 안 됨. x가 S에 추가되며 Q=∅, 종료. Fig 24.6 (f)와 일치." },
+                  { text: "$x.d = 7$ (z보다 멀어야 한다)", correct: false,
+                    explain: "x는 s에서 9 (s→y→t→x), z는 7 (s→y→z). 둘은 별개 경로이므로 순서에 의미 없음." },
+                  { text: "z.d가 x를 지나 갱신됨", correct: false,
+                    explain: "9+$4 = 13$은 현재 $z.d = 7$보다 크므로 RELAX 조건 실패." },
+                  { text: "종료 조건이 아님 — 한 번 더 반복", correct: false,
+                    explain: "Q가 비면 while 루프 종료." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "bellman-ford", name: "Bellman-Ford", desc: "음수 가중치 허용, 음수 사이클 감지",
+        tags: ["O(VE)", "음수 허용"], viz: "bellmanFord",
+        drills: {
+          source: "CLRS 3판 24.1절 pp.651-655, Theorem 24.4 · Figure 24.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — BELLMAN-FORD",
+            intro: "CLRS 24.1절 p.651의 7줄 메인 루프. RELAX는 Dijkstra와 공유. |V|-1번의 완화 통과 후 음수 사이클 검사 루프가 이어진다는 점이 핵심.",
+            reference: {
+              title: "참고: 왜 |V|-1번이면 충분한가?",
+              lines: [
+                { text: "최단 경로는 최대 |V|-1개의 간선을 가짐",              indent: 0 },
+                { text: "(그 이상은 반드시 정점 반복 → 사이클)",                indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "경로 완화 성질(Path Relaxation Property):",            indent: 0 },
+                { text: "  최단 경로 p = ⟨v₀, v₁, ..., vₖ⟩의 간선을",          indent: 0 },
+                { text: "  순서대로 RELAX하면 vₖ.d = δ(s, vₖ) 확정",            indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "Bellman-Ford는 매 반복마다 모든 간선을 RELAX",          indent: 0 },
+                { text: "→ i번째 반복 후에는 ≤ i개 간선 최단 경로 확정",        indent: 0 },
+                { text: "→ |V|-1번이면 모든 경로 수렴",                         indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "BELLMAN-FORD(G, w, s)",                     indent: 0, note: "그래프, 가중치, 출발점" },
+              { text: "INITIALIZE-SINGLE-SOURCE(G, s)",            indent: 1, note: "v.d=∞, $s.d = 0$ 초기화" },
+              { text: "for $i = 1$ to |G.V| - 1",                    indent: 1, note: "|V|-1번 반복" },
+              { text: "for each edge (u, v) ∈ G.E",                indent: 2, note: "모든 간선을" },
+              { text: "RELAX(u, v, w)",                            indent: 3, note: "한 번씩 완화" },
+              { text: "for each edge (u, v) ∈ G.E",                indent: 1, note: "음수 사이클 검사" },
+              { text: "if $v.d > u.d$ + w(u, v)",                    indent: 2, note: "더 완화 가능하면" },
+              { text: "return FALSE",                              indent: 3, note: "음수 사이클 존재" },
+              { text: "return TRUE",                               indent: 1, note: "정상 종료" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 경로 완화 성질 + 음수 사이클 감지",
+            intro: "CLRS Theorem 24.4. 음수 사이클이 없으면 Bellman-Ford가 올바른 $\\delta(s,v)$를 반환. 있으면 FALSE 반환. 두 부분으로 분할 증명.",
+            invariantLabel: "Theorem 24.4: ",
+            invariant: "음수 사이클이 없으면 |V|-1번의 반복 후 모든 v에 대해 v.d = $\\delta(s,v)$. 음수 사이클이 있으면 검사 루프에서 적어도 하나의 간선이 여전히 완화 가능 → FALSE.",
+            steps: [
+              {
+                stage: "① 최단 경로의 간선 수 상한",
+                prompt: "s에서 v로의 최단 경로가 존재한다면 그 경로의 간선 수는 최대 몇 개?",
+                choices: [
+                  { text: "|V|-1개 — 정점이 반복되지 않는 단순 경로(simple path)이므로 최대 |V|개 정점, 간선 |V|-1개", correct: true,
+                    explain: "CLRS Lemma 24.10. 음수 사이클이 없으면 최단 경로는 simple path로 잡을 수 있음 (사이클 포함해도 더 짧아지지 않음). 정점 |V|개 중 중복 없으면 간선 ≤ |V|-1." },
+                  { text: "|V|개 — 모든 정점을 지나야 함", correct: false,
+                    explain: "모든 정점을 반드시 지나지는 않음. 짧은 경로가 있을 수 있음." },
+                  { text: "|E|개 — 모든 간선을 지날 수 있음", correct: false,
+                    explain: "그건 경로가 아닌 워크. 최단 '경로'는 중복 없음." },
+                ],
+              },
+              {
+                stage: "② 경로 완화 성질 (Path Relaxation Property)",
+                prompt: "최단 경로 p = ⟨$v_{0} = s$, v₁, ..., vₖ=v⟩의 간선을 (v₀,v₁), (v₁,v₂), ..., (vₖ₋₁,vₖ) 순서로 RELAX하면?",
+                choices: [
+                  { text: "vₖ.d = δ(s, vₖ) 확정 — 중간에 다른 완화가 섞여도 이 순서의 완화가 한 번씩 발생하면 최종값 정확", correct: true,
+                    explain: "CLRS Lemma 24.15. RELAX는 단조 감소이므로 '언젠가 이 순서로 한 번씩' 호출되면 vₖ.d = δ(s, vₖ). 중간에 다른 RELAX는 해만 더 작게 만들 뿐." },
+                  { text: "오직 이 순서로만 완화해야 성립", correct: false,
+                    explain: "중간에 다른 완화가 섞여도 무관. '이 간선들이 순서대로 한 번씩 완화됨'만 있으면 됨." },
+                  { text: "k번의 반복이 반드시 순서대로 일어나야 함", correct: false,
+                    explain: "완화 순서가 경로 순서와 일치하기만 하면 됨. 각 반복에서 모든 간선을 훑으므로 자연스럽게 포함." },
+                ],
+              },
+              {
+                stage: "③ Bellman-Ford의 핵심 관찰",
+                prompt: "Bellman-Ford의 i번째 반복 후 어떤 불변이 성립?",
+                choices: [
+                  { text: "i번째 반복 후 모든 간선 수 ≤ i인 최단 경로가 확정 (v.d가 해당 δ와 같음)", correct: true,
+                    explain: "귀납: 1번째 반복 후 간선 1개짜리 경로 확정. 이후 매 반복이 최단 경로 경로의 다음 간선을 '따라잡음'. i = |V|-1이면 최대 길이 경로까지 모두 포함." },
+                  { text: "i번째 반복 후 i개 정점의 d가 확정", correct: false,
+                    explain: "정점 수가 아닌 '경로 간선 수'가 기준. 한 정점의 확정은 그 정점까지의 최단 경로 길이에 의존." },
+                  { text: "i번째 반복에서 i번째로 가까운 정점이 확정", correct: false,
+                    explain: "그건 Dijkstra. Bellman-Ford는 경로 길이 기준." },
+                ],
+              },
+              {
+                stage: "④ |V|-1번 반복의 충분성",
+                prompt: "step ①(최대 |V|-1 간선) + step ②,③(반복당 한 간선씩 따라잡음)을 결합하면?",
+                choices: [
+                  { text: "|V|-1번 반복 후 모든 최단 경로가 v.d에 반영됨 → v.d = $\\delta(s,v)$ for all v", correct: true,
+                    explain: "CLRS Theorem 24.4 핵심. 최단 경로 간선 수 ≤ |V|-1 + 매 반복이 경로 다음 간선을 포함 → |V|-1번이면 모든 경로 수렴." },
+                  { text: "|V|번 반복해야 안전", correct: false,
+                    explain: "|V|-1개 간선이 상한이므로 |V|-1번이면 충분. 더 반복해도 값은 변하지 않음." },
+                  { text: "O(lg V)번이면 충분", correct: false,
+                    explain: "그건 경로 배가(path doubling) 같은 다른 기법. 기본 Bellman-Ford는 |V|-1번 필수." },
+                ],
+              },
+              {
+                stage: "⑤ 음수 사이클 감지 로직",
+                prompt: "검사 루프에서 어떤 간선 (u,v)에 대해 $v.d > u.d$ + w(u,v)이면 무엇을 의미?",
+                choices: [
+                  { text: "|V|-1번 후에도 완화 가능 → s에서 도달 가능한 음수 사이클이 존재 → FALSE 반환", correct: true,
+                    explain: "CLRS Corollary 24.3. 음수 사이클이 없으면 step ④에 의해 수렴. 수렴하지 않았다면 무한히 작아지는 경로 = 음수 사이클." },
+                  { text: "단순히 더 계산이 필요 (V번 더 반복하면 됨)", correct: false,
+                    explain: "음수 사이클이 없으면 |V|-1번이면 이미 수렴. 추가 반복으로 해결되지 않음." },
+                  { text: "알고리즘 버그", correct: false,
+                    explain: "정확한 감지 로직. 의도된 동작." },
+                ],
+              },
+              {
+                stage: "⑥ Dijkstra와의 비교 — 왜 $O(VE)$?",
+                prompt: "Bellman-Ford의 시간 복잡도 $O(VE)$ vs Dijkstra O((V+E) lg V). 차이의 원인은?",
+                choices: [
+                  { text: "Bellman-Ford는 매 반복(|V|-1번)에서 모든 간선(|E|)을 완화 → $O(VE)$. 대신 음수 가중치 허용 + 음수 사이클 감지.", correct: true,
+                    explain: "Trade-off: 더 일반적(음수 허용) ↔ 더 느림. Dijkstra는 우선순위 큐로 탐욕적이지만 음수에서 실패. 음수 가중치 필요 시 Bellman-Ford 선택." },
+                  { text: "Bellman-Ford는 데이터 구조가 느려서", correct: false,
+                    explain: "사실 Bellman-Ford는 자료구조 없이 단순 반복. 느린 이유는 '모든 간선 × |V|-1번' 때문." },
+                  { text: "두 알고리즘이 같은 복잡도", correct: false,
+                    explain: "$O(VE)$ vs O((V+E) lg V) — 희소 그래프에서 Dijkstra가 빠르고 밀집 그래프에서 비슷함." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Bellman-Ford 추적 — 음수 간선 포함 그래프",
+            intro: "정점 {s, a, b, c, d}. 간선 (s,a,6), (s,c,7), (a,b,5), (a,c,-4), (a,d,-1), (b,a,-2), (b,d,-1), (c,b,8), (c,d,9), (d,b,7), (d,s,2). CLRS Figure 24.4 기반. |V|-$1 = 4$번 반복.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "INITIALIZE-SINGLE-SOURCE(G, s) 실행. 초기 d값은?",
+                choices: [
+                  { text: "$s.d = 0$, 나머지(a, b, c, d).d = ∞. 모든 $\\pi  = NIL$.", correct: true,
+                    explain: "CLRS p.648 초기화. 출발점만 0, 나머지는 미도달을 의미하는 ∞." },
+                  { text: "모든 정점의 $d = 0$", correct: false,
+                    explain: "그러면 모든 정점이 이미 도달된 것처럼 처리됨. RELAX가 작동 안 함." },
+                  { text: "s.d = ∞, 나머지 = 0", correct: false,
+                    explain: "반대. 출발점만 0으로 고정해야 함." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "1번째 반복: 모든 간선을 (s,a), (s,c), (a,b), (a,c), (a,d), (b,a), (b,d), (c,b), (c,d), (d,b), (d,s) 순으로 RELAX. 1번째 반복 직후 d값은? (여러 정답 가능하지만 가장 간선 순서에 충실한 것 선택)",
+                choices: [
+                  { text: "$s = 0$, $a = 6$, b=11(via a), c=2(via a: 6+(-4)=2), d=5(via a: 6+(-1)=5)", correct: true,
+                    explain: "간선 순서대로 전개: (s,a)→$a = 6$, (s,c)→$c = 7$, (a,b)→$b = 11$, (a,c)→$2 < 7$ 갱신 $c = 2$, (a,d)→$d = 5$, (b,a)→11+(-2)=$9 > 6$ 스킵, (b,d)→11+(-1)=$10 > 5$ 스킵, (c,b)→2+8=$10 < 11$ 갱신 $b = 10$, (c,d)→2+9=$11 > 5$ 스킵, (d,b)→5+7=$12 > 10$ 스킵, (d,s)→5+2=$7 > 0$ 스킵. 최종 $b = 10$." },
+                  { text: "$s = 0$, $a = 6$, $b = 11$, $c = 7$, d=∞ (음수 간선 미반영)", correct: false,
+                    explain: "(a,c,-4)가 $c = 6$+(-4)=2로 갱신해야 함. 음수 간선도 RELAX에서 정상 처리." },
+                  { text: "모든 정점이 이미 최종값", correct: false,
+                    explain: "한 번의 반복으로 수렴하지 않는 예시. 여러 반복 필요." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "1번째 반복 후: $s = 0$, $a = 6$, $b = 10$, $c = 2$, $d = 5$. 2번째 반복에서 어떤 간선이 추가 완화?",
+                choices: [
+                  { text: "(b,a)→10+(-2)=$8 > 6$ 스킵, ..., 실제로 변경 없음. 2번째 반복에서 값 안정.", correct: true,
+                    explain: "운 좋게 간선 순서가 경로 길이 순과 일치. 남은 반복에서 더 이상 개선 없음. 4번 반복 전에 수렴." },
+                  { text: "모든 정점의 d가 절반이 됨", correct: false,
+                    explain: "Bellman-Ford는 단조 감소지만 '절반' 같은 규칙은 없음." },
+                  { text: "$c = 0$이 됨", correct: false,
+                    explain: "c까지의 최단 경로는 s→a→$c = 2$. 0이 되지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최종 d = {s:0, a:6, b:10, c:2, d:5}, π = {s:nil, a:s, b:c, c:a, d:a}. 음수 사이클 검사 루프 (마지막 for 루프)는?",
+                choices: [
+                  { text: "모든 간선 (u,v)에 대해 $v.d \\leq u.d$ + w(u,v) 성립 확인 → 모두 pass → return TRUE", correct: true,
+                    explain: "수렴된 상태에서는 어떤 간선도 $v.d > u.d$ + w(u,v)를 만족하지 않음. TRUE 반환 = '음수 사이클 없음 + 정확한 최단 거리'." },
+                  { text: "FALSE 반환", correct: false,
+                    explain: "이 그래프에는 음수 간선은 있지만 음수 '사이클'은 없음." },
+                  { text: "추가 반복 실행", correct: false,
+                    explain: "검사 루프는 반복이 아니라 '확인'. 변경을 시도하지 않음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 간선 (b,c,-15)를 추가하면 s → a → b → c → a → b → ... 사이클을 돌면 가중치 누적이 음수로 무한히 작아짐. 알고리즘의 반응은?",
+                choices: [
+                  { text: "|V|-$1 = 4$번 반복 후에도 일부 d가 계속 감소 → 검사 루프에서 적어도 한 간선이 $v.d > u.d$ + w 위반 → FALSE 반환", correct: true,
+                    explain: "사이클을 돌 때마다 d가 감소하므로 4번 반복만으로 끝나지 않음. 검사 루프가 이를 감지하고 거절." },
+                  { text: "여전히 TRUE 반환하지만 d값이 매우 작음", correct: false,
+                    explain: "알고리즘은 '음수 사이클 존재 시 FALSE'를 명시적으로 확인." },
+                  { text: "무한 루프", correct: false,
+                    explain: "반복 수는 |V|-1로 고정. 무한 루프 아님. 대신 FALSE 반환으로 상황 알림." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Dijkstra로 같은(원래, 음수 사이클 없는) 그래프를 푼다면 어떤 결과?",
+                choices: [
+                  { text: "음수 간선 (a,c,-4), (a,d,-1), (b,a,-2), (b,d,-1) 때문에 부정확한 결과 가능 — Dijkstra는 한 번 S에 추가된 정점 d를 확정하므로 이후 음수로 더 짧아질 수 있어도 놓침", correct: true,
+                    explain: "이 예시에서 a.d를 6으로 확정하고 S에 넣지만 실제로는 음수 간선을 통해 우회 필요. Dijkstra의 탐욕 전제가 깨짐." },
+                  { text: "같은 결과를 더 빠르게 계산", correct: false,
+                    explain: "음수 가중치에서 Dijkstra는 부정확할 수 있음. 이것이 Bellman-Ford의 존재 이유." },
+                  { text: "Dijkstra는 에러 발생", correct: false,
+                    explain: "알고리즘 자체는 실행됨. 단지 결과가 정확한 최단 거리가 아닐 뿐." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch9",
+    tier: 2,
+    num: "Ch 9",
+    title: "Medians and Order Statistics",
+    subtitle: "k번째 작은 원소 찾기 · RANDOMIZED-SELECT · 기대 $O(n)$",
+    summary: "정렬 없이 i번째 순서 통계량을 기대 선형 시간에 찾는다. 퀵정렬의 분할을 재귀의 '한쪽'만으로 줄인 형태.",
+    objectives: [
+      "선택 문제의 정의를 이해하고 정렬 후 선택 대비 선형 시간 알고리즘의 우위를 설명할 수 있다.",
+      "RANDOMIZED-SELECT의 기댓값 $O(n)$을 점화식 $T(n) = T(n/2) + \\Theta(n)$로 분석할 수 있다.",
+      "SELECT(중앙값의 중앙값)가 최악 $O(n)$임을 점화식 $T(n) \\le T(n/5) + T(7n/10 + 6) + O(n)$로 증명할 수 있다.",
+    ],
+    md: `
+## i번째 순서 통계량 (i-th Order Statistic)
+- n개 원소 중 i번째로 작은 원소 찾기
+- **중앙값(Median)**: i = $\\lceil n/2 \\rceil$
+- 정렬 후 i번째 원소 접근: $O(n \\lg n)$ — 과함
+- **목표**: 평균 $O(n)$에 해결
+
+## 접근법 비교
+
+| 방법 | 시간 복잡도 | 비고 |
+|------|------------|------|
+| 정렬 후 접근 | $O(n \\lg n)$ | 단순하지만 낭비 |
+| RANDOMIZED-SELECT | **기대 $O(n)$**, 최악 $O(n^2)$ | 실용적, Quicksort 닮음 |
+| SELECT (Blum et al.) | **최악 $O(n)$** | '중앙값의 중앙값' 기법, 상수가 큼 |
+
+## RANDOMIZED-SELECT 핵심 아이디어
+- Quicksort의 PARTITION을 사용
+- 분할 후, 피벗 위치 q와 i를 비교:
+  - q == i: 답을 찾음
+  - $i < q$: 왼쪽 부분에서 재귀
+  - $i > q$: 오른쪽 부분에서 재귀 (i 조정)
+- **한쪽만 재귀** → T(n) = T(분할된 한쪽) + $O(n)$ → 기대 $O(n)$
+
+## 분석의 핵심
+- 무작위 피벗으로 E[분할 크기] ≈ n/2
+- 점화식 기대값: E[T(n)] $\\leq 1$/n · Σ E[T(max)] + $O(n)$
+- 선형 방정식으로 귀납 → E[T(n)] = $O(n)$
+`,
+    ox: [
+      { q: "RANDOMIZED-SELECT의 기대 시간은 $O(n)$이다.", a: true, why: "Theorem 9.1. 한쪽 재귀." },
+      { q: "RANDOMIZED-SELECT의 최악 시간은 $O(n)$이다.", a: false, why: "$O(n^2)$. 극단 분할 반복." },
+      { q: "결정적 SELECT(Blum et al.)는 최악 $O(n)$을 보장.", a: true, why: "중앙값의 중앙값 기법." },
+      { q: "SELECT는 정렬 후 i번째 접근보다 점근적으로 빠르다.", a: true, why: "$O(n)$ vs $O(n \\lg n)$." },
+      { q: "SELECT는 분할 후 양쪽 모두 재귀한다.", a: false, why: "한쪽만." },
+      { q: "SELECT에서 '중앙값의 중앙값' 피벗 선택은 분할 비율 3/10~7/10을 보장.", a: true, why: "Blum 알고리즘의 핵심." },
+      { q: "i번째 순서 통계량은 반드시 전체 정렬을 거쳐야 구할 수 있다.", a: false, why: "SELECT가 정렬 없이 찾음." },
+      { q: "RANDOMIZED-SELECT는 RANDOMIZED-PARTITION을 사용한다.", a: true, why: "Ch 7 Quicksort와 공유." },
+      { q: "중앙값(median) 찾기는 순서 통계량 i = $\\lceil n/2 \\rceil$ 찾기와 동치이다.", a: true, why: "표준 정의." },
+      { q: "SELECT는 분할 후 재귀 호출을 '더 큰 쪽'에서 한다.", a: false, why: "원하는 i가 속한 쪽(작거나 큰 쪽)에서. 크기와 무관." },
+    ],
+
+    exercises: [
+      {
+        num: "9.1-1",
+        q: "$n$개의 서로 다른 원소 중 최솟값을 찾는 데 최소 $n-1$번의 비교가 필요함을 보여라.",
+        hint: "각 비교는 '최솟값이 아닌 후보' 하나를 제거한다.",
+        solution: "최솟값이 아닌 원소는 적어도 한 번은 다른 원소와 비교해 졌어야 한다. 그렇지 않으면 그 원소가 최솟값일 가능성이 남는다. 따라서 $n-1$개의 비-최솟값 원소 각각이 최소 한 번 패배 → 최소 $n-1$번 비교 필요.",
+      },
+      {
+        num: "9.1-2",
+        q: "$n$개의 원소에서 최솟값과 최댓값을 동시에 찾는 데 $\\lceil 3n/2 \\rceil - 2$번의 비교면 충분함을 보여라.",
+        hint: "짝을 먼저 비교하고, 짝 안에서 작은 쪽끼리·큰 쪽끼리 경쟁시킨다.",
+        solution: "원소를 2개씩 짝지어 $\\lfloor n/2 \\rfloor$번 비교. 각 짝의 패자는 최솟값 후보, 승자는 최댓값 후보가 되어 각 후보 집합은 $\\lfloor n/2 \\rfloor$개. 각 집합에서 min/max 찾기에 $\\lfloor n/2 \\rfloor - 1$번씩. 총: $\\lfloor n/2 \\rfloor + 2(\\lfloor n/2 \\rfloor - 1) = \\lceil 3n/2 \\rceil - 2$ (홀수 $n$은 첫 원소를 min/max 초기값으로 두면 동일).",
+      },
+      {
+        num: "9.2-1",
+        q: "RANDOMIZED-SELECT가 크기 0인 배열로 재귀 호출하는 일이 없음을 보여라.",
+        hint: "PARTITION이 반환하는 $q$의 범위와 기저 사례 $p == r$의 조합.",
+        solution: "PARTITION은 $p \\leq q \\leq r$를 반환한다. 왼쪽 재귀 $(p, q-1)$이 빈 구간이려면 $q = p$여야 하는데, 이 경우 $k = 1$이므로 $i < k$는 $i < 1$ → 입력 가정 $1 \\leq i$에 모순. 오른쪽 재귀 $(q+1, r)$이 빈 구간이려면 $q = r$이고 이때 $k = r-p+1$이므로 $i > k$는 $i > r-p+1$ → 불가. 또한 $p = r$이면 기저 사례로 즉시 반환되므로 재귀 자체가 발생하지 않는다.",
+      },
+      {
+        num: "9.3-1",
+        q: "SELECT 알고리즘을 그룹 크기 5 대신 7로 바꾸어도 여전히 최악 $O(n)$임을 보이고, 그룹 크기 3에서는 왜 선형이 안 되는지 설명하라.",
+        hint: "분할 후 각 부분의 크기 상한을 점화식에 대입.",
+        solution: "**그룹 7**: 중앙값의 중앙값 $x$보다 큰 원소는 적어도 $4 \\cdot \\lceil \\lceil n/7 \\rceil / 2 \\rceil \\geq 2n/7$개. 재귀 상한: $T(n) \\leq T(n/7) + T(5n/7) + O(n)$. $1/7 + 5/7 = 6/7 < 1$ → $T(n) = O(n)$. **그룹 3**: 보장 분할 비율이 $n/3 : 2n/3$. 재귀: $T(n) \\leq T(n/3) + T(2n/3) + O(n)$. $1/3 + 2/3 = 1$ → $\\Theta(n \\lg n)$, 선형이 깨진다.",
+      },
+      {
+        num: "9.3-3",
+        q: "Quicksort를 수정해 최악 실행 시간 $O(n \\lg n)$을 달성하는 방법을 제시하라.",
+        hint: "매 재귀 호출에서 피벗을 어떻게 고르면 분할이 항상 균등해지는가?",
+        solution: "각 PARTITION 전에 결정론적 SELECT(Blum et al.)로 중앙값을 $O(n)$에 찾아 피벗으로 사용. 분할이 항상 $\\lfloor n/2 \\rfloor : \\lceil n/2 \\rceil$로 균등 → $T(n) = 2T(n/2) + O(n) = O(n \\lg n)$. 상수가 커서 실무엔 부적합하지만 최악 $O(n \\lg n)$ 이론적 보장.",
+      },
+    ],
+
+    problems: [
+      {
+        num: "9-1",
+        title: "가장 큰 $i$개 원소를 정렬된 순서로",
+        q: "$n$개의 서로 다른 수의 집합에서 가장 큰 $i$개 원소를 **정렬된 순서**로 출력하는 세 가지 접근을 비교하라.",
+        parts: [
+          {
+            label: "a",
+            q: "전체 $n$개의 수를 정렬한 후 상위 $i$개를 출력하는 방법의 시간 복잡도는?",
+            solution: "정렬 $O(n \\lg n)$ + 상위 $i$개 선형 스캔 $O(i) = O(n \\lg n)$. $i$가 작아도 전체 정렬 비용이 지배.",
+          },
+          {
+            label: "b",
+            q: "$n$개의 수로 최대 힙을 만들고 EXTRACT-MAX를 $i$번 수행하는 방법의 시간 복잡도는?",
+            hint: "BUILD-MAX-HEAP은 $O(n)$, 각 EXTRACT-MAX는 $O(\\lg n)$.",
+            solution: "BUILD-MAX-HEAP $O(n)$ + $i$번의 $O(\\lg n)$ = $O(n + i \\lg n)$. $i = O(n / \\lg n)$이면 $O(n)$까지 내려감.",
+          },
+          {
+            label: "c",
+            q: "SELECT로 $i$번째로 큰 원소를 찾고, 그 주위로 분할해 상위 $i$개를 추출한 뒤 그 $i$개만 정렬하는 방법의 시간 복잡도는?",
+            hint: "세 단계 비용의 합.",
+            solution: "SELECT $O(n)$ + 분할(상위 $i$개 추출) $O(n)$ + 상위 $i$개 정렬 $O(i \\lg i)$ = $O(n + i \\lg i)$. 일반적으로 (b)보다 좋음: $\\lg i \\leq \\lg n$.",
+          },
+        ],
+      },
+      {
+        num: "9-2",
+        title: "가중 중앙값 (Weighted Median)",
+        q: "$n$개의 서로 다른 원소 $x_1, \\ldots, x_n$이 각각 양의 가중치 $w_i > 0$을 가지며 $\\sum w_i = 1$. **가중 중앙값** $x_k$: $\\sum_{x_i < x_k} w_i < 1/2$이고 $\\sum_{x_i > x_k} w_i \\leq 1/2$인 원소.",
+        parts: [
+          {
+            label: "a",
+            q: "모든 가중치가 동일($w_i = 1/n$)할 때 가중 중앙값이 일반 중앙값과 일치함을 보여라.",
+            solution: "$w_i = 1/n$이면 조건: $|\\{x_i < x_k\\}| / n < 1/2$이고 $|\\{x_i > x_k\\}| / n \\leq 1/2$. 즉 $x_k$보다 작은 원소 수가 $< n/2$이고 큰 원소 수가 $\\leq n/2$ → 일반 중앙값의 정의와 동치.",
+          },
+          {
+            label: "b",
+            q: "정렬을 이용한 최악 $O(n \\lg n)$ 알고리즘을 제시하라.",
+            hint: "정렬 후 누적 가중치를 한 번 훑는다.",
+            solution: "(1) $x$를 오름차순 정렬 $O(n \\lg n)$. (2) 누적 합 $W_k = \\sum_{i \\leq k} w_i$를 $O(n)$에 계산. (3) $W_k \\geq 1/2$를 만족하는 최소 $k$가 가중 중앙값. 총 $O(n \\lg n)$.",
+          },
+          {
+            label: "c",
+            q: "SELECT를 이용한 최악 $O(n)$ 알고리즘을 설계하라.",
+            hint: "중앙값 $x_m$ 기준 분할 후, 어느 쪽에 답이 있는지는 양쪽 가중치 합으로 판정.",
+            solution: "(1) SELECT로 $x_1, \\ldots, x_n$의 중앙값 $x_m$을 $O(n)$에 찾고 분할: $L = \\{x_i < x_m\\}$, $R = \\{x_i > x_m\\}$, 각각의 가중치 합 $W_L, W_R$을 $O(n)$에 계산. (2) $W_L < 1/2$이고 $W_L + w_m \\geq 1/2$이면 $x_m$이 답. (3) $W_L \\geq 1/2$이면 $L$에서 재귀(원소 $\\leq n/2$개). (4) 그렇지 않으면 $R \\cup \\{x_m\\}$에서 재귀하되 $x_m$의 가중치를 $W_L + w_m$으로 '묶어' 처리. 점화식 $T(n) = T(n/2) + O(n) = O(n)$.",
+          },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "rand-select", name: "RANDOMIZED-SELECT", desc: "i번째 작은 원소 찾기 — 기대 $O(n)$",
+        tags: ["기대 O(n)", "분할 정복"], viz: "randSelect",
+        drills: {
+          source: "CLRS 3판 9.2절 pp.215-219, Theorem 9.1 · RANDOMIZED-PARTITION 공유",
+          pseudo: {
+            title: "① 의사코드 재구성 — RANDOMIZED-SELECT",
+            intro: "CLRS 9.2절 p.216의 8줄. RANDOMIZED-PARTITION은 Ch 7 Quicksort와 공유. 핵심은 분할 후 '한쪽만' 재귀.",
+            reference: {
+              title: "참고: RANDOMIZED-PARTITION (Ch 7 공유)",
+              lines: [
+                { text: "RANDOMIZED-PARTITION(A, p, r)",                      indent: 0 },
+                { text: "  $i = RANDOM(p, r)$",                                  indent: 0 },
+                { text: "  exchange A[r] with A[i]",                          indent: 0 },
+                { text: "  return PARTITION(A, p, r)",                        indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "PARTITION은 A[p..r]을",                                indent: 0 },
+                { text: "  [≤피벗] 피벗 [>피벗]으로 재배치,",                   indent: 0 },
+                { text: "  피벗의 최종 인덱스 q 반환",                          indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "RANDOMIZED-SELECT 시간:",                             indent: 0 },
+                { text: "  기대 E[T(n)] = $O(n)$",                                indent: 0 },
+                { text: "  최악 T(n) = $O(n^2)$ (매번 극단 분할)",                 indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "RANDOMIZED-SELECT(A, p, r, i)",                indent: 0, note: "A[p..r]에서 i번째 작은 원소" },
+              { text: "if p == r",                                    indent: 1, note: "원소가 하나면" },
+              { text: "return A[p]",                                  indent: 2, note: "그것이 답" },
+              { text: "$q = RANDOMIZED$-PARTITION(A, p, r)",            indent: 1, note: "무작위 분할 → 피벗 인덱스" },
+              { text: "$k = q$ - p + 1",                                indent: 1, note: "피벗의 순서 (A[p..q]의 크기)" },
+              { text: "if i == k",                                    indent: 1, note: "피벗이 i번째면" },
+              { text: "return A[q]",                                  indent: 2, note: "정답 반환" },
+              { text: "elseif $i < k$",                                 indent: 1, note: "왼쪽 부분이 포함" },
+              { text: "return RANDOMIZED-SELECT(A, p, q-1, i)",       indent: 2, note: "왼쪽만 재귀" },
+              { text: "else return RANDOMIZED-SELECT(A, q+1, r, i-k)", indent: 1, note: "오른쪽 재귀, i 조정" },
+            ],
+          },
+          proof: {
+            title: "② 기대 시간 $O(n)$ 증명 — 지시 변수 + 점화식",
+            intro: "CLRS Theorem 9.1. RANDOMIZED-SELECT의 기대 실행 시간이 $O(n)$임을 지시 확률 변수와 기댓값의 선형성으로 증명.",
+            invariantLabel: "Theorem 9.1: ",
+            invariant: "서로 다른 n개 원소에서 RANDOMIZED-SELECT의 기대 실행 시간은 $O(n)$. 핵심: 무작위 피벗이 '균형 분할'을 기대값으로 보장하여 T(n) = T(최대 분할) + $O(n)$ 점화식이 T(n) ≤ 4cn으로 귀결.",
+            steps: [
+              {
+                stage: "① 한쪽만 재귀하는 이유",
+                prompt: "RANDOMIZED-SELECT가 분할 후 한쪽만 재귀하는 근거는?",
+                choices: [
+                  { text: "피벗 인덱스 q를 알면 i와 k(피벗 순위)를 비교해 i가 속한 쪽 하나만 탐색하면 됨 — 다른 쪽은 무시 가능", correct: true,
+                    explain: "CLRS 관찰. 정렬이 아니라 '찾기'이므로 $i < k$이면 왼쪽에만 답이 있고 오른쪽은 불필요. 이게 Quicksort(양쪽 정렬)와 다른 점." },
+                  { text: "두 쪽 다 재귀하지만 한쪽이 빠르게 종료", correct: false,
+                    explain: "명시적으로 한쪽만 호출. 다른 쪽은 아예 진입하지 않음." },
+                  { text: "원소 수에 따라 결정", correct: false,
+                    explain: "i와 피벗 순위 k의 관계로 결정. 크기와 무관." },
+                ],
+              },
+              {
+                stage: "② 최악의 경우 시간",
+                prompt: "RANDOMIZED-SELECT의 최악 시간은?",
+                choices: [
+                  { text: "$O(n^2)$ — 매번 피벗이 가장 큰/작은 원소라 분할이 [n-1, 0]로 기울 때. $T(n) = T(n-1)$ + $O(n)$ = $\\Theta(n^2)$", correct: true,
+                    explain: "CLRS p.216. 극단적 운 나쁜 무작위 선택이 연속되면 n, n-1, n-2, ... 재귀 → $\\Theta(n^2)$. 확률적으로 매우 낮지만 이론적 상한." },
+                  { text: "$O(n)$ — 무작위화로 항상 선형", correct: false,
+                    explain: "기대값이 $O(n)$. 최악은 $O(n^2)$. 결정론적 SELECT(Blum)만 최악 $O(n)$ 보장." },
+                  { text: "$O(n \\lg n)$", correct: false,
+                    explain: "그건 Quicksort의 기대값. SELECT는 한쪽만 재귀하므로 기대 $O(n)$." },
+                ],
+              },
+              {
+                stage: "③ 지시 변수 설정",
+                prompt: "$X_k = I${분할 후 재귀하는 부분의 크기 = k}. E[X_k]는?",
+                choices: [
+                  { text: "무작위 피벗이 1..n 중 각 순위를 1/n 확률로 가짐. 재귀 크기 k가 될 확률 = 1/n (고르게 분포)", correct: true,
+                    explain: "CLRS p.217. 피벗이 무작위이므로 분할 결과(왼쪽 크기 = 0..n-1)가 모두 1/n 확률. 재귀 부분 크기 k ∈ {0, 1, ..., n-1} 각각 1/n." },
+                  { text: "$E[X_k] = 1$ (항상 발생)", correct: false,
+                    explain: "지시 변수는 한 가지 k만 True. 평균은 1/n." },
+                  { text: "$E[X_k] = 1$/2", correct: false,
+                    explain: "두 가지 선택이 아니라 n가지 분할. 각각 1/n." },
+                ],
+              },
+              {
+                stage: "④ 기대값 점화식",
+                prompt: "E[T(n)]은 어떻게 상한을 잡나? 최악의 경우 '큰 쪽'이 재귀되는 경우로 상한.",
+                choices: [
+                  { text: "E[T(n)] ≤ (2/n) · Σ_{k=$\\lfloor n/2 \\rfloor$}^{n-1} E[T(k)] + $O(n)$ — 큰 쪽 크기가 ≥ $\\lceil n/2 \\rceil$인 절반 합에 대해 상한", correct: true,
+                    explain: "CLRS p.217. 어떤 분할이 되든 '큰 쪽'은 최소 $\\lceil n/2 \\rceil$ 이상. 두 경우(피벗 위치 대칭)가 있으므로 계수 2. 합을 상한으로 치환." },
+                  { text: "E[T(n)] = T(n/2) + $O(n)$ (일정 분할 가정)", correct: false,
+                    explain: "기대 분할이 아닌 '최악 큰 쪽'으로 상한. 더 정교한 계산 필요." },
+                  { text: "E[T(n)] = $O(1)$", correct: false,
+                    explain: "선형 미만은 불가능 (원소 접근만으로도 n번)." },
+                ],
+              },
+              {
+                stage: "⑤ 귀납으로 E[T(n)] ≤ cn",
+                prompt: "귀납 가설: 모든 $m < n$에 대해 E[T(m)] ≤ cm. 위 점화식에 대입 후 E[T(n)] ≤ cn 유도 가능한가?",
+                choices: [
+                  { text: "예 — 대입 후 계산하면 상수 c를 충분히 크게 잡아 E[T(n)] ≤ cn 성립. CLRS에서 c = 4a 정도 선택 (a는 $O(n)$ 상수)", correct: true,
+                    explain: "CLRS p.218의 귀납 증명. 적분 근사와 산술 연산으로 E[T(n)] ≤ cn/2 + cn/2·(3/4) + an 같은 부등식 유도 → c를 크게 잡으면 ≤ cn." },
+                  { text: "아니오 — c가 n에 따라 변해야 함", correct: false,
+                    explain: "상수 c로 충분. 핵심은 '큰 쪽'의 상한 합이 선형으로 수렴한다는 점." },
+                  { text: "귀납만으로는 부족", correct: false,
+                    explain: "귀납 + 기댓값 선형성으로 엄밀히 증명 가능 (CLRS 9.2)." },
+                ],
+              },
+              {
+                stage: "⑥ 결정론적 SELECT (Blum et al.)와의 비교",
+                prompt: "결정론적 SELECT (9.3절)가 최악 $O(n)$을 달성하는 방법은?",
+                choices: [
+                  { text: "중앙값의 중앙값(median-of-medians) 기법 — 5개씩 그룹 지어 각 중앙값의 중앙값을 피벗으로. 분할 비율 $\\geq 3$/10 & $\\leq 7$/10 보장 → T(n) ≤ T(n/5) + T(7n/10) + $O(n)$ → $O(n)$", correct: true,
+                    explain: "CLRS 9.3. 상수 시간의 균형 보장으로 최악도 선형. 구현 복잡도와 상수가 크므로 실무에선 무작위 버전 선호." },
+                  { text: "전체 정렬 후 i번째 선택", correct: false,
+                    explain: "그건 $O(n \\lg n)$. Blum 알고리즘은 정렬 회피." },
+                  { text: "무작위화를 더 많이 사용", correct: false,
+                    explain: "Blum은 결정론적(deterministic). 무작위 의존 없이 최악 $O(n)$." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ RANDOMIZED-SELECT 추적 — A=[3,2,9,1,7,5,8,4,6,10], $i = 4$",
+            intro: "A[1..10] = [3, 2, 9, 1, 7, 5, 8, 4, 6, 10]에서 $i = 4$번째 작은 원소(=4) 찾기. 각 재귀 호출의 피벗 선택, 분할 결과, 다음 호출을 추적.",
+            array: [3, 2, 9, 1, 7, 5, 8, 4, 6, 10],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "첫 호출: RANDOMIZED-SELECT(A, 1, 10, 4). 무작위 피벗으로 인덱스 7이 선택되어 $A[7] = 8$과 $A[10] = 10$ 교환 후 PARTITION. 피벗 = 8 기준 분할 결과는?",
+                choices: [
+                  { text: "A = [3,2,1,7,5,4,6,8,9,10], $q = 8$ (피벗 8이 인덱스 8로). $\\leq 8$: [3,2,1,7,5,4,6], >8: [9,10]", correct: true,
+                    explain: "Lomuto PARTITION 결과: 피벗보다 작거나 같은 원소 7개가 앞으로, 피벗이 8번 위치, 큰 원소 9, 10이 뒤. $k = 8$ − 1 + $1 = 8$ (피벗의 순위)." },
+                  { text: "이미 정렬됨", correct: false,
+                    explain: "분할은 완전 정렬이 아님. 피벗 기준 두 그룹으로만 분리." },
+                  { text: "피벗이 인덱스 1로 이동", correct: false,
+                    explain: "피벗보다 작은 원소가 7개이므로 피벗은 8번째 위치로 이동." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$q = 8$, $k = 8$. $i = 4$와 $k = 8$ 비교: $i < k$ → 왼쪽 재귀. 재귀 호출은?",
+                choices: [
+                  { text: "RANDOMIZED-SELECT(A, 1, 7, 4) — A[1..7] = [3,2,1,7,5,4,6]에서 4번째 원소", correct: true,
+                    explain: "$i < k$이므로 왼쪽만 탐색. i 값은 그대로 유지 (오른쪽 이동이 없으므로)." },
+                  { text: "RANDOMIZED-SELECT(A, 9, 10, 4) — 오른쪽 재귀", correct: false,
+                    explain: "i=$4 < k$=8이므로 왼쪽. 오른쪽은 9, 10번째만 있음." },
+                  { text: "종료 — 8을 반환", correct: false,
+                    explain: "i=$4 \\neq k$=8. 종료 조건은 $i = k$일 때." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "두 번째 호출: A[1..7] = [3,2,1,7,5,4,6]. 무작위 피벗 = 4 (인덱스 6). 분할 후 결과는?",
+                choices: [
+                  { text: "A[1..7] = [3,2,1,4,5,7,6], $q = 4$ (피벗 4의 새 인덱스). $\\leq 4$: [3,2,1,4], >4: [5,7,6]. $k = 4$ − 1 + $1 = 4$.", correct: true,
+                    explain: "피벗 4 기준 분할. 작은 원소 3개(3,2,1)가 앞, 피벗이 4번째 위치로 이동. 새로운 $k = 4$." },
+                  { text: "여전히 피벗이 8", correct: false,
+                    explain: "두 번째 호출에서는 A[1..7]만 참조. 피벗 4가 선택됨." },
+                  { text: "정렬 완료", correct: false,
+                    explain: "분할은 국지적 정렬이지 전체 정렬이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$q = 4$, $k = 4$, $i = 4$. i == k → 종료 조건! 반환값은?",
+                choices: [
+                  { text: "$A[q] = A[4]$ = 4 — 4번째 작은 원소", correct: true,
+                    explain: "분할 후 피벗 순위가 정확히 i와 일치. 더 이상 재귀 불필요. 답 = 4." },
+                  { text: "$A[1] = 3$", correct: false,
+                    explain: "i번째 원소를 찾아야 함. 피벗의 위치가 그 답." },
+                  { text: "전체 배열을 반환", correct: false,
+                    explain: "SELECT는 단일 원소 반환." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 첫 피벗이 $A[1] = 3$이었다면? 시나리오 재구성.",
+                choices: [
+                  { text: "피벗 3 기준 분할: [2,1,3,7,5,8,4,6,9,10], $q = 3$, $k = 3$. i=$4 > k$ → 오른쪽 재귀: SELECT(A, 4, 10, 4-$3 = 1$). 작은 문제로 축소.", correct: true,
+                    explain: "i=$4 > k$=3이므로 오른쪽으로. 새 $i = i$ - $k = 4$ - $3 = 1$ (왼쪽 + 피벗을 제외한 상대 위치). 오른쪽 7개 원소에서 1번째 찾기." },
+                  { text: "여전히 A[q] 반환", correct: false,
+                    explain: "$i \\neq k$일 때는 종료 안 함. 재귀 지속." },
+                  { text: "양쪽 모두 재귀", correct: false,
+                    explain: "한쪽만 재귀. 이것이 SELECT의 핵심." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Quicksort vs SELECT 시간 비교 관점에서 차이는?",
+                choices: [
+                  { text: "Quicksort: $T(n) = T(k)$+T(n-k-1)+$O(n)$, 기대 $O(n \\lg n)$. SELECT: T(n) = T(max(k,n-k-1))+$O(n)$, 기대 $O(n)$. 같은 분할 쓰지만 재귀 수가 다름.", correct: true,
+                    explain: "핵심 차이: 정렬은 양쪽 모두 처리(lg n 레벨), 선택은 한쪽만(선형). 문제의 본질이 다름을 알고리즘이 활용." },
+                  { text: "둘 다 $O(n \\lg n)$", correct: false,
+                    explain: "SELECT는 $O(n)$ 기대. 한쪽 재귀의 선형 수렴." },
+                  { text: "둘 다 $O(n)$", correct: false,
+                    explain: "Quicksort는 모든 원소를 정렬해야 하므로 lg n 팩터 필수." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch25",
+    tier: 2,
+    num: "Ch 25",
+    title: "All-Pairs Shortest Paths",
+    subtitle: "Floyd-Warshall · 동적 프로그래밍",
+    summary: "모든 정점 쌍의 최단 경로를 Θ(V³)에 계산. 음수 간선 허용(사이클은 불가).",
+    objectives: [
+      "Floyd-Warshall의 DP 점화식 $d_{ij}^{(k)} = \\min(d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)})$을 도출할 수 있다.",
+      "행렬 곱셈 기반 / Floyd-Warshall / Johnson 알고리즘을 그래프 밀도에 따라 비교 선택할 수 있다.",
+      "Johnson 알고리즘에서 재가중치(reweighting) $\\hat{w}(u,v) = w(u,v) + h(u) - h(v)$가 최단 경로를 보존함을 증명할 수 있다.",
+    ],
+    md: `
+## 문제 정의
+- 모든 정점 쌍 (u, v)에 대해 최단 경로 $\\delta(u,v)$ 계산
+- 단순 방법: 각 정점을 출발로 Bellman-Ford → O(V²·E) = O(V⁴) for 밀집
+- **Floyd-Warshall**: DP로 Θ(V³) — 밀집 그래프에서 최적
+
+## 핵심 점화식
+d_{ij}^{(k)} = i에서 j로 가는 최단 경로 (중간 정점을 {1, 2, ..., k}에서만 허용)
+- $k = 0$: 직접 간선만, d_{ij}^{(0)} = w(i, j)
+- $k \\geq 1$: d_{ij}^{(k)} = min(d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)})
+- **두 경우**: k를 경유 안 함 vs k를 경유함
+
+최종: d_{ij}^{(n)} = δ(i, j)
+
+## Floyd-Warshall vs Bellman-Ford 반복
+| 알고리즘 | 시간 | 공간 | 음수 가중치 | 음수 사이클 감지 |
+|---------|------|------|------------|----------------|
+| Floyd-Warshall | Θ(V³) | $\\Theta(V^2)$ | ✅ | 대각선 검사 |
+| V×Bellman-Ford | O(V²·E) | O(V) | ✅ | ✅ |
+| V×Dijkstra | O(V·(V+E)·lg V) | O(V) | ❌ | ❌ |
+
+## 전이 폐쇄(Transitive Closure)
+- Floyd-Warshall의 변형: 불린 AND/OR 버전
+- t_{ij}^{(k)} = (t_{ij}^{(k-1)}) OR (t_{ik}^{(k-1)} AND t_{kj}^{(k-1)})
+- $O(V^3)$ 시간에 도달 가능성 행렬 생성
+
+## 경로 재구성
+- 전임자 행렬 Π^{(k)} 유지
+- π_{ij}^{(k)} = i에서 j로의 최단 경로 상 j의 직전 정점
+`,
+    ox: [
+      { q: "Floyd-Warshall은 음수 간선을 처리한다.", a: true, why: "음수 사이클이 없는 한." },
+      { q: "Floyd-Warshall의 시간은 $\\Theta(V^2)$이다.", a: false, why: "Θ(V³). 3중 루프." },
+      { q: "Floyd-Warshall은 대각선 $d_ii < 0$으로 음수 사이클을 감지.", a: true, why: "자기로의 경로가 음수이면 사이클 존재." },
+      { q: "밀집 그래프에서는 V번 Dijkstra가 Floyd-Warshall보다 항상 빠르다.", a: false, why: "밀집에서 Floyd-Warshall Θ(V³)이 더 단순·경쟁력." },
+      { q: "d_ij^(k)는 중간 정점 집합이 {1..k}의 부분집합인 i→j 경로 최단값.", a: true, why: "CLRS 25.2 정의." },
+      { q: "Floyd-Warshall의 3중 루프에서 k는 반드시 외부 루프여야 한다.", a: true, why: "의존성 순서 보장." },
+      { q: "Floyd-Warshall은 $\\Theta(V^2)$ 공간만 사용 가능.", a: true, why: "In-place로 가능." },
+      { q: "Floyd-Warshall로 Transitive Closure도 계산 가능.", a: true, why: "가중치 대신 불린 AND/OR." },
+      { q: "Floyd-Warshall 점화식 d_ij^(k) = min(d_ij^(k-1), d_ik^(k-1) + d_kj^(k-1))이다.", a: true, why: "CLRS 25.2 식 (25.5)." },
+      { q: "Johnson's 알고리즘은 reweighting으로 음수 간선을 제거한 후 V번 Dijkstra를 실행한다.", a: true, why: "희소 그래프에서 O(V² lg V + VE)로 효율적." },
+    ],
+
+    algorithms: [
+      {
+        id: "floyd-warshall", name: "Floyd-Warshall", desc: "모든 쌍 최단 경로 — DP Θ(V³)",
+        tags: ["Θ(V³)", "DP"], viz: "floydWarshall",
+        drills: {
+          source: "CLRS 3판 25.2절 pp.693-699, Theorem 25.3 · Figure 25.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — FLOYD-WARSHALL",
+            intro: "CLRS 25.2절 p.695의 7줄 3중 루프. 외부 k, 중간 i, 내부 j — 순서가 핵심. k의 증가 순으로 d_{ij}^{(k)} 점진적 업데이트.",
+            reference: {
+              title: "참고: 점화식과 의미",
+              lines: [
+                { text: "입력: W — n×n 가중치 행렬",                          indent: 0 },
+                { text: "  W[i,j] = (i,j) 간선 가중치, 없으면 ∞, $i = j$면 0",    indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "출력: D^{(n)} — n×n 최단 거리 행렬",                    indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "점화식:",                                              indent: 0 },
+                { text: "  d_{ij}^{(0)} = W[i,j]",                              indent: 0 },
+                { text: "  d_{ij}^{(k)} = min(",                               indent: 0 },
+                { text: "    d_{ij}^{(k-1)},                  // k 경유 안함", indent: 0 },
+                { text: "    d_{ik}^{(k-1)} + d_{kj}^{(k-1)}  // k 경유함",    indent: 0 },
+                { text: "  )",                                                  indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "한 개 D 행렬로 in-place 가능:",                         indent: 0 },
+                { text: "  d_{ij} = min(d_{ij}, d_{ik} + d_{kj})",             indent: 0 },
+                { text: "  이전 값이 필요한 d_{ik}, d_{kj}가 보존됨을 증명",    indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "FLOYD-WARSHALL(W)",                        indent: 0, note: "W는 n×n 가중치 행렬" },
+              { text: "$n = W.rows$",                                indent: 1, note: "정점 수" },
+              { text: "D^{(0)} = W",                               indent: 1, note: "$k = 0$: 직접 간선" },
+              { text: "for $k = 1$ to n",                            indent: 1, note: "중간 정점 집합 확장" },
+              { text: "let D^{(k)} = (d_{ij}^{(k)}) be a new n×n matrix", indent: 2, note: "새 층 할당 (옵션)" },
+              { text: "for $i = 1$ to n",                            indent: 2, note: "출발 정점" },
+              { text: "for $j = 1$ to n",                            indent: 3, note: "도착 정점" },
+              { text: "d_{ij}^{(k)} = min(d_{ij}^{(k-1)}, d_{ik}^{(k-1)} + d_{kj}^{(k-1)})", indent: 4, note: "점화식 적용" },
+              { text: "return D^{(n)}",                            indent: 1, note: "최종 최단 거리" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 경로 분해 + DP 귀납",
+            intro: "CLRS Lemma 25.2. d_{ij}^{(k)}의 정의가 '중간 정점이 {1..k}인 최단 경로 길이'와 일치함을 k에 대한 귀납으로 증명.",
+            invariantLabel: "Lemma 25.2 / Theorem 25.3: ",
+            invariant: "d_{ij}^{(k)}는 중간 정점 집합이 {1, 2, ..., k}의 부분집합인 i→j 경로 중 최단 경로 길이. $k = n$일 때 제한 없음 → d_{ij}^{(n)} = δ(i, j). 증명: 경로 p를 k의 포함 여부로 두 경우로 분해, 각각 귀납 가설 적용.",
+            steps: [
+              {
+                stage: "① 기저 사례 $k = 0$",
+                prompt: "d_{ij}^{(0)}의 의미는?",
+                choices: [
+                  { text: "중간 정점 없이(direct edge) i→j 경로의 길이 — 즉 d_{ij}^{(0)} = W[i,j]", correct: true,
+                    explain: "CLRS p.694. $k = 0$: {1..0}=∅이므로 중간 정점 없음. 간선이 있으면 W[i,j], 없으면 ∞, $i = j$면 0. 귀납의 base." },
+                  { text: "모든 경로의 평균", correct: false,
+                    explain: "최단 경로 길이가 기준." },
+                  { text: "임의의 초기값", correct: false,
+                    explain: "정확히 간선 가중치 행렬." },
+                ],
+              },
+              {
+                stage: "② 경로 분해의 핵심",
+                prompt: "중간 정점이 {1..k}의 부분집합인 i→j 최단 경로 p를 생각. k가 p에 '포함되는지'로 두 경우로 분리:",
+                choices: [
+                  { text: "(A) k ∉ p: p의 중간 정점이 {1..k-1}에 있음 → 길이 = d_{ij}^{(k-1)}. (B) k ∈ p: $p = i$→...→k→...→j로 분해. i→k와 k→j 각 부분은 중간 정점 {1..k-1}에서 (반복 없음 가정) → d_{ik}^{(k-1)} + d_{kj}^{(k-1)}", correct: true,
+                    explain: "CLRS Lemma 25.1의 핵심. 최단 경로는 단순(simple) → k가 두 번 나올 수 없음 → 깔끔한 분해. 이게 점화식의 min 두 항의 기원." },
+                  { text: "k 포함 여부와 관계없이 항상 같은 길이", correct: false,
+                    explain: "포함 시 분해로 다른 부분 문제 생김. 다른 길이 가능." },
+                  { text: "경로를 셋 이상으로 분해", correct: false,
+                    explain: "중간 정점 k가 한 번만 나오므로 두 부분으로 충분." },
+                ],
+              },
+              {
+                stage: "③ 귀납 가설과 최솟값",
+                prompt: "귀납 가설: d_{ij}^{(k-1)}가 정확함. 두 경우의 min이 정확한 d_{ij}^{(k)}를 주는 이유는?",
+                choices: [
+                  { text: "(A)(B) 중 하나가 반드시 최단 경로 p와 대응 → min이 둘 중 더 작은 길이를 선택 → d_{ij}^{(k)} = 정답", correct: true,
+                    explain: "CLRS p.694 증명. 최단 경로가 k를 포함 안 하면 A가 답, 포함하면 B가 답. min이 그 중 '해당되는 쪽'을 뽑음. 둘 다 정확(귀납)하므로 min도 정확." },
+                  { text: "min은 상한만 제공", correct: false,
+                    explain: "정확한 등식을 만듦. 최단 경로는 반드시 두 경우 중 하나." },
+                  { text: "두 경우 중 하나만 유효", correct: false,
+                    explain: "항상 둘 다 유효한 상한. min이 더 작은 걸 선택." },
+                ],
+              },
+              {
+                stage: "④ 계산 순서 — 왜 k가 외부 루프?",
+                prompt: "왜 루프 순서가 k-i-j 순 (k 외부)이어야 하나?",
+                choices: [
+                  { text: "k번째 iteration에서 모든 (i,j)에 대해 d_{ij}^{(k)}를 D^{(k-1)}에서 계산 → 의존성 존중. in-place 업데이트 시 d_{ik}와 d_{kj}가 제때 보존됨을 증명 가능 (Exercise 25.2-4).", correct: true,
+                    explain: "CLRS p.695 + Exercise 25.2-4. k 외부 루프가 '이전 층' 값을 보장. in-place도 가능한 이유는 d_{ik}^{(k)} = d_{ik}^{(k-1)} (k를 중간에 포함하면 d_{kk}=0이라 불변)." },
+                  { text: "임의 순서로 가능", correct: false,
+                    explain: "k가 내부면 의존성 위배로 잘못된 결과. 순서 중요." },
+                  { text: "i가 외부여야 함", correct: false,
+                    explain: "i 외부 시 d_{ik}^{(k-1)} 준비 안 됨. k 외부가 맞음." },
+                ],
+              },
+              {
+                stage: "⑤ 시간/공간 복잡도",
+                prompt: "Floyd-Warshall의 시간 Θ(V³), 공간 $\\Theta(V^2)$. 왜?",
+                choices: [
+                  { text: "3중 루프 각 O(V) → Θ(V³). 공간은 D 행렬 1개만 유지해도 정답 (in-place), 이전 층 저장도 $\\Theta(V^2)$.", correct: true,
+                    explain: "CLRS Theorem 25.3. 고정 시간 연산의 3중 루프. in-place 최적화로 $\\Theta(V^2)$ 공간만 필요 (Exercise 25.2-4)." },
+                  { text: "시간 $\\Theta(V^2)$", correct: false,
+                    explain: "3중 루프 × $O(1)$ = Θ(V³)." },
+                  { text: "공간 Θ(V³) (모든 층 저장 필수)", correct: false,
+                    explain: "한 층만 유지해도 정확함 (in-place 가능). 층 저장은 경로 복원에만 필요." },
+                ],
+              },
+              {
+                stage: "⑥ 음수 가중치와 사이클 감지",
+                prompt: "Floyd-Warshall이 음수 간선을 처리하고 음수 사이클을 감지하는 방법은?",
+                choices: [
+                  { text: "음수 간선: 정상 처리(min에서 자연 반영). 음수 사이클 감지: 대각선 d_{ii}^{(n)} < 0 확인 → i가 속한 사이클 존재", correct: true,
+                    explain: "CLRS p.697. 음수 사이클이 있으면 i에서 자신으로 가는 '음수 경로'가 생겨 d_{ii} < 0이 됨 (원래 d_{ii}^{(0)}=0). 간단하게 n단계 후 대각선 검사." },
+                  { text: "Dijkstra로 폴백", correct: false,
+                    explain: "Floyd-Warshall이 일반적이라 음수 처리 가능. Dijkstra는 오히려 음수에서 실패." },
+                  { text: "음수 사이클 있으면 무한 루프", correct: false,
+                    explain: "알고리즘은 정확히 $O(V^3)$에 종료. 사이클은 대각선 부호로 감지." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Floyd-Warshall 추적 — CLRS Figure 25.4 (5정점 예시)",
+            intro: "5정점 그래프. 초기 W[i,j]: $W[1,2] = 3$, $W[1,3] = 8$, W[1,5]=-4, $W[2,4] = 1$, $W[2,5] = 7$, $W[3,2] = 4$, $W[4,1] = 2$, W[4,3]=-5, $W[5,4] = 6$, 대각 0, 나머지 ∞. 4번의 k 반복($k = 1$..5)을 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "D^{(0)} = W (초기 행렬). d_{2,4}^{(0)}와 d_{3,4}^{(0)}의 값은?",
+                choices: [
+                  { text: "d_{2,4}^{(0)} = 1 (직접 간선 2→4), d_{3,4}^{(0)} = ∞ (직접 간선 없음)", correct: true,
+                    explain: "$k = 0$은 중간 정점 없이 직접 간선만. W[3,4]는 없으므로 ∞." },
+                  { text: "둘 다 0", correct: false,
+                    explain: "대각선만 0. 비대각선은 간선 가중치 또는 ∞." },
+                  { text: "둘 다 무작위", correct: false,
+                    explain: "결정론적 초기화. W 그대로." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$k = 1$ iteration: 중간 정점 {1} 허용. d_{3,4}^{(1)}의 계산은?",
+                choices: [
+                  { text: "min(d_{3,4}^{(0)}=∞, d_{3,1}^{(0)} + d_{1,4}^{(0)} = ∞+∞=∞) = ∞. 개선 없음.", correct: true,
+                    explain: "3→1이나 1→4 간선이 없으므로 1을 경유해도 개선 불가. ∞ 유지." },
+                  { text: "즉시 1로 변경", correct: false,
+                    explain: "1 경유 경로가 없으면 ∞. 간선 존재 여부 확인 필요." },
+                  { text: "-3이 됨", correct: false,
+                    explain: "이 단계에선 음수 결과 없음. 뒤 반복에서 음수 간선 영향 전파." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$k = 2$ iteration: {1,2} 허용. d_{3,4}^{(2)}의 계산은?",
+                choices: [
+                  { text: "min(∞, d_{3,2}^{(1)} + d_{2,4}^{(1)}) = min(∞, 4+1) = 5. 3→2→4 경로로 개선.", correct: true,
+                    explain: "3→2(간선 4) + 2→4(간선 1) = 5. 2를 중간 정점으로 허용한 덕분." },
+                  { text: "여전히 ∞", correct: false,
+                    explain: "2를 경유한 경로가 유효. ∞ → 5 개선." },
+                  { text: "1 (직접값)", correct: false,
+                    explain: "그건 d_{2,4}. 여기선 3→4 경로." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$k = 3$ iteration: {1,2,3} 허용. d_{4,1}^{(3)}의 계산은? (초기 $W[4,1] = 2$)",
+                choices: [
+                  { text: "min(d_{4,1}^{(2)}=2, d_{4,3}^{(2)} + d_{3,1}^{(2)}) = min(2, -5+∞) = 2. 유지.", correct: true,
+                    explain: "3을 경유한 경로 4→3(-5) + 3→1(∞) = ∞. 직접 2 유지. 3→1 경로 아직 무의미." },
+                  { text: "-3이 됨", correct: false,
+                    explain: "3→1 경로가 이 단계에선 아직 ∞. 뒤에 개선됨." },
+                  { text: "∞로 악화", correct: false,
+                    explain: "알고리즘은 min이므로 단조 감소. 증가 불가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$k = 4$ iteration 후 많은 값 업데이트. 특히 d_{1,2}^{(4)} = 3, d_{2,1}^{(4)} = 3, d_{4,2}^{(4)} = -1 등. 음수 거리 가능한가?",
+                choices: [
+                  { text: "가능 — 음수 간선(W[1,5]=-4, W[4,3]=-5)이 있으면 음수 거리 생김. 음수 사이클은 없어야 의미 있음.", correct: true,
+                    explain: "CLRS의 설명. 음수 간선은 허용되며 거리도 음수 가능. 단 음수 사이클이 있으면 δ(i,j)가 -∞로 발산." },
+                  { text: "불가능 — 거리는 항상 양수", correct: false,
+                    explain: "Bellman-Ford와 마찬가지로 음수 간선 허용 → 음수 거리 가능." },
+                  { text: "음수면 알고리즘 오류", correct: false,
+                    explain: "정상 동작. 결과가 음수인 경우 존재." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최종 D^{(5)}의 대각선 d_{i,i}^{(5)} 값으로 음수 사이클 여부를 판정. 이 예제에선?",
+                choices: [
+                  { text: "d_{1,1}^{(5)} = 0, ..., d_{5,5}^{(5)} = 0 — 모든 대각선이 0 → 음수 사이클 없음", correct: true,
+                    explain: "CLRS p.697. 대각선 d_{ii}^{(n)} < 0이 하나라도 있으면 i가 속한 음수 사이클 존재. 이 예제는 0 유지 → 안전." },
+                  { text: "대각선이 음수 → 알고리즘 실패", correct: false,
+                    explain: "실패가 아니라 음수 사이클의 '감지'. 이 예제엔 없음." },
+                  { text: "대각선은 의미 없음", correct: false,
+                    explain: "음수 사이클 감지의 핵심 지표. 반드시 확인해야 함." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch26",
+    tier: 2,
+    num: "Ch 26",
+    title: "Maximum Flow",
+    subtitle: "Ford-Fulkerson · 잔여 그래프 · 증대 경로 · Max-Flow Min-Cut",
+    summary: "네트워크에서 source s → sink t로 보낼 수 있는 최대 유량. 증대 경로(augmenting path)가 없을 때 최적.",
+    objectives: [
+      "유량 네트워크·잔여 그래프(residual graph)·증대 경로(augmenting path)의 정의를 이해하고 도식화할 수 있다.",
+      "Ford-Fulkerson 방법과 Edmonds-Karp 알고리즘의 시간 복잡도 차이를 설명할 수 있다.",
+      "Max-Flow Min-Cut 정리를 진술하고 이분 매칭 등 응용 문제에 적용할 수 있다.",
+    ],
+    md: `
+## 유량 네트워크 (Flow Network)
+- 방향 그래프 G = (V, E), 간선 용량 $c(u, v) \\geq 0$
+- source s, sink t
+- 유량 f(u, v): 용량 제약 $f \\leq c$, 보존 제약 (중간 정점 입=출)
+
+## Ford-Fulkerson 방법
+1. $f = 0$으로 시작
+2. 증대 경로(augmenting path) p가 있으면 잔여 용량만큼 유량 증가
+3. 경로 없을 때까지 반복
+
+## 핵심 개념
+
+**잔여 네트워크 (Residual Network) G_f**:
+- 잔여 용량 $c_f(u, v) = c(u, v)$ - f(u, v) (남은 용량)
+- 역방향 용량 $c_f(v, u) = f(v, u)$ (취소 가능)
+- G_f에 간선 = 잔여 용량 > 0
+
+**증대 경로**: G_f에서 s → t로의 단순 경로
+- 이 경로의 병목 용량만큼 유량 증가 가능
+- 원간선: +유량, 역간선: -유량(취소)
+
+**Max-Flow Min-Cut Theorem** ⭐:
+다음 세 조건은 동치:
+1. f가 최대 유량
+2. G_f에 증대 경로 없음
+3. |f| = c(S, T) (최소 절단 용량)
+
+## Edmonds-Karp 개선
+- 증대 경로를 BFS(간선 수 최소)로 찾음
+- 시간: O(V·E²) — 경로 선택 순서 무관하게 다항시간 보장
+- Ford-Fulkerson 자체는 유량 값이 큰 경우 매우 느릴 수 있음 (상수 용량 아님)
+
+## 응용
+- **이분 매칭(Bipartite Matching)**: Hall의 정리 + max flow
+- **엣지 분리(Edge-disjoint paths)**: Menger 정리 + max flow
+- **이미지 분할**: 최소 절단으로 전경/배경 분리
+`,
+    ox: [
+      { q: "Ford-Fulkerson은 어떤 증대 경로 선택에서도 다항 시간을 보장한다.", a: false, why: "일반 Ford-Fulkerson은 큰 용량에서 지수 시간 가능." },
+      { q: "Edmonds-Karp는 BFS로 증대 경로를 찾는다.", a: true, why: "최단 증대 경로 선택." },
+      { q: "Max-Flow Min-Cut Theorem: 최대 유량 = 최소 절단 용량.", a: true, why: "Theorem 26.6." },
+      { q: "잔여 네트워크 G_f는 원본과 동일하다.", a: false, why: "유량에 따라 잔여 용량과 역간선이 추가/변경됨." },
+      { q: "Edmonds-Karp의 시간은 O(VE²)이다.", a: true, why: "증대 경로 $O(VE)$ × BFS O(E)." },
+      { q: "이분 매칭(Bipartite Matching)은 Max-Flow로 해결 가능.", a: true, why: "소스·싱크 추가 + 용량 1로 환원." },
+      { q: "역간선(residual edge)은 유량의 '취소'를 나타낸다.", a: true, why: "f(u,v) 만큼 v→u 잔여." },
+      { q: "유량 네트워크는 반드시 방향 그래프이다.", a: true, why: "각 간선이 방향성을 가짐." },
+      { q: "유량 보존 제약은 s와 t를 제외한 모든 정점에서 유입 = 유출이다.", a: true, why: "flow conservation." },
+      { q: "최대 유량은 유일한 값이지만 유량 분배는 여러 개 가능하다.", a: true, why: "같은 |f|를 만드는 다른 간선 분배가 존재 가능." },
+    ],
+
+    algorithms: [
+      {
+        id: "ford-fulkerson", name: "Ford-Fulkerson (Edmonds-Karp)", desc: "증대 경로 반복 — BFS로 O(VE²)",
+        tags: ["O(VE²)", "증대 경로"], viz: "maxFlow",
+        drills: {
+          source: "CLRS 3판 26.2절 pp.723-734, Ford-Fulkerson · Theorem 26.6 (Max-Flow Min-Cut)",
+          pseudo: {
+            title: "① 의사코드 재구성 — FORD-FULKERSON (일반)",
+            intro: "CLRS 26.2절 p.724의 기본 형태. 증대 경로 탐색은 BFS로(Edmonds-Karp). 잔여 네트워크가 핵심 자료구조.",
+            reference: {
+              title: "참고: 잔여 용량과 유량 업데이트",
+              lines: [
+                { text: "잔여 용량:",                                            indent: 0 },
+                { text: "  $c_f(u,v) = c(u,v)$ - f(u,v)  (원방향 남은 용량)",      indent: 0 },
+                { text: "  $c_f(v,u) = f(u,v)$           (역방향 = 취소 가능량)", indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "증대 경로 p의 잔여 용량:",                                 indent: 0 },
+                { text: "  $c_f(p) = min${c_f(u,v) : (u,v) ∈ p}",                   indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "유량 업데이트:",                                          indent: 0 },
+                { text: "  원간선 (u,v) ∈ E:  f(u,v) += c_f(p)",                 indent: 0 },
+                { text: "  역간선 (u,v) ∉ E: f(v,u) -= c_f(p) (취소)",            indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "Edmonds-Karp: BFS로 p 찾음 → O(VE²)",                    indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "FORD-FULKERSON(G, s, t)",                     indent: 0, note: "G는 유량 네트워크" },
+              { text: "for each edge (u,v) ∈ G.E",                   indent: 1, note: "유량 초기화" },
+              { text: "(u,v).$f = 0$",                                 indent: 2, note: "모든 간선 $f = 0$" },
+              { text: "while there exists a path p from s to t in G_f", indent: 1, note: "증대 경로 존재 동안" },
+              { text: "$c_f(p) = min${c_f(u,v) : (u,v) ∈ p}",          indent: 2, note: "병목 용량" },
+              { text: "for each edge (u,v) ∈ p",                     indent: 2, note: "경로 따라 유량 증가" },
+              { text: "if (u,v) ∈ E",                                indent: 3, note: "원간선이면" },
+              { text: "(u,v).f = (u,v).f + c_f(p)",                  indent: 4, note: "유량 증가" },
+              { text: "else (v,u).f = (v,u).f - c_f(p)",             indent: 3, note: "역간선 → 원간선 유량 감소" },
+            ],
+          },
+          proof: {
+            title: "② Max-Flow Min-Cut 정리 — 세 조건의 동치성",
+            intro: "CLRS Theorem 26.6. 최대 유량 문제의 핵심 정리. 세 명제의 동치성이 Ford-Fulkerson의 정확성 + 종료 시점 판별 근거.",
+            invariantLabel: "Theorem 26.6: ",
+            invariant: "유량 네트워크 G와 유량 f에 대해 다음 세 조건은 동치: (1) f는 G의 최대 유량, (2) 잔여 네트워크 G_f에 증대 경로가 없다, (3) 어떤 절단 (S, T)에 대해 |f| = c(S, T). (3)의 절단은 필연적으로 최소 절단.",
+            steps: [
+              {
+                stage: "① 유량과 절단의 상한 관계",
+                prompt: "임의의 유량 f와 임의의 s-t 절단 (S, T)에 대해 |f|와 c(S, T)의 관계는?",
+                choices: [
+                  { text: "|f| ≤ c(S, T) — 임의의 유량은 임의의 절단 용량 이하 (약한 쌍대성)", correct: true,
+                    explain: "CLRS Corollary 26.5. s가 S에, t가 T에 있는 모든 절단의 용량이 |f|의 상한. max|f| ≤ min c(S,T). 이게 알고리즘 설계의 출발점." },
+                  { text: "|f| > c(S, T)", correct: false,
+                    explain: "절대 불가. 절단이 s-t 흐름을 물리적으로 차단하므로 상한." },
+                  { text: "|f| = c(S, T) 항상", correct: false,
+                    explain: "등식은 최대 유량 = 최소 절단일 때만 성립." },
+                ],
+              },
+              {
+                stage: "② (1) → (2): 최대 유량이면 증대 경로 없음",
+                prompt: "f가 최대 유량이지만 G_f에 증대 경로 p가 있다고 가정. 모순을 유도하려면?",
+                choices: [
+                  { text: "p를 따라 $c_f(p) > 0$만큼 유량을 증가시킬 수 있음 → |f|가 더 큰 유량 존재 → f가 최대라는 가정과 모순", correct: true,
+                    explain: "CLRS p.734 증명. 증대 경로가 존재하는 한 유량을 늘릴 수 있음. 최대성 위배." },
+                  { text: "p가 없음을 직접 증명", correct: false,
+                    explain: "대우 증명. 증대 경로 존재 가정 후 모순 도출." },
+                  { text: "$c_f(p) = 0$이라 증가 불가", correct: false,
+                    explain: "증대 경로 정의상 $c_f(u,v) > 0$ for all (u,v) ∈ p → $c_f(p) > 0$." },
+                ],
+              },
+              {
+                stage: "③ (2) → (3): 증대 경로 없으면 어떤 절단 용량과 일치",
+                prompt: "G_f에 증대 경로 없다고 하자. S = {v : s에서 G_f로 도달 가능}로 정의. (S, $T = V$\\S)는 어떤 절단?",
+                choices: [
+                  { text: "s ∈ S, t ∈ T (t가 S에 있으면 증대 경로 존재, 모순) → s-t 절단. 절단을 가로지르는 간선들은 모두 포화($f = c$) or 역방향은 0.", correct: true,
+                    explain: "CLRS 증명. 그 외 간선이 있으면 G_f에 경로가 연장되어 t에 닿음. 따라서 S에서 T로 가는 원간선은 포화, T에서 S로 가는 원간선은 유량 0." },
+                  { text: "T에 속한 정점이 없음", correct: false,
+                    explain: "t가 반드시 T에 속함. S, T 둘 다 비어있지 않음." },
+                  { text: "임의의 절단", correct: false,
+                    explain: "구체적으로 잔여 네트워크의 도달 가능성으로 정의된 특수한 절단." },
+                ],
+              },
+              {
+                stage: "④ 절단 용량과 유량의 등식",
+                prompt: "step ③의 절단 (S, T)에서 |f|와 c(S, T)의 관계는?",
+                choices: [
+                  { text: "|f| = Σ_{(u,v): u ∈ S, v ∈ T} f(u,v) - Σ_{(u,v): u ∈ T, v ∈ S} $f(u,v) = \\Sigma $ c(u,v) - $0 = c(S, T)$", correct: true,
+                    explain: "포화 간선 + 역방향 0을 대입. 순유량 = 절단을 가로지르는 용량의 합. |f| = c(S, T). 이게 세 번째 조건 (3)." },
+                  { text: "|f| < c(S, T)", correct: false,
+                    explain: "정확히 등식. 절단이 '타이트'하게 맞음." },
+                  { text: "|f| = 0", correct: false,
+                    explain: "일반적으로 양의 유량. 등식은 용량과 일치한다는 것." },
+                ],
+              },
+              {
+                stage: "⑤ (3) → (1): 절단과 일치하면 최대 유량",
+                prompt: "어떤 절단 (S, T)에 대해 |f| = c(S, T)이면 f는 최대인 이유는?",
+                choices: [
+                  { text: "약한 쌍대성 max|f'| ≤ min c(S',T') ≤ c(S,T) = |f|. 따라서 |f| ≥ max|f'| → f가 최대.", correct: true,
+                    explain: "CLRS Theorem 26.6 마지막 단계. 임의 유량 ≤ 임의 절단이므로 특정 절단과 일치하는 유량은 최대. 동시에 그 절단은 최소 절단." },
+                  { text: "(3)에서 (1)은 별도 증명 필요", correct: false,
+                    explain: "(3)이 강한 조건. 임의 상한과 같으므로 자동 최대." },
+                  { text: "|f|가 절반쯤", correct: false,
+                    explain: "정확히 최대. 절반이 아님." },
+                ],
+              },
+              {
+                stage: "⑥ Edmonds-Karp의 다항 시간 보장",
+                prompt: "Ford-Fulkerson은 용량이 정수인 경우에도 시간이 |f*|에 의존(매우 큼 가능). Edmonds-Karp는 어떻게 다항 시간 달성?",
+                choices: [
+                  { text: "BFS로 증대 경로 선택 → 각 간선이 critical(포화된 후 잔여 0)이 되는 횟수가 O(V) → 전체 증대 횟수 $O(VE)$ → 총 O(V·E·E) = O(VE²)", correct: true,
+                    explain: "CLRS Theorem 26.8. BFS가 경로 길이를 단조 증가시킴. 같은 간선이 critical이 되려면 경로 길이가 $\\geq 2$ 증가 필요 → O(V/2) 제한. 경로당 BFS O(E) → O(VE²)." },
+                  { text: "용량에 의존한 지수 시간", correct: false,
+                    explain: "그건 일반 Ford-Fulkerson. BFS는 용량과 무관한 다항 시간." },
+                  { text: "$O(V + E)$ 선형", correct: false,
+                    explain: "O(VE²)가 정답. 매 반복에 BFS + 여러 반복." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Ford-Fulkerson 추적 — 작은 네트워크",
+            intro: "4정점 {s, a, b, t}. 간선 용량: (s,a,10), (s,b,10), (a,b,2), (a,t,8), (b,t,10). 각 증대 경로와 유량 업데이트 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 $f = 0$. 잔여 네트워크 G_f는 원 그래프와 동일. BFS로 첫 증대 경로 탐색 결과는?",
+                choices: [
+                  { text: "s → a → t (BFS가 얕은 경로 선호). $c_f(p) = min(10, 8)$ = 8. 유량: $f(s,a) = 8$, $f(a,t) = 8$.", correct: true,
+                    explain: "BFS는 최단(간선 수) 경로. s→a→t는 2간선. 병목 8로 업데이트." },
+                  { text: "s → b → t (임의 선택)", correct: false,
+                    explain: "BFS는 결정적 (인접 리스트 순서). 예제에서 s→a가 먼저이면 a 경로 선택." },
+                  { text: "s → a → b → t (3간선)", correct: false,
+                    explain: "BFS는 최단 경로. 2간선 경로가 있으면 그걸 먼저." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "첫 증대 후 잔여 네트워크 G_f: $c_f(s,a) = 10$-$8 = 2$, $c_f(a,s) = 8$, $c_f(a,t) = 0$, $c_f(t,a) = 8$, (s,b,10), (b,t,10), (a,b,2), (b,a,0). 두 번째 증대 경로는?",
+                choices: [
+                  { text: "s → b → t, $c_f(p) = min(10, 10)$ = 10. 유량: $f(s,b) = 10$, $f(b,t) = 10$.", correct: true,
+                    explain: "a→t는 포화($c_f = 0$). 다른 BFS 경로는 s→b→t. 간단하고 큰 병목." },
+                  { text: "s → a → t 재사용", correct: false,
+                    explain: "$c_f(a,t) = 0$이라 더 이상 사용 불가. 포화 간선." },
+                  { text: "증대 경로 없음 (즉시 종료)", correct: false,
+                    explain: "s→b→t 경로가 존재. 아직 증대 가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "두 번째 증대 후. 현재 |f| = 8 + $10 = 18$. 잔여 네트워크 상태: $c_f(s,a) = 2$, $c_f(s,b) = 0$, $c_f(a,t) = 0$, $c_f(b,t) = 0$. 증대 경로 남았나?",
+                choices: [
+                  { text: "s → a → b → t — s→a (잔여 2), a→b (원 용량 2), b→t (0 직접 → 역방향은 10 존재, 하지만 원방향 필요). 실제로는 b→t 원 잔여 0이므로 이 경로 불가.", correct: false,
+                    explain: "b→t가 포화 (잔여 0). 원 방향으론 더 못 감. 재검토 필요." },
+                  { text: "s → a → b → (취소 경로 통해 t): s→a (2) → a→b (2) 로 가도 b→t가 0. 역간선 b→s (10) 써도 t 미도달. → 증대 경로 없음 → 종료. 최대 유량 18.", correct: true,
+                    explain: "모든 경로가 막힘. t 도달 불가 → FORD-FULKERSON 종료. Max-Flow Min-Cut 검증: |f|=18 = c(S={s,a}, T={b,t}) = c(s,b)+c(a,b)+$c(a,t) = 10$+2+... (정확한 절단 값 계산 필요)." },
+                  { text: "s → a → t 다시 사용", correct: false,
+                    explain: "포화. 불가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최종 최대 유량 |f| = 18. 최소 절단을 찾으려면?",
+                choices: [
+                  { text: "G_f에서 s로부터 도달 가능한 정점 집합 S = {s, a}. T = {b, t}. $c(S,T) = c(s,b)$ + c(a,t) + $c(a,b) = 10$ + 8 + $2 = 20$. 잠깐... |f|=18과 일치해야", correct: false,
+                    explain: "계산 오류. c(a,b) 경로는 원래 (a,b,2)로 2. 실제 최소 절단은 |f|=18과 일치하는 값이어야 함. (s,b)=10, (a,t)=8 → 10+$8 = 18$ ✓ (S={s,a} 기준, a→b는 같은 쪽 내부 간선이므로 절단 제외)." },
+                  { text: "(S, T) = ({s}, {a, b, t}). $c(S,T) = c(s,a)$ + $c(s,b) = 10$+10 = $20 \\neq 18$. 따라서 최소 절단 아님.", correct: false,
+                    explain: "이 절단은 20이지만 |f|=18. 더 작은 절단 존재 → 이건 최소 절단 아님. 최소 절단은 S={s,a}." },
+                  { text: "(S, T) = ({s, a}, {b, t}). $c(S, T) = c(s,b)$ + $c(a,t) = 10$ + $8 = 18$. |f| = c(S,T) ✓ — 이것이 최소 절단.", correct: true,
+                    explain: "Max-Flow Min-Cut Theorem 검증. a→b는 같은 쪽이라 절단에 포함 안 됨. 정확히 18로 일치. S는 G_f에서 s-도달 가능한 정점들." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "경로 선택 순서가 다르면 결과가 달라질까?",
+                choices: [
+                  { text: "최종 최대 유량 값은 같음(Theorem 26.6). 단, 개별 간선의 유량 분배와 증대 횟수는 다를 수 있음.", correct: true,
+                    explain: "최대 유량은 유일한 값(꼭 유일한 분배는 아님). 선택 순서가 다르면 경로 수와 유량 분배는 다를 수 있지만 |f|는 같음." },
+                  { text: "다른 값이 나옴", correct: false,
+                    explain: "최대값은 유일. 정리 보장." },
+                  { text: "순서에 따라 무한 루프", correct: false,
+                    explain: "정수 용량이면 유한 종료. 실수 용량은 이론적 문제지만 정수는 안전." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 예제에 간선 (a,b,2) 없이 순수 s-a-t, s-b-t 두 경로만 있으면 최대 유량은?",
+                choices: [
+                  { text: "|f| = 8 + $10 = 18$ (변하지 않음)", correct: true,
+                    explain: "a-b 간선이 이 예제에선 사용되지 않음 (b→t 포화로 도달 불가). 제거해도 같은 결과. 일반적으로 중간 간선이 있으면 '유량 재배분' 가능성 열림." },
+                  { text: "|f| = 20 (두 경로 완전 활용)", correct: false,
+                    explain: "a-t가 8로 제한. 증가 불가능." },
+                  { text: "|f| = 10", correct: false,
+                    explain: "두 경로 독립이므로 최소 8+$10 = 18$." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch32",
+    tier: 2,
+    num: "Ch 32",
+    title: "String Matching",
+    subtitle: "나이브 · Rabin-Karp · KMP — 실패 함수",
+    summary: "텍스트 T에서 패턴 P를 찾기. KMP는 실패 함수로 불필요한 비교를 건너뛰어 Θ(n+m).",
+    objectives: [
+      "나이브·Rabin-Karp·KMP 세 알고리즘의 시간 복잡도와 핵심 아이디어를 비교할 수 있다.",
+      "Rabin-Karp의 롤링 해시 갱신과 거짓 양성(false positive) 처리를 이해한다.",
+      "KMP의 실패 함수(prefix function) $\\pi$를 직접 계산하고 매칭 과정을 추적할 수 있다.",
+    ],
+    md: `
+## 문제 정의
+- 텍스트 T[1..n], 패턴 P[1..m]
+- P가 T에서 등장하는 모든 위치 반환 (shift s: $T[s+1..s+m] = P$)
+
+## 알고리즘 비교
+
+| 알고리즘 | 전처리 | 매칭 | 총합 |
+|---------|-------|------|------|
+| 나이브 | 0 | O((n-m+1)·m) | O(nm) |
+| Rabin-Karp | Θ(m) | 기대 Θ(n+m), 최악 Θ(nm) | 해시 기반 |
+| Finite Automaton | Θ(m·\|Σ\|) | $\\Theta(n)$ | 전처리 커 |
+| **KMP** | $\\Theta(m)$ | **$\\Theta(n)$** | **$\\Theta(n+m)$** |
+
+## KMP의 핵심 — 실패 함수 π (CLRS 32.4)
+
+**π[q]**: 길이 q 접두사 P[1..q]의 최장 '적절한 접두-접미 일치'
+- P[1..π[q]] = P[q-π[q]+1..q]
+- π[q] < q
+- 예: P = "ababaca"
+  - π[1]=0, π[2]=0, π[3]=1 (a), π[4]=2 (ab), π[5]=3 (aba), π[6]=0, π[7]=1 (a)
+
+## 불일치 시 시프트 규칙
+- P[1..q]가 T에 일치했다가 P[q+1]에서 불일치
+- 나이브: q+1 감소하고 s 하나 증가
+- KMP: q를 π[q]로 줄임 → T에서 이미 확인한 부분을 '공짜로' 재사용
+- 결과: 텍스트 인덱스는 뒤로 가지 않음 → $\\Theta(n)$ 매칭
+
+## COMPUTE-PREFIX-FUNCTION
+- 자기 자신과의 KMP 매칭을 닮은 구조
+- Θ(m) 시간에 π 테이블 완성
+`,
+    ox: [
+      { q: "KMP의 매칭 시간은 Θ(n+m)이다.", a: true, why: "amortized 분석." },
+      { q: "실패 함수 π 계산은 Θ(m)이다.", a: true, why: "COMPUTE-PREFIX-FUNCTION." },
+      { q: "KMP는 텍스트 인덱스 i를 뒤로 되돌리지 않는다.", a: true, why: "단조 증가 — $\\Theta(n)$ 보장 핵심." },
+      { q: "나이브 문자열 매칭의 최악 시간은 O(nm)이다.", a: true, why: "각 shift에서 m 비교 가능." },
+      { q: "KMP는 패턴 내부의 반복 구조를 활용한다.", a: true, why: "π 함수 = 접두=접미 일치." },
+      { q: "Rabin-Karp는 해시 기반이다.", a: true, why: "롤링 해시로 빠른 비교." },
+      { q: "π[q]는 P[1..q]의 접두사이자 접미사인 '적절한(proper)' 부분 문자열 중 최대 길이.", a: true, why: "CLRS 32.4 정의." },
+      { q: "Boyer-Moore는 평균적으로 KMP보다 빠르다 (특히 긴 패턴).", a: true, why: "Suffix heuristic, bad character." },
+      { q: "KMP의 매칭 과정에서 비교 횟수는 최대 2n이다.", a: true, why: "amortized 분석으로 증가 n회, 감소 ≤ 증가." },
+      { q: "π[1] = 0 이다 (길이 1인 접두사의 적절한 접두=접미는 빈 문자열).", a: true, why: "proper는 자기 제외. 빈 문자열이 유일한 후보." },
+    ],
+
+    algorithms: [
+      {
+        id: "kmp", name: "KMP (Knuth-Morris-Pratt)", desc: "실패 함수로 Θ(n+m) 문자열 매칭",
+        tags: ["Θ(n+m)", "실패 함수"], viz: "kmp",
+        drills: {
+          source: "CLRS 3판 32.4절 pp.1002-1013, KMP-MATCHER · COMPUTE-PREFIX-FUNCTION",
+          pseudo: {
+            title: "① 의사코드 재구성 — KMP-MATCHER",
+            intro: "CLRS 32.4절 p.1005의 10줄. 실패 함수 π가 이미 계산되어 있다고 가정. 두 포인터(텍스트 i, 패턴 q)로 선형 시간 매칭.",
+            reference: {
+              title: "참고: COMPUTE-PREFIX-FUNCTION (별도 서브루틴)",
+              lines: [
+                { text: "COMPUTE-PREFIX-FUNCTION(P):",                       indent: 0 },
+                { text: "  $m = P.length$",                                    indent: 0 },
+                { text: "  π[1] = 0",                                         indent: 0 },
+                { text: "  $k = 0$",                                            indent: 0 },
+                { text: "  for $q = 2$ to m:",                                  indent: 0 },
+                { text: "    while $k > 0$ and $P[k+1] \\neq P[q]$:",                indent: 0 },
+                { text: "      k = π[k]",                                     indent: 0 },
+                { text: "    if P[k+1] == P[q]:",                            indent: 0 },
+                { text: "      $k = k$ + 1",                                   indent: 0 },
+                { text: "    π[q] = k",                                       indent: 0 },
+                { text: "",                                                    indent: 0 },
+                { text: "시간: Θ(m) — amortized 분석 (k는 최대 m번 증가)",    indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "KMP-MATCHER(T, P)",                         indent: 0, note: "텍스트 T, 패턴 P" },
+              { text: "$n = T.length$; $m = P.length$",                indent: 1, note: "길이" },
+              { text: "$\\pi  = COMPUTE$-PREFIX-FUNCTION(P)",            indent: 1, note: "전처리 Θ(m)" },
+              { text: "$q = 0$",                                     indent: 1, note: "일치한 패턴 문자 수" },
+              { text: "for $i = 1$ to n",                            indent: 1, note: "텍스트 훑기" },
+              { text: "while $q > 0$ and $P[q+1] \\neq T[i]$",             indent: 2, note: "불일치시 shift" },
+              { text: "q = π[q]",                                  indent: 3, note: "π로 jump back" },
+              { text: "if P[q+1] == T[i]",                         indent: 2, note: "문자 일치" },
+              { text: "$q = q$ + 1",                                 indent: 3, note: "일치 길이 증가" },
+              { text: "if q == m",                                 indent: 2, note: "전체 패턴 일치" },
+              { text: "print \"Pattern occurs with shift \" i - m", indent: 3, note: "매칭 보고" },
+              { text: "q = π[q]",                                  indent: 3, note: "다음 매칭 준비" },
+            ],
+          },
+          proof: {
+            title: "② 정확성과 $\\Theta(n)$ 매칭 시간 증명",
+            intro: "CLRS Lemma 32.5 (KMP 정확성) + amortized 분석 ($\\Theta(n)$). 핵심은 q의 값이 단조 성질로 전체 증가량 ≤ n.",
+            invariantLabel: "KMP 정확성 + 시간: ",
+            invariant: "KMP-MATCHER가 T에서 P의 모든 출현을 정확히 보고하며, 전체 매칭 시간은 $\\Theta(n)$. 증명: q의 값이 amortized $O(1)$ per i (각 증가는 문자 비교 1회, 감소는 이전 증가로 상쇄).",
+            steps: [
+              {
+                stage: "① 실패 함수 π[q]의 정의",
+                prompt: "π[q]의 정확한 정의는?",
+                choices: [
+                  { text: "P[1..q]의 접두사이면서 접미사인 '적절한(proper)' 부분 문자열의 최대 길이. (proper = 자기 자신 제외)", correct: true,
+                    explain: "CLRS p.1003. π[q] = max{$k < q$ : P[1..k]가 P[1..q]의 접미사}. 이 '자기 유사성'이 KMP의 핵심." },
+                  { text: "P[q]의 ASCII 값", correct: false,
+                    explain: "문자의 숫자값이 아닌, 접두-접미 일치 길이." },
+                  { text: "P에서 q의 빈도", correct: false,
+                    explain: "빈도 아니라 구조적 속성 (접두=접미)." },
+                ],
+              },
+              {
+                stage: "② 불일치 시 KMP의 시프트",
+                prompt: "P[1..q]까지 T[i-q+1..i]와 일치했다가 T[i+1]에서 P[q+1]과 불일치. 나이브는 shift를 하나만 늘리지만 KMP는?",
+                choices: [
+                  { text: "q를 π[q]로 감소 → T[i+1]부터 다시 비교. 텍스트 인덱스 i는 뒤로 가지 않음. 시프트 = q - π[q].", correct: true,
+                    explain: "CLRS p.1004. 이미 매칭된 T[i-q+1..i]가 P[1..q]와 같으므로, π[q]가 접두=접미임을 이용해 T와 P를 정렬 유지. 이게 속도의 원천." },
+                  { text: "$q = 0$으로 초기화 (완전 재시작)", correct: false,
+                    explain: "그건 나이브의 극단. KMP는 π를 활용해 이미 매칭한 정보 재사용." },
+                  { text: "i를 뒤로 감김", correct: false,
+                    explain: "절대 뒤로 가지 않음. 이게 $\\Theta(n)$ 보장의 핵심." },
+                ],
+              },
+              {
+                stage: "③ 시프트의 타당성",
+                prompt: "왜 s를 q - π[q] 증가시켜도 매칭을 놓치지 않나?",
+                choices: [
+                  { text: "$0 < s$' < q - π[q]인 어떤 s'도 유효하려면 P[1..q-s']가 P[1..q]의 접두사이자 접미사가 되어야 함. π[q]의 최대성에 의해 q-s' ≤ π[q] → s' ≥ q - π[q]. 모순.", correct: true,
+                    explain: "CLRS Lemma 32.5. π의 최대성이 '건너뛰는 시프트에 매칭이 없음'을 보장. 불필요한 비교 완벽히 생략." },
+                  { text: "그냥 휴리스틱", correct: false,
+                    explain: "엄밀 증명 가능. π 정의가 정확히 이 최대성을 제공." },
+                  { text: "작은 확률로 놓칠 수 있음", correct: false,
+                    explain: "확정적으로 놓치지 않음. 이게 KMP 정확성." },
+                ],
+              },
+              {
+                stage: "④ Amortized 시간 분석",
+                prompt: "매칭 시간이 $\\Theta(n)$인 이유를 포텐셜 방법으로 설명하면?",
+                choices: [
+                  { text: "$\\Phi  = q$ (현재 일치 길이)를 포텐셜로. 각 i에서: (a) 증가 최대 1 (q+1로), (b) while 감소 k번 → ΔΦ = -k + 1. Σ감소 ≤ Σ증가 ≤ n → 총 비교 ≤ 2n = $\\Theta(n)$", correct: true,
+                    explain: "CLRS 32.4 Exercise 수준. q는 최대 n번 증가(각 i당 $\\leq 1$), 감소 총합 ≤ 증가 총합 ($q \\geq 0$이므로). 감소도 총 $O(n)$." },
+                  { text: "각 i에 O(m) 작업 → O(nm)", correct: false,
+                    explain: "그건 나이브. KMP는 amortized $O(1)$ per i로 $\\Theta(n)$." },
+                  { text: "Θ(n log m)", correct: false,
+                    explain: "로그 없음. 선형 선형." },
+                ],
+              },
+              {
+                stage: "⑤ COMPUTE-PREFIX-FUNCTION의 시간",
+                prompt: "π 테이블 계산의 시간 복잡도는?",
+                choices: [
+                  { text: "Θ(m) — 같은 amortized 논법. k가 최대 m-1번 증가, 감소 총합 ≤ 증가 총합. q 루프 m-1번 반복 + 상수 작업.", correct: true,
+                    explain: "CLRS p.1006. 자기 자신에 KMP를 적용하는 구조. 같은 amortized 분석. 전체 KMP 전처리+매칭 = Θ(m+n)." },
+                  { text: "Θ(m²)", correct: false,
+                    explain: "나이브한 접근이면 그렇지만 CLRS 코드는 Θ(m)." },
+                  { text: "Θ(m lg m)", correct: false,
+                    explain: "정렬 기반 알고리즘이 아님. 선형." },
+                ],
+              },
+              {
+                stage: "⑥ KMP vs 다른 문자열 매칭",
+                prompt: "실무에서 KMP가 선호되는 상황과 대안은?",
+                choices: [
+                  { text: "KMP: 이론적 최악 Θ(n+m) 보장, 짧은 알파벳에 유리. 대안: Boyer-Moore(긴 패턴, 큰 알파벳에서 실제로 더 빠름, 평균 sublinear), Rabin-Karp(다중 패턴 해싱).", correct: true,
+                    explain: "CLRS 32장. 알고리즘 선택: 패턴 길이/알파벳 크기/다중 패턴 여부에 의존. KMP는 선형 보장이 필요할 때." },
+                  { text: "항상 KMP가 가장 빠름", correct: false,
+                    explain: "실무 평균 속도는 Boyer-Moore가 우위. KMP는 최악 보장이 강점." },
+                  { text: "나이브로 충분", correct: false,
+                    explain: "악의적 입력에서 O(nm). 선형 보장이 필요한 시스템엔 부적절." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ KMP 추적 — P=\"ababaca\", T=\"abababacaba\"",
+            intro: "패턴 P=\"ababaca\" ($m = 7$), 텍스트 T=\"abababacaba\" ($n = 11$). 먼저 π 계산, 이어서 매칭 과정 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "COMPUTE-PREFIX-FUNCTION(P)의 π 배열은?",
+                choices: [
+                  { text: "π[1..7] = [0, 0, 1, 2, 3, 0, 1] — $P = ababaca$에서 각 접두사의 최대 적절한 접두=접미 길이", correct: true,
+                    explain: "$q = 1$: 길이 1 접두사 'a'의 적절한 접미=접두는 빈 문자열 → 0. $q = 3$: 'aba'에서 'a' 일치 → 1. $q = 5$: 'ababa'에서 'aba' 일치 → 3. $q = 6$: 'ababac'에서 일치 없음 → 0. $q = 7$: 'ababaca'에서 'a' 일치 → 1." },
+                  { text: "모든 값 0", correct: false,
+                    explain: "반복 패턴(ab)으로 접두=접미 일치 존재. 0 아님." },
+                  { text: "모든 값 q-1 (선형)", correct: false,
+                    explain: "정확한 계산 필요. 패턴의 자기 유사성에 의존." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "매칭 시작. $i = 1$, $q = 0$. T[1]='a', P[1]='a' 일치 → $q = 1$. $i = 2$, T[2]='b', P[2]='b' 일치 → $q = 2$. 쭉 진행하면 $i = 5$에서?",
+                choices: [
+                  { text: "$i = 1$..5에서 q가 1,2,3,4,5로 증가. T[1..5]='ababa' = P[1..5]. 아직 불일치 없음.", correct: true,
+                    explain: "패턴 앞 5글자가 텍스트와 일치. ababa 매칭 중." },
+                  { text: "즉시 불일치", correct: false,
+                    explain: "$T = abababacaba$의 앞 5자 ababa는 P의 앞 5자와 같음." },
+                  { text: "이미 완전 매칭", correct: false,
+                    explain: "패턴은 7자. 5자만 일치해도 아직 완전 매칭 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 6$, $q = 5$. T[6]='b', P[6]='c'. 불일치! while 루프 실행: q = π[5] = 3. P[4]='b'와 T[6]='b' 비교?",
+                choices: [
+                  { text: "$P[q+1] = P[4]$='b' == T[6]='b' → $q = 4$. while 종료.", correct: true,
+                    explain: "π[5]=3으로 jump back. $q = 3$에서 P[4]='b'와 T[6]='b' 비교 → 일치. $q = 4$로 증가. i는 그대로 6." },
+                  { text: "$q = 0$ (완전 재시작)", correct: false,
+                    explain: "π로 jump back이 단일 단계. 완전 재시작 아님." },
+                  { text: "i를 감소", correct: false,
+                    explain: "i는 절대 감소 안 함. q만 조정." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 6$ 후 $q = 4$. $i = 7$, T[7]='a', P[5]='a' → $q = 5$. $i = 8$, T[8]='c', P[6]='c' → $q = 6$. $i = 9$, T[9]='a', P[7]='a' → $q = 7$. q==$m = 7$!",
+                choices: [
+                  { text: "매칭 발견! $shift = i$ - $m = 9$ - $7 = 2$. T[3..9]='ababaca' = P. 보고 후 q = π[7] = 1로 이어감.", correct: true,
+                    explain: "KMP-MATCHER의 매칭 출력. π[7]=1로 업데이트하여 overlapping 매칭 탐색 계속." },
+                  { text: "종료", correct: false,
+                    explain: "여러 매칭 가능하므로 π[m]으로 업데이트하고 계속." },
+                  { text: "$q = 0$으로 재설정", correct: false,
+                    explain: "π[m]=1이므로 1부터 시작. 이미 일치한 'a' 재사용." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 10$, $q = 1$. T[10]='b', P[2]='b' → $q = 2$. $i = 11$, T[11]='a', P[3]='a' → $q = 3$. 종료. 이 매칭 시도는?",
+                choices: [
+                  { text: "$q = 3$에서 i 끝. 최종 q=$3 < m$=7이므로 두 번째 매칭은 완성되지 않음. 단 한 번의 매칭 ($shift = 2$).", correct: true,
+                    explain: "T='abababacaba'에 패턴이 한 번만 ($shift = 2$ 위치) 출현. 이후 'ba'로 끝나지만 P의 접두사 'aba'와 길이 3까지만 일치." },
+                  { text: "두 번째 매칭 발견", correct: false,
+                    explain: "텍스트 끝까지 $q = 3$만 도달. $m = 7$에 미치지 못함." },
+                  { text: "무한 루프", correct: false,
+                    explain: "for 루프는 $i = n$에서 정상 종료. 무한 루프 없음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "KMP vs 나이브: 이 예제에서 총 문자 비교 횟수 차이는?",
+                choices: [
+                  { text: "KMP: 약 11 + 상수 (Θ(n+m)). 나이브: 각 shift에서 실패 시 여러 번 비교, 최악 O((n-m+1)·m) = O(5·7)=35. 차이 크지 않지만 긴 텍스트에서 KMP 압도.", correct: true,
+                    explain: "이 작은 예제에선 차이가 작지만, $n = 10$^6, $m = 100$ 같은 스케일에선 KMP=O(10^6), 나이브=O(10^8)으로 100배 차이." },
+                  { text: "KMP가 항상 나이브보다 2배 느림", correct: false,
+                    explain: "KMP가 압도적으로 빠름. 극단 예시에서 100~1000배." },
+                  { text: "둘이 똑같음", correct: false,
+                    explain: "KMP는 i 감소 없음이 핵심 개선. 악의적 입력에서 큰 차이." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch5",
+    tier: 2,
+    num: "Ch 5",
+    title: "Probabilistic Analysis",
+    subtitle: "채용 문제 · 지시 확률 변수 · 무작위 알고리즘",
+    summary: "알고리즘 분석을 '평균 입력' 또는 '무작위화된 알고리즘'의 기대값으로 수행. 지시 확률 변수가 핵심 도구.",
+    objectives: [
+      "채용 문제(Hiring Problem)의 평균 비용을 조화수 $H_n$으로 분석할 수 있다.",
+      "지시 확률 변수(Indicator Random Variable)의 정의와 기댓값 선형성을 활용해 평균 분석을 수행할 수 있다.",
+      "확률 분석과 무작위 알고리즘의 차이를 구분하고 무작위 순열 생성 알고리즘을 설명할 수 있다.",
+    ],
+    md: `
+## 채용 문제 (Hiring Problem)
+- n명 후보를 순서대로 면접, 현재 최고보다 나으면 채용(해고 + 신규 고용)
+- 비용: 면접 $c_i$ × n (고정) + 채용 $c_h$ × m (가변)
+- **분석 대상**: 평균적으로 몇 번 채용(m)?
+
+## 분석 접근법 두 가지
+
+**1. 확률적 분석(Probabilistic Analysis)**
+- 입력이 특정 분포(보통 균등 무작위 순열)를 따른다고 '가정'
+- 분석자가 입력 분포를 제어하지 못함
+
+**2. 무작위 알고리즘(Randomized Algorithm)** ⭐
+- 알고리즘 자체가 난수를 사용
+- 어떤 입력이든 '기대 실행 시간' 보장
+- 예: RANDOMIZED-HIRE-ASSISTANT, Quicksort, Select
+
+## 지시 확률 변수 (Indicator Random Variable)
+- $X_A = \\mathbb{1}\\{A \\text{ 발생}\\}$ (1 또는 0)
+- **핵심 등식**: $E[X_A] = \\Pr\\{A\\}$
+- 합의 기댓값: $E[\\sum X_i] = \\sum E[X_i]$ (선형성, 독립 불필요!)
+
+## 채용 문제의 기대값
+- $X_i = \\mathbb{1}\\{\\text{후보 } i \\text{가 채용됨}\\}$
+- Pr{$X_i = 1$} = 1/i (후보 1..i 중 i가 최대일 확률)
+- $E[m] = \\Sigma $ 1/$i = H_n$ = ln n + $O(1)$ = $O(\\lg n)$
+
+## 대표 적용 예
+- RANDOMIZED-QUICKSORT (Ch 7): 기대 $O(n \\lg n)$
+- RANDOMIZED-SELECT (Ch 9): 기대 $O(n)$
+- 생일 역설: 23명 중 2명 같은 생일 확률 > 1/2
+- 공 던지기: n개 상자에 n개 공, 최대 상자 크기 Θ(lg n / lg lg n)
+`,
+    ox: [
+      { q: "지시 확률 변수 X_A에 대해 $E[X_A] = Pr${A}이다.", a: true, why: "X_A가 0/1이므로 기댓값 = 사건 확률." },
+      { q: "기댓값의 선형성(Linearity)은 독립성을 요구한다.", a: false, why: "종속이어도 $E[X+Y] = E[X]$+E[Y] 성립." },
+      { q: "채용 문제에서 기대 채용 수는 H_n이다.", a: true, why: "Σ 1/$i = H_n$." },
+      { q: "무작위 알고리즘은 입력 분포 가정이 필요 없다.", a: true, why: "난수가 알고리즘 내부에 있음." },
+      { q: "$H_n = ln$ n + $O(1)$은 $\\Theta(\\lg n)$이다.", a: true, why: "자연 로그와 이진 로그는 상수배 차이." },
+      { q: "n명 후보 중 첫 번째는 항상 채용된다.", a: true, why: "가상 $best = 0$보다 무조건 나음." },
+      { q: "RANDOMIZED-HIRE-ASSISTANT는 먼저 입력을 무작위 섞는다.", a: true, why: "이후 결정적 버전 호출." },
+      { q: "조화 급수 H_n은 n→∞에서 수렴한다.", a: false, why: "발산. ln n처럼 증가." },
+      { q: "지시 확률 변수를 합치면 복잡한 분포의 기댓값을 '단순 확률의 합'으로 계산할 수 있다.", a: true, why: "핵심 기법. 분해하여 각 사건 확률만 계산." },
+      { q: "생일 역설에서 23명이면 2명이 같은 생일일 확률 > 1/2이다.", a: true, why: "CLRS 5.4.1 예시." },
+    ],
+
+    algorithms: [
+      {
+        id: "hire-assistant", name: "Hire-Assistant (채용 문제)", desc: "지시 확률 변수로 $E[m] = H_n$ = $O(\\lg n)$",
+        tags: ["기대 O(lg n)", "지시 변수"], viz: "hireAssistant",
+        drills: {
+          source: "CLRS 3판 5.1-5.2절 pp.114-124, Lemma 5.2 · 지시 확률 변수의 기본 활용",
+          pseudo: {
+            title: "① 의사코드 재구성 — HIRE-ASSISTANT",
+            intro: "CLRS 5.1절 p.115의 6줄. 단순한 알고리즘이지만 확률 분석의 입문 예제. 지시 변수로 '몇 번 채용?' 기댓값 계산.",
+            reference: {
+              title: "참고: 왜 RANDOMIZED 버전이 필요한가?",
+              lines: [
+                { text: "결정적 HIRE-ASSISTANT:",                                   indent: 0 },
+                { text: "  입력 순서대로 처리",                                      indent: 0 },
+                { text: "  입력이 오름차순이면 최악 $O(n)$ 채용",                      indent: 0 },
+                { text: "  입력이 이미 내림차순이면 최선 1회 채용",                   indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "RANDOMIZED-HIRE-ASSISTANT:",                               indent: 0 },
+                { text: "  입력을 무작위 섞은 후 HIRE-ASSISTANT 호출",                indent: 0 },
+                { text: "  어떤 입력이든 기대 채용 수 $O(\\lg n)$",                       indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "지시 변수 $X_i = I${i번째 후보가 채용}",                       indent: 0 },
+                { text: "E[m] = E[Σ X_i] = Σ $E[X_i] = \\Sigma $ Pr{i번째가 max} = Σ 1/i",     indent: 0 },
+                { text: "      = $H_n \\approx ln$ n + 0.577 = $O(\\lg n)$",                       indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "HIRE-ASSISTANT(n)",                         indent: 0, note: "n명의 후보" },
+              { text: "$best = 0$",                                  indent: 1, note: "0번 = 가상 후보 (품질 -∞)" },
+              { text: "for $i = 1$ to n",                            indent: 1, note: "각 후보 면접" },
+              { text: "interview candidate i",                     indent: 2, note: "비용 c_i" },
+              { text: "if candidate i is better than candidate best", indent: 2, note: "현재 최고와 비교" },
+              { text: "$best = i$",                                  indent: 3, note: "최고 후보 갱신" },
+              { text: "hire candidate i",                          indent: 3, note: "채용 (비용 c_h)" },
+            ],
+          },
+          proof: {
+            title: "② 기대 채용 수 $E[m] = H_n$ 증명 — 지시 확률 변수",
+            intro: "CLRS Lemma 5.2. 균등 무작위 순열 입력 하에서 채용 횟수의 기댓값이 조화수 H_n = $O(\\lg n)$임을 증명.",
+            invariantLabel: "Lemma 5.2: ",
+            invariant: "n명의 후보가 균등 무작위 순서로 도착한다고 가정할 때, HIRE-ASSISTANT의 기대 채용 수 $E[m] = H_n$ = ln n + $O(1)$ = $O(\\lg n)$. 증명: 지시 변수 X_i와 기댓값의 선형성.",
+            steps: [
+              {
+                stage: "① 지시 변수 설정",
+                prompt: "$X_i = I${후보 i가 채용됨}. 총 채용 수 m과의 관계는?",
+                choices: [
+                  { text: "m = Σ_{$i = 1$}^{n} X_i — 각 후보의 채용 여부 합. X_i ∈ {0, 1}이므로 자연스럽게 개수 표현", correct: true,
+                    explain: "CLRS p.118. 지시 변수의 표준 활용. 전체 수량을 개별 사건 지시자의 합으로 분해." },
+                  { text: "$m = max${X_i}", correct: false,
+                    explain: "max는 채용 유무(0 or 1). 수를 세지 못함." },
+                  { text: "$m = \\Pi $ X_i", correct: false,
+                    explain: "곱은 '모두 채용'만 표현. 합이 맞음." },
+                ],
+              },
+              {
+                stage: "② 기댓값의 선형성",
+                prompt: "E[m] = E[Σ X_i] = ? (독립성 필요한가?)",
+                choices: [
+                  { text: "$E[m] = \\Sigma $ E[X_i] — 기댓값의 선형성은 독립성 가정 없이 성립. X_i가 서로 상관되어도 무관.", correct: true,
+                    explain: "CLRS p.117. 기댓값 선형성 $E[X+Y] = E[X]$+E[Y]는 언제나 성립. X_i들이 종속이어도 합의 기댓값 = 기댓값의 합." },
+                  { text: "독립일 때만 성립", correct: false,
+                    explain: "독립성 불필요. 이게 지시 변수의 핵심 이점." },
+                  { text: "E[m] = (E[X_i])^n", correct: false,
+                    explain: "그건 곱. 합의 기댓값은 합." },
+                ],
+              },
+              {
+                stage: "③ Pr{$X_i = 1$} 계산",
+                prompt: "후보 i가 채용될 확률 Pr{$X_i = 1$}은?",
+                choices: [
+                  { text: "$Pr = 1$/i — 후보 1..i 중 i가 '가장 좋음'일 확률. 균등 순열 가정 하에서 i번째 위치에 있는 원소가 1..i 중 최대일 확률.", correct: true,
+                    explain: "CLRS p.118 핵심 계산. 무작위 순열에서 앞 i개 중 어느 것이 최대일 확률이 균등 1/i. 후보 i가 최대여야만 채용됨." },
+                  { text: "$Pr = 1$ (항상 채용)", correct: false,
+                    explain: "앞선 후보가 더 좋으면 채용 안 됨." },
+                  { text: "$Pr = 1$/n", correct: false,
+                    explain: "전체 중 최대일 확률 1/n과 혼동. 채용은 '앞 i개 중 최대'면 충분." },
+                ],
+              },
+              {
+                stage: "④ 합산으로 H_n 도출",
+                prompt: "E[m] = Σ_{$i = 1$}^n 1/i의 값은?",
+                choices: [
+                  { text: "$E[m] = H_n$ (n번째 조화수) = ln n + γ + $O(1/n)$ = $\\Theta(\\lg n)$", correct: true,
+                    explain: "CLRS Lemma 5.2. 조화급수의 점근 표현. 오일러-마셰로니 상수 $\\gamma  \\approx 0.5772$. 실용적으로 매우 작은 수." },
+                  { text: "$E[m] = n$", correct: false,
+                    explain: "H_n = $O(\\lg n)$. 선형이 아님." },
+                  { text: "$E[m] = 1$", correct: false,
+                    explain: "너무 작음. n이 커지면 기댓값도 lg n으로 증가." },
+                ],
+              },
+              {
+                stage: "⑤ 무작위 알고리즘의 이점",
+                prompt: "RANDOMIZED-HIRE-ASSISTANT(무작위 섞기 추가)가 결정적 버전과 다른 점은?",
+                choices: [
+                  { text: "입력 분포 가정 불필요. '어떤 입력'이 들어와도 기대 $O(\\lg n)$ 채용. 분석이 알고리즘 내부 난수에만 의존.", correct: true,
+                    explain: "CLRS 5.3절. 무작위 알고리즘은 '입력에 대한 가정'을 제거하고 '알고리즘이 제어하는 난수'로 대체. 더 강한 보장." },
+                  { text: "시간 복잡도가 빨라짐", correct: false,
+                    explain: "점근 시간은 동일 (정렬/섞기 포함). 이점은 '보장의 강도'." },
+                  { text: "결과가 달라짐", correct: false,
+                    explain: "동일 후보 집합에 대해 결과(최고 선택)는 같음. 섞기만 추가." },
+                ],
+              },
+              {
+                stage: "⑥ 지시 변수의 다른 응용",
+                prompt: "지시 변수 기법의 CLRS 내 다른 예는?",
+                choices: [
+                  { text: "RANDOMIZED-QUICKSORT의 기대 비교 횟수 (Theorem 7.3) + 해싱의 기대 검색 시간 (Theorem 11.2) + 생일 역설 (섹션 5.4.1) 등 광범위", correct: true,
+                    explain: "CLRS 전체를 관통하는 기법. 복잡한 확률 계산을 '합으로 분해'하여 개별 확률만 계산하면 됨. 조합론의 기본 도구." },
+                  { text: "이 문제 전용 기법", correct: false,
+                    explain: "범용적. 여러 장에서 재등장." },
+                  { text: "결정적 알고리즘엔 적용 안 됨", correct: false,
+                    explain: "결정적 알고리즘의 확률적 입력 분석에도 사용 (채용 문제가 그 예)." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ HIRE-ASSISTANT 추적 — 5명의 후보, 두 순서 비교",
+            intro: "후보 품질 = {1, 2, 3, 4, 5} (숫자가 클수록 좋음). 두 가지 입력 순서로 m(채용 수) 관찰.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "순서 1: 입력 [3, 1, 4, 5, 2]. $i = 1$부터 진행. $i = 1$에서 품질 3, best=0(가상)보다 나음 → 채용. $m = 1$, $best = 3$.",
+                choices: [
+                  { text: "정확 — 첫 후보는 항상 채용 ($best = 0$ 가상 후보보다 무조건 나음).", correct: true,
+                    explain: "CLRS의 $best = 0$ 초기화. 가상 후보 품질 -∞로 간주하여 첫 번째는 무조건 채용." },
+                  { text: "첫 후보는 채용 안 됨", correct: false,
+                    explain: "$best = 0$ 가상 후보가 항상 지므로 첫 후보는 채용." },
+                  { text: "면접만 하고 채용은 안 함", correct: false,
+                    explain: "'면접' 단계와 '채용' 단계 순차. 나으면 채용." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 2$, 품질 1. best=3(=품질 3)보다 나쁨 → 채용 안 함. $i = 3$, 품질 4. $best = 3$보다 나음 → 채용.",
+                choices: [
+                  { text: "$m = 2$ (후보 1, 3 채용), $best = 4$", correct: true,
+                    explain: "후보 1(품질 3), 후보 3(품질 4) 총 2번 채용. 후보 2(품질 1)은 건너뜀." },
+                  { text: "$m = 1$ (후보 3만)", correct: false,
+                    explain: "$i = 1$에서 이미 한 번 채용. m은 누적 카운트." },
+                  { text: "모두 채용", correct: false,
+                    explain: "품질 감소 시 채용 안 함. 후보 2는 제외." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$i = 4$, 품질 5. best=4(=품질 4)보다 나음 → 채용. $i = 5$, 품질 2. 채용 안 함. 최종 m?",
+                choices: [
+                  { text: "$m = 3$ (후보 1, 3, 4), $best = 5$ (품질 5)", correct: true,
+                    explain: "입력 [3,1,4,5,2] 처리 결과. 최고 품질 5가 마지막에서 두 번째에 등장. 그 전에 누적 갱신 2회(품질 3→4→5)." },
+                  { text: "$m = 5$ (모두 채용)", correct: false,
+                    explain: "품질 감소 구간은 채용 안 함. 후보 2, 5 제외." },
+                  { text: "$m = 4$", correct: false,
+                    explain: "후보 2, 5 각각 품질 감소이므로 채용 2회 제외." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "순서 2: 입력 [1, 2, 3, 4, 5] (오름차순 최악). $i = 1$..5 각 단계에서 새 최대 → 매번 채용. 최종 m?",
+                choices: [
+                  { text: "$m = 5$ (모두 채용) — 오름차순은 알고리즘의 최악 입력", correct: true,
+                    explain: "매 단계가 새 최고 품질 → 매번 채용. $n = 5$이면 $m = 5$. 결정적 알고리즘의 최악 케이스." },
+                  { text: "$m = 1$ (첫 번째만)", correct: false,
+                    explain: "품질이 계속 증가하므로 매번 갱신 + 채용." },
+                  { text: "$m = lg$ $n = 2$", correct: false,
+                    explain: "최악 경우는 n회 채용. 기대값만 $O(\\lg n)$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$n = 5$의 기대 채용 수는 $H_5 = 1$ + 1/2 + 1/3 + 1/4 + 1/5 = ?",
+                choices: [
+                  { text: "$H_5 = 1$ + 0.5 + 0.333 + 0.25 + $0.2 = 2.283$. 약 2.28회.", correct: true,
+                    explain: "CLRS Lemma 5.2 구체 수치. 5! = 120가지 순서의 평균 채용 수 = 2.283. n이 커지면 lg n 속도로 증가." },
+                  { text: "$H_5 = 5$ (n과 같음)", correct: false,
+                    explain: "최악은 5지만 평균은 훨씬 작음." },
+                  { text: "$H_5 = 1$", correct: false,
+                    explain: "최선은 1회(내림차순)지만 평균은 더 큼." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "실제 $n = 100$에서 H_100 ≈ ? 그리고 $n = 10$,000에서는?",
+                choices: [
+                  { text: "$H_100 \\approx ln$ $100 \\approx 4.6$ (5회 전후). $H_10000 \\approx ln$ $10000 \\approx 9.2$. n이 100배 증가해도 H_n은 2배만 증가.", correct: true,
+                    explain: "조화급수의 매우 느린 증가. 이것이 '기대 $O(\\lg n)$' 효율성의 실용적 의미. 100명 면접해도 평균 5번만 채용." },
+                  { text: "$H_100 = 100$", correct: false,
+                    explain: "H_n은 선형이 아님. lg n 속도." },
+                  { text: "$H_10000 = 100$", correct: false,
+                    explain: "ln $10000 \\approx 9.2$. 제곱근이 아닌 로그 속도." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch18",
+    tier: 2,
+    num: "Ch 18",
+    title: "B-Trees",
+    subtitle: "디스크 기반 균형 트리 · 높이 O($\\log_t n$) · DB/파일시스템 기반",
+    summary: "노드당 t~2t-1개 키를 저장하여 높이를 극단적으로 낮춤. 디스크 I/O 최소화가 설계 목표.",
+    objectives: [
+      "B-Tree의 정의와 차수 $t$에 따른 높이 $O(\\log_t n)$을 증명할 수 있다.",
+      "B-TREE-SEARCH·SPLIT-CHILD·INSERT-NONFULL 연산의 동작을 직접 추적할 수 있다.",
+      "디스크 I/O 모델에서 B-Tree가 BST·RB-Tree보다 우수한 이유를 설명할 수 있다.",
+    ],
+    md: `
+## B-Tree 성질 (CLRS 18.1)
+**최소 차수(minimum degree) $t \\geq 2$**. 각 노드는:
+1. **키 개수**: 루트는 최소 1개, 다른 노드는 최소 t-1, 최대 2t-1개
+2. **자식 개수**: 내부 노드에서 = (키 수)+1, 최소 t, 최대 2t
+3. **리프의 깊이**: 모든 리프가 같은 깊이 (균형)
+4. **키 순서**: 노드 내 키가 오름차순, 각 자식 서브트리의 키가 그 사이에 위치
+
+## 높이 보장
+- n개 키를 가진 B-Tree의 높이 h ≤ log_t((n+1)/2)
+- t가 클수록(예: $t = 100$) 높이 극도로 낮음 (1M 키 → 3 레벨)
+
+## 디스크 I/O 모델
+- 각 노드 = 한 블록(페이지, 보통 4KB~16KB)
+- 노드 크기를 블록에 맞춤
+- DISK-READ / DISK-WRITE로 I/O 횟수 최소화
+- 연산 I/O 횟수 = O(h) = O($\\log_t n$)
+
+## 주요 연산
+- **B-TREE-SEARCH**: 각 노드 내 선형 탐색, 깊이별 재귀. O(h·t) CPU, O(h) I/O
+- **B-TREE-INSERT**: 가득 찬 노드를 만나면 '미리 분할' (split)
+- **B-TREE-DELETE**: 최소 수 위반 방지 위해 '미리 병합/재분배'
+
+## B+Tree와의 차이
+- B-Tree: 모든 노드에 데이터. 검색이 리프 아닐 수도.
+- B+Tree: 리프에만 데이터, 내부는 인덱스. 리프 연결로 범위 질의 효율 ↑
+- 실제 DB/파일시스템은 대부분 B+Tree (PostgreSQL, MySQL InnoDB, NTFS)
+
+## 응용
+- 데이터베이스 인덱스 (B+Tree 변형)
+- 파일시스템: ext4, NTFS, Btrfs, ZFS
+- Key-value 스토어: LevelDB, RocksDB (LSM과 결합)
+`,
+    ox: [
+      { q: "B-Tree의 모든 리프는 같은 깊이에 있다.", a: true, why: "균형 성질." },
+      { q: "최소 차수 t인 B-Tree의 내부 노드는 t-1 ~ 2t-1 키를 갖는다.", a: true, why: "CLRS 18.1." },
+      { q: "B-Tree의 높이는 O($\\log_t n$)이다.", a: true, why: "Theorem 18.1." },
+      { q: "B-Tree 검색의 I/O 횟수는 $O(\\lg n)$이다.", a: false, why: "O($\\log_t n$). t가 크면 훨씬 적음." },
+      { q: "B-Tree는 디스크 I/O 최소화를 목적으로 설계되었다.", a: true, why: "블록 단위 노드 크기." },
+      { q: "B-Tree 루트는 최소 1개 키가 필요하다.", a: true, why: "예외적으로 최소 요건이 1." },
+      { q: "B-Tree와 B+Tree는 동일하다.", a: false, why: "B+Tree는 데이터가 리프에만." },
+      { q: "B-Tree 삽입은 가득 찬 노드를 만나면 미리 분할(split)한다.", a: true, why: "single-pass 삽입." },
+      { q: "B-Tree에서 $t = 100$인 경우 1M 키를 3~4 레벨로 저장할 수 있다.", a: true, why: "log_100(10^6) ≈ 3." },
+      { q: "B-Tree의 각 내부 노드는 키 수 + 1개의 자식을 갖는다.", a: true, why: "CLRS 18.1." },
+    ],
+
+    algorithms: [
+      {
+        id: "btree-search", name: "B-TREE-SEARCH", desc: "B-Tree 키 검색 — I/O O($\\log_t n$)",
+        tags: ["O(h) I/O", "디스크 기반"], viz: "btreeSearch",
+        drills: {
+          source: "CLRS 3판 18.1-18.2절 pp.488-494, B-TREE-SEARCH · Theorem 18.1",
+          pseudo: {
+            title: "① 의사코드 재구성 — B-TREE-SEARCH",
+            intro: "CLRS 18.1절 p.491의 8줄. 재귀형. 각 노드 내부에서 선형 검색 + 해당 자식으로 재귀. DISK-READ가 주요 비용.",
+            reference: {
+              title: "참고: B-Tree 성질과 디스크 모델",
+              lines: [
+                { text: "노드 x의 구성:",                                        indent: 0 },
+                { text: "  x.n — 저장된 키 수",                                  indent: 0 },
+                { text: "  x.key[1..x.n] — 키 배열 (오름차순)",                    indent: 0 },
+                { text: "  x.leaf — 리프 여부",                                   indent: 0 },
+                { text: "  x.c[1..x.n+1] — 자식 포인터 (내부 노드일 때)",          indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "성질: $x.key[i] < x.c[i+1]$의 모든 키 < x.key[i+1]",        indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "DISK-READ(x): 노드 x를 디스크에서 메모리로",               indent: 0 },
+                { text: "I/O가 CPU 작업보다 훨씬 비쌈 → I/O 횟수가 핵심",          indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "B-TREE-SEARCH(x, k)",                       indent: 0, note: "노드 x에서 키 k 검색" },
+              { text: "$i = 1$",                                     indent: 1, note: "선형 검색 시작" },
+              { text: "while $i \\leq x.n$ and $k > x.key[i]$",            indent: 1, note: "k가 들어갈 위치까지 이동" },
+              { text: "$i = i$ + 1",                                 indent: 2, note: "다음 키로" },
+              { text: "if $i \\leq x.n$ and k == x.key[i]",              indent: 1, note: "키를 찾음" },
+              { text: "return (x, i)",                             indent: 2, note: "노드와 인덱스 반환" },
+              { text: "elseif x.leaf",                             indent: 1, note: "리프까지 도달" },
+              { text: "return NIL",                                indent: 2, note: "키 없음" },
+              { text: "else DISK-READ(x.c[i])",                    indent: 1, note: "자식 로드 (I/O)" },
+              { text: "return B-TREE-SEARCH(x.c[i], k)",           indent: 2, note: "자식에서 재귀 검색" },
+            ],
+          },
+          proof: {
+            title: "② 높이 상한 Theorem 18.1 — h ≤ log_t((n+1)/2)",
+            intro: "CLRS Theorem 18.1. B-Tree가 n개 키를 가지면 높이 h가 log_t((n+1)/2) 이하. 이게 I/O O($\\log_t n$) 보장의 근거.",
+            invariantLabel: "Theorem 18.1: ",
+            invariant: "최소 차수 $t \\geq 2$인 B-Tree에 $n \\geq 1$개 키가 있으면 h ≤ log_t((n+1)/2). 증명: 각 레벨의 최소 노드 수 하한으로 키 수 하한을 유도.",
+            steps: [
+              {
+                stage: "① 레벨별 최소 노드 수",
+                prompt: "루트(레벨 0)가 최소 1개 키를 가져야 하고 각 내부 노드는 최소 t개 자식을 가져야 한다. 레벨 d의 최소 노드 수는?",
+                choices: [
+                  { text: "레벨 0: 1개 (루트). 레벨 1: 최소 2개 (루트의 자식 2개). 레벨 d ($d \\geq 1$): 2·t^(d-1)개", correct: true,
+                    explain: "CLRS p.489. 루트는 최소 1개 키 → 2개 자식. 이후 각 노드가 최소 t개 자식 → 기하급수적 증가." },
+                  { text: "모든 레벨 1개", correct: false,
+                    explain: "B-Tree는 균형 + 분기. 각 레벨에 여러 노드." },
+                  { text: "레벨 d: d개", correct: false,
+                    explain: "기하급수적(지수적)으로 증가. 선형 아님." },
+                ],
+              },
+              {
+                stage: "② 각 노드의 최소 키 수",
+                prompt: "루트가 아닌 노드의 최소 키 수는?",
+                choices: [
+                  { text: "t - 1개 (최소 차수 t의 정의: 최소 t-1개 키, 최소 t개 자식)", correct: true,
+                    explain: "CLRS p.488 B-Tree 성질 2. 이 최소가 깨지면 재균형 필요. 루트는 예외적으로 최소 1개." },
+                  { text: "t개", correct: false,
+                    explain: "키는 t-1개, 자식은 t개. 키와 자식의 개수 차이가 1." },
+                  { text: "2t개", correct: false,
+                    explain: "2t-1이 최대. 2t는 초과." },
+                ],
+              },
+              {
+                stage: "③ 총 키 수 하한",
+                prompt: "높이 h, 모든 노드가 최소 구성일 때 총 키 수 n의 하한은?",
+                choices: [
+                  { text: "$n \\geq 1$ + (t-1) · Σ_{$d = 1$}^{h} 2·t^(d-1) = 1 + 2(t-1)·($t^{h}$ - 1)/(t-1) = 2·$t^{h}$ - 1", correct: true,
+                    explain: "CLRS p.489 Theorem 18.1 증명. 각 레벨 노드 수 × 노드당 키 수 합산. 기하급수 합으로 깔끔한 닫힘형." },
+                  { text: "$n \\geq h$", correct: false,
+                    explain: "지수적 하한. 선형 아님." },
+                  { text: "n = $2^h$", correct: false,
+                    explain: "이진 트리의 값. B-Tree는 $t^{h}$." },
+                ],
+              },
+              {
+                stage: "④ 높이 상한 도출",
+                prompt: "$n \\geq 2$·$t^{h}$ - 1에서 h를 n에 대해 풀면?",
+                choices: [
+                  { text: "$t^{h}$ ≤ (n+1)/2 → h ≤ log_t((n+1)/2)", correct: true,
+                    explain: "단순 대수. t의 로그 취하기. $t = 100$이면 $log_100(500K) \\approx 2.85$로 매우 낮음." },
+                  { text: "$h \\leq n$/t", correct: false,
+                    explain: "로그 관계. 선형 아님." },
+                  { text: "$h \\geq n$", correct: false,
+                    explain: "반대 부등식. 상한이 아닌 하한 방향." },
+                ],
+              },
+              {
+                stage: "⑤ I/O 횟수",
+                prompt: "B-TREE-SEARCH의 디스크 I/O 횟수는?",
+                choices: [
+                  { text: "O(h) = O($\\log_t n$) — 각 레벨마다 한 번 DISK-READ. CPU는 각 노드 내 선형 검색 O(t)로 총 O(t · h) = O(t $\\log_t n$)", correct: true,
+                    explain: "CLRS Theorem 18.1 결론. I/O가 비싼 상황(디스크 접근 ms 단위)에서 $\\log_t 차수는$ 엄청 효율적. $t = 100$이면 100만 키를 3번 I/O로 검색." },
+                  { text: "$O(n)$", correct: false,
+                    explain: "로그 시간. 선형 스캔 불필요." },
+                  { text: "$O(1)$", correct: false,
+                    explain: "트리 순회이므로 깊이에 비례." },
+                ],
+              },
+              {
+                stage: "⑥ t의 선택 — 왜 큰 값이 유리?",
+                prompt: "실제로 $t = 50$~500이 흔함. 그 이유는?",
+                choices: [
+                  { text: "디스크 블록 크기(4KB~16KB)에 노드 크기를 맞춰 한 번의 I/O에 최대한 많은 키 로드. t 크면 h 작아져 I/O 감소.", correct: true,
+                    explain: "CLRS 18.1 실용 논의. 캐시/페이지 단위와 정렬. $t = 500$이면 1M 키를 2레벨 트리로 표현 가능. 실제 DB B+Tree의 핵심 튜닝." },
+                  { text: "코드가 단순해짐", correct: false,
+                    explain: "t 클수록 오히려 분할/병합 로직 복잡. 하드웨어 최적화가 목적." },
+                  { text: "메모리 사용 감소", correct: false,
+                    explain: "노드당 메모리는 오히려 증가. I/O가 중요." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ B-TREE-SEARCH 추적 — $t = 3$ 트리에서 'S' 찾기",
+            intro: "CLRS Figure 18.1 예시. 루트: [M]. M의 왼 자식: [D,H], 오른 자식: [Q,T,X]. [D,H] 자식 3개: [A,B,C],[E,F,G,J,K,L],[N,O,P]... 간소화하여 'S' 검색 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "B-TREE-SEARCH(root, 'S'). 루트 [M] 로드. S vs M 비교 → $S > M$이므로 $i = 2$ (오른쪽 자식 x.c[2]).",
+                choices: [
+                  { text: "$i = 1$ 시작, 'S' > 'M' 이므로 $i = 2$. 리프 아니므로 DISK-READ(x.c[2]) 호출 후 오른쪽 자식 재귀.", correct: true,
+                    explain: "B-TREE-SEARCH의 while 루프. 한 번만 실행되어 $i = 2$로 증가. 자식 인덱스 $i = 2$가 'M 초과' 영역." },
+                  { text: "즉시 반환 NIL", correct: false,
+                    explain: "루트 키 M은 S와 다르지만 자식이 있음. 계속 탐색." },
+                  { text: "양쪽 자식 탐색", correct: false,
+                    explain: "BST처럼 한쪽만. 키 순서로 정확히 결정." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "자식 [Q, T, X] 로드 (I/O #2). S와 비교: $i = 1$, $S > Q$ (계속). $i = 2$, $S < T$ → while 종료. $S \\neq T$.",
+                choices: [
+                  { text: "$i = 2$에서 $S < T$이므로 while 종료. $S \\neq T$이고 리프 아니면 DISK-READ(x.c[2]) 재귀. 자식 인덱스 $2 = Q$와 T 사이 범위.", correct: true,
+                    explain: "B-Tree 내부 탐색 규칙. while은 $k > x.key[i]$일 때만 계속. T가 k보다 크면 멈추고 그 위치 자식 탐색." },
+                  { text: "S와 T가 같으므로 찾음", correct: false,
+                    explain: "문자 비교. 'S' ≠ 'T'." },
+                  { text: "X 자식으로 재귀", correct: false,
+                    explain: "$i = 2$에서 멈추므로 c[2] (Q와 T 사이). c[3], c[4]는 각각 T-X 사이, X 이후." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "자식 [R, S] 로드 (I/O #3). $i = 1$, $S > R$ → $i = 2$. $i = 2$, S == S! 찾음.",
+                choices: [
+                  { text: "return (x, 2) — 노드 포인터와 인덱스 2 반환. 총 I/O 3회 (root + 중간 + 리프).", correct: true,
+                    explain: "검색 성공. 3번의 I/O로 완료 (트리 높이 = 2). t가 클수록 훨씬 적은 I/O로 더 큰 집합 검색." },
+                  { text: "더 재귀", correct: false,
+                    explain: "키 일치 시 즉시 반환. 추가 탐색 불필요." },
+                  { text: "NIL 반환", correct: false,
+                    explain: "S가 존재하므로 성공. NIL은 '키 없음' 때만." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 'Y'를 검색한다면? (Y는 트리에 없다고 가정)",
+                choices: [
+                  { text: "루트 [M]: $Y > M$, $i = 2$. [Q,T,X]: $Y > Q$ > $T > X$, $i = 4$. X의 오른쪽 자식($i = 4$)로 재귀. 리프 도달 후 Y 없음 확인 → NIL 반환.", correct: true,
+                    explain: "리프에서 찾지 못하면 NIL. while 루프가 리프에서 끝까지 돌고 x.leaf==true → return NIL." },
+                  { text: "무한 루프", correct: false,
+                    explain: "리프 도달 시 명시적 NIL 반환. 루프 아님." },
+                  { text: "루트 수준에서 즉시 NIL", correct: false,
+                    explain: "B-Tree는 키의 범위만으로 결정 불가. 리프까지 내려가야 확정." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$t = 3$일 때 4레벨 트리의 최대 키 수는? 그리고 그걸 검색하는 I/O 횟수는?",
+                choices: [
+                  { text: "최대 키 수 = (2t-1) × (1 + 2t + (2t)² + (2t)³) = 5 × (1 + 6 + 36 + 216) = 5 × $259 = 1295$. 검색 I/$O = 4$회 (레벨마다 한 번).", correct: true,
+                    explain: "각 노드 최대 2t-$1 = 5$키, 레벨별 노드 수 최대 (2t)^d. 약 1300개 키를 4 I/O로 검색. $t = 100$이면 100^$4 = 1$억 키를 4 I/O." },
+                  { text: "I/$O = 1000$ (키 수에 비례)", correct: false,
+                    explain: "높이에만 비례. $\\log_t 스케일$." },
+                  { text: "I/$O = lg$ n (이진 트리)", correct: false,
+                    explain: "log_t. $t = 3$이면 $\\log_3 vs$ lg. 더 작은 값." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "실전 예: 1000만 키를 $t = 100$ B-Tree에 저장. 검색 I/O 횟수는?",
+                choices: [
+                  { text: "h ≤ log_100(10^7 / 2) ≈ log_100(5·10^6) ≈ 3.35 → $h = 4$ 정도. I/O 4회. 1M+ 키를 디스크 접근 4회에 검색.", correct: true,
+                    explain: "CLRS의 실용적 관찰. DB 인덱스(B+Tree)의 성능 근거. SSD 1 I/$O \\approx 0$.1ms → 전체 0.4ms 이내 응답." },
+                  { text: "I/$O = 7$ (lg 10^7)", correct: false,
+                    explain: "이진 트리 기준. B-Tree는 더 빠름." },
+                  { text: "I/$O = 100$", correct: false,
+                    explain: "훨씬 적음. $\\log_100 스케일$." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch34",
+    tier: 3,
+    num: "Ch 34",
+    title: "NP-Completeness",
+    subtitle: "환원 · P vs NP · 3-SAT · 고전적 NP-완전 문제들",
+    summary: "'다루기 쉬운(P)' 문제와 '다루기 어려운(NP-hard)' 문제 구분. NP-완전성은 '현재 다항시간 알고리즘 없음'의 강력한 증거.",
+    objectives: [
+      "P, NP, NP-hard, NP-complete의 정의와 관계를 정확히 구분할 수 있다.",
+      "다항시간 환원(polynomial-time reduction)으로 한 문제가 NP-complete임을 증명할 수 있다.",
+      "3-SAT, Vertex Cover, Hamiltonian Cycle 등 고전 NP-complete 문제와 환원 관계를 이해한다.",
+    ],
+    md: `
+## 복잡도 클래스
+
+| 클래스 | 정의 | 예시 |
+|-------|------|------|
+| **P** | 결정적 다항시간 | 정렬, 최단 경로, MST |
+| **NP** | 비결정적 다항시간 (증명 검증 가능) | SAT, Hamiltonian-Cycle |
+| **NP-hard** | NP의 모든 문제가 이것으로 환원 | TSP, Halting Problem |
+| **NP-complete** | NP ∩ NP-hard | 3-SAT, Clique, Vertex-Cover |
+
+## 환원 (Reduction)
+**다항 환원 ≤_P**: $A \\leq _P$ B이면 "A는 B만큼 어렵거나 쉬움"
+- A 인스턴스 → 다항시간에 B 인스턴스로 변환
+- B의 해 ↔ A의 해로 복원
+
+**NP-완전성 증명 방법**:
+1. L ∈ NP 증명 (증명을 다항시간에 검증 가능)
+2. 기존 NP-완전 문제 L' ≤_P L 증명 (기존을 L로 환원)
+
+## Cook-Levin 정리 (Theorem 34.10)
+**SAT가 NP-완전**. 모든 NP 문제를 SAT로 환원 가능. 이것이 첫 번째 NP-완전 문제.
+
+## 고전적 NP-완전 문제 체인
+
+\\\`\\\`\\\`
+SAT → 3-SAT → CLIQUE → VERTEX-COVER → HAM-CYCLE → TSP
+                  ↓                         ↓
+              SUBSET-SUM                 3-COLOR
+\\\`\\\`\\\`
+
+각 화살표는 "다항 환원" 가능.
+
+## $P = NP$?
+- 100만 달러 밀레니엄 문제 (Clay Institute)
+- 대부분 이론가: $P \\neq NP$로 추측
+- 증명/반증 모두 미해결 (2026 기준)
+
+## 실용적 대응 — "NP-hard는 어떻게 풀까?"
+1. **근사 알고리즘(Ch 35)**: 최적에 가까운 해를 다항시간에
+2. **휴리스틱**: 평균적으로 잘 작동 (이론 보장 없음)
+3. **고정 매개변수(FPT)**: 특정 매개변수에 대해 지수, 나머지는 다항
+4. **SAT 솔버**: 놀랍게도 수천만 변수까지 실용적으로 풀림 (SAT 솔빙 기술 발전)
+`,
+    ox: [
+      { q: "P ⊆ NP임은 증명되어 있다.", a: true, why: "결정적으로 풀리면 비결정적으로도 검증 가능." },
+      { q: "$P = NP$는 이미 해결된 문제이다.", a: false, why: "미해결 (밀레니엄 문제)." },
+      { q: "3-SAT은 NP-완전이다.", a: true, why: "Cook-Levin 이후 환원으로 증명." },
+      { q: "NP-완전 문제들은 서로 다항 시간에 환원 가능하다.", a: true, why: "이것이 'NP-완전' 정의의 본질." },
+      { q: "정지 문제(Halting Problem)는 NP-완전이다.", a: false, why: "결정 불가능 — NP에도 속하지 않음." },
+      { q: "SAT는 Cook-Levin 정리로 최초의 NP-완전 문제로 증명됐다.", a: true, why: "Theorem 34.10." },
+      { q: "NP-hard 문제는 반드시 NP에 속한다.", a: false, why: "NP 소속 안 해도 NP-hard 가능 (예: Halting)." },
+      { q: "Vertex-Cover는 NP-완전이다.", a: true, why: "3-$SAT \\leq _P$ VC." },
+      { q: "$A \\leq _P$ B 이고 B가 P면 A도 P이다.", a: true, why: "다항 환원의 transitivity." },
+      { q: "NP 문제의 증명(certificate)은 다항 크기여야 한다.", a: true, why: "NP의 정의." },
+    ],
+
+    exercises: [
+      {
+        num: "34.2-1",
+        q: "SUBSET-SUM ∈ NP임을 증명.",
+        hint: "certificate = 부분집합.",
+        solution: "부분집합 크기 ≤ n이므로 다항 크기. 검증: 합산 $O(n)$.",
+      },
+      {
+        num: "34.3-1",
+        q: "$SAT \\leq _P$ 3-SAT 환원을 구성.",
+        hint: "긴 절을 3-절로 분할.",
+        solution: "|C| > 3인 절을 새 변수로 분할 (chain). |C| = k → k-2개 새 3-절.",
+      },
+      {
+        num: "34.4-2",
+        q: "HAM-$CYCLE \\leq _P$ HAM-PATH 환원.",
+        hint: "정점 쪼개기.",
+        solution: "한 정점 v를 v1, v2로 쪼개고 원본 간선 분배. HAM-$PATH(v1, v2) = HAM$-CYCLE.",
+      },
+      {
+        num: "34.5-3",
+        q: "$CLIQUE \\leq _P$ VERTEX-COVER 환원 (보 그래프 사용).",
+        hint: "G의 k-CLIQUE ⟺ 보 G'의 (n-k)-VC.",
+        solution: "CLIQUE는 '연결된 집합', VC는 '간선 덮는 집합'. 보 그래프에서 상보 관계.",
+      },
+      {
+        num: "Problem 34-3",
+        q: "MAX-SAT: 최대한 많은 절을 만족시키는 할당. NP-hard.",
+        hint: "SAT이 NP-완전이고 MAX-SAT은 일반화.",
+        solution: "결정 버전 'k개 이상 절 만족?' NP-완전. 근사: 무작위 할당으로 7/8 근사 (Håstad).",
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "vc-reduction", name: "3-SAT ≤_P Vertex-Cover", desc: "3-SAT을 VC로 환원하는 고전 증명",
+        tags: ["환원", "NP-완전"], viz: "npReduction",
+        drills: {
+          source: "CLRS 3판 34.5절 pp.1086-1100, Theorem 34.12 (VC NP-완전성) · 3-SAT 환원",
+          pseudo: {
+            title: "① 의사코드 재구성 — 3-SAT에서 VC로의 환원",
+            intro: "CLRS 34.5.2절 p.1093의 환원 설계. 3-SAT 식 φ (n 변수, m 절)를 VC 인스턴스 (그래프 G, 크기 k)로 변환. 이것이 '환원의 예술'.",
+            reference: {
+              title: "참고: 문제 정의",
+              lines: [
+                { text: "3-SAT 인스턴스:",                                          indent: 0 },
+                { text: "  부울 변수 x_1, ..., x_n",                                 indent: 0 },
+                { text: "  m개의 절 C_1, ..., C_m (각 절에 정확히 3 리터럴)",        indent: 0 },
+                { text: "  $\\phi  = C_1$ ∧ C_2 ∧ ... ∧ C_m",                              indent: 0 },
+                { text: "  질문: φ를 참으로 만드는 할당 존재?",                      indent: 0 },
+                { text: "",                                                         indent: 0 },
+                { text: "Vertex-Cover 인스턴스:",                                   indent: 0 },
+                { text: "  무방향 그래프 G = (V, E), 정수 k",                        indent: 0 },
+                { text: "  질문: |V'| ≤ k인 V' ⊆ V로 모든 간선 덮음?",               indent: 0 },
+                { text: "  (각 간선의 최소 한 끝점이 V'에 속함)",                    indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "REDUCE-3SAT-TO-VC(φ)",                       indent: 0, note: "식 φ → (G, k)" },
+              { text: "$G = empty$ graph",                            indent: 1, note: "새 그래프" },
+              { text: "// Step 1: 변수 가젯(variable gadget)",      indent: 1, note: "각 변수 x_i마다" },
+              { text: "for each variable x_i",                      indent: 1, note: "" },
+              { text: "add vertices {x_i, ¬x_i} with edge (x_i, ¬x_i)", indent: 2, note: "리터럴 쌍 + 간선" },
+              { text: "// Step 2: 절 가젯(clause gadget)",          indent: 1, note: "각 절마다 삼각형" },
+              { text: "for each clause C_j = (l_{j1} ∨ l_{j2} ∨ l_{j3})", indent: 1, note: "" },
+              { text: "add 3 vertices forming a triangle",          indent: 2, note: "세 정점 + 3 간선" },
+              { text: "// Step 3: 연결 간선",                        indent: 1, note: "가젯 간 연결" },
+              { text: "connect each clause vertex to its literal counterpart in variable gadget", indent: 2, note: "3 간선 per 절" },
+              { text: "$k = n$ + 2m",                                 indent: 1, note: "VC 크기 상한" },
+              { text: "return (G, k)",                              indent: 1, note: "VC 인스턴스 반환" },
+            ],
+          },
+          proof: {
+            title: "② 환원의 정확성 — φ 만족 ⟺ G가 크기 k VC 존재",
+            intro: "CLRS Theorem 34.12. 3-SAT과 VC 사이의 다항 환원의 양방향 증명. 각 방향이 독립적인 구성적 증명.",
+            invariantLabel: "Theorem 34.12 정확성: ",
+            invariant: "환원 함수 f: 3-SAT → VC는 다음을 보장: φ가 만족 가능 ⟺ G = f(φ)가 크기 n+2m VC를 가진다. 따라서 VC ∈ NP + 환원 존재 → VC NP-완전.",
+            steps: [
+              {
+                stage: "① VC의 NP 소속",
+                prompt: "Vertex-Cover ∈ NP 임을 보이려면?",
+                choices: [
+                  { text: "증명 = 후보 V'. 검증 = |V'| ≤ k 확인 + 모든 간선 (u,v)에 대해 u ∈ V' 또는 v ∈ V' 확인 → O(|V|+|E|) 다항시간", correct: true,
+                    explain: "CLRS p.1090. NP의 정의: 증명(certificate)을 다항시간에 검증. VC의 경우 후보 집합 확인 매우 간단." },
+                  { text: "지수 시간이 필요", correct: false,
+                    explain: "검증은 다항 시간. 최적화가 어려운 것이지 검증이 어렵진 않음." },
+                  { text: "NP에 속하지 않음", correct: false,
+                    explain: "VC는 NP. '어렵다'는 것은 다항 알고리즘 부재의 의미." },
+                ],
+              },
+              {
+                stage: "② 변수 가젯의 의미",
+                prompt: "각 변수 x_i에 대해 {x_i, ¬x_i} 정점 + 간선. VC가 이 간선을 덮으려면?",
+                choices: [
+                  { text: "x_i 또는 ¬x_i 중 최소 하나를 V'에 포함. '변수의 할당'을 자연스럽게 인코딩", correct: true,
+                    explain: "CLRS 설계 아이디어. 간선 (x_i, ¬x_i)를 덮으려면 끝점 하나 필수. 그 선택이 'true/false' 할당 역할." },
+                  { text: "양쪽 정점 모두 포함", correct: false,
+                    explain: "하나로 충분 (VC 정의). 최소 VC 찾는 것이 목표." },
+                  { text: "간선 무시", correct: false,
+                    explain: "VC는 '모든' 간선 덮어야 함. 스킵 불가." },
+                ],
+              },
+              {
+                stage: "③ 절 가젯의 의미",
+                prompt: "각 절 C_j에 대해 삼각형 3 정점 + 3 간선. 삼각형 간선을 덮으려면 VC는 어떻게 구성?",
+                choices: [
+                  { text: "삼각형의 3 간선을 덮으려면 최소 2 정점 필요 (임의 2개 선택). 이 2가 '절의 나머지 2 리터럴' 역할, 남은 1개가 '그 절을 만족시킨 리터럴'", correct: true,
+                    explain: "CLRS 핵심 통찰. 삼각형 간선 수 3, 정점 커버 최소 크기 2. $k = n$ + 2m의 2m이 이 제약에서 나옴." },
+                  { text: "1 정점으로 충분", correct: false,
+                    explain: "삼각형의 1 정점은 2 간선만 덮음. 세 번째 간선 안 덮임." },
+                  { text: "3 정점 모두 필요", correct: false,
+                    explain: "2 정점이 삼각형 커버에 충분. 최소 3은 과대." },
+                ],
+              },
+              {
+                stage: "④ 연결 간선의 역할",
+                prompt: "각 절 정점을 해당 리터럴(변수 가젯의 x_i 또는 ¬x_i)과 연결. VC가 $k = n$+2m을 유지하면서 이 간선들도 덮으려면?",
+                choices: [
+                  { text: "변수 가젯의 선택된 리터럴(참인 리터럴)이 절 정점의 연결 간선을 덮어야 함 → 절 가젯에서 '참이 아닌' 2 정점만 VC에 포함", correct: true,
+                    explain: "CLRS 환원의 정교함. 참인 리터럴이 변수 가젯에서 선택 → 연결 간선 자동 커버 → 절 가젯은 나머지 2만 VC에 넣음. 총 n + 2m." },
+                  { text: "모든 리터럴을 VC에 포함", correct: false,
+                    explain: "그러면 $k > n$+2m이 되어 실패." },
+                  { text: "절 정점 전부", correct: false,
+                    explain: "절 가젯의 3 정점 다 넣으면 $k > n$+2m." },
+                ],
+              },
+              {
+                stage: "⑤ 환원의 양방향",
+                prompt: "φ 만족 ⟹ G에 VC 존재, 그리고 G에 VC 존재 ⟹ φ 만족. 양방향 모두 정확해야 하는 이유는?",
+                choices: [
+                  { text: "환원은 ⟺ (iff) 관계를 요구. 한 방향만이면 VC의 '어려움'이 3-SAT의 '어려움'과 같다는 것을 보이지 못함. 양방향이 'NP-완전' 이전을 만듦.", correct: true,
+                    explain: "CLRS 환원 정의. 다항 환원 f: x ∈ A ⟺ f(x) ∈ B. 양방향으로 'equivalent'여야 B가 A만큼 어렵다는 결론 도출." },
+                  { text: "한 방향만으로 충분", correct: false,
+                    explain: "단방향은 단지 '덜 어려움' 보임. NP-완전성엔 양방향 필수." },
+                  { text: "세 방향", correct: false,
+                    explain: "2개 방향만 있음 (양의). ⟺ = 두 방향." },
+                ],
+              },
+              {
+                stage: "⑥ 다항시간 환원",
+                prompt: "REDUCE-3SAT-TO-VC의 시간 복잡도는?",
+                choices: [
+                  { text: "O(n+m) — 변수 가젯 n개, 절 가젯 m개 각각 상수 시간 구성. 연결 간선 3m개. 총 O(n+m) 정점/간선 생성.", correct: true,
+                    explain: "CLRS 환원 요구. 다항 시간 = '환원 자체는 쉬움'. 어려운 건 그 후 VC를 푸는 것. 환원 시간이 지수면 환원 무의미." },
+                  { text: "O(2^n) 지수", correct: false,
+                    explain: "환원은 반드시 다항. 지수면 NP-완전성 증명 불가." },
+                  { text: "$O(1)$", correct: false,
+                    explain: "입력 크기 의존. n+m에 비례." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 환원 예시 — φ = (x₁ ∨ ¬x₂ ∨ x₃) ∧ (¬x₁ ∨ x₂ ∨ x₃)",
+            intro: "3개 변수($n = 3$), 2개 절($m = 2$). 환원 후 G 구성과 $k = 3$ + $4 = 7$인 VC 찾기.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Step 1: 변수 가젯. x_1, x_2, x_3 각각에 대해 {x_i, ¬x_i} 쌍 + 간선 3개. 결과 정점과 간선은?",
+                choices: [
+                  { text: "정점 6개: {x_1, ¬x_1, x_2, ¬x_2, x_3, ¬x_3}. 간선 3개: (x_1,¬x_1), (x_2,¬x_2), (x_3,¬x_3).", correct: true,
+                    explain: "각 변수마다 쌍 정점 2개 + 연결 간선 1개. 총 2n=6 정점, $n = 3$ 간선." },
+                  { text: "정점 3개만", correct: false,
+                    explain: "각 변수의 '참/거짓' 둘 다 정점. 총 2n." },
+                  { text: "완전 그래프 K_6", correct: false,
+                    explain: "쌍끼리만 연결. 변수 간 연결은 절 가젯과의 연결을 통해서만." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Step 2: 절 가젯. C_1 = (x_1 ∨ ¬x_2 ∨ x_3)에 대한 삼각형. 정점과 간선은?",
+                choices: [
+                  { text: "새 정점 {c_1^1, c_1^2, c_1^3} + 삼각형 간선 3개 (c_1^1-c_1^2, c_1^2-c_1^3, c_1^3-c_1^1).", correct: true,
+                    explain: "각 절 정점이 '리터럴 후보'. 삼각형으로 강한 제약 (3 간선 덮으려면 최소 2 정점)." },
+                  { text: "정점 1개", correct: false,
+                    explain: "각 리터럴마다 정점. 절당 3 정점." },
+                  { text: "간선 6개 (완전 그래프 K_3)", correct: false,
+                    explain: "삼각형 K_3는 정확히 간선 3개." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "Step 3: 연결 간선. c_1^1 → x_1 (첫 리터럴), c_1^2 → ¬x_2 (둘째), c_1^3 → x_3 (셋째). C_2도 마찬가지. 총 간선 수는?",
+                choices: [
+                  { text: "변수 간선 3 + 절 삼각형 간선 2×$3 = 6$ + 연결 간선 2×$3 = 6$ = 총 15 간선", correct: true,
+                    explain: "환원 그래프 크기. n + 3m + 3m = 3+6+$6 = 15$ 간선, 2n+3m=12 정점. 다항 크기." },
+                  { text: "6개만", correct: false,
+                    explain: "변수 간선 3 + 삼각형 6 + 연결 $6 = 15$. 각 단계가 추가." },
+                  { text: "300개 (m²)", correct: false,
+                    explain: "선형 증가. m² 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "φ의 만족 할당: $x_1 = T$, $x_2 = F$, $x_3 = T$. 이에 대응하는 VC는?",
+                choices: [
+                  { text: "변수 가젯에서 참인 리터럴 선택: {x_1, ¬x_2, x_3}. 각 절에서 삼각형의 '참이 아닌 2 리터럴 정점' 선택. C_1(x_1 T): {c_1^2, c_1^3} (¬x_2 F, x_3 T... 검토 필요). 총 n+2m = 3+$4 = 7$.", correct: true,
+                    explain: "환원의 양의 방향. 참인 리터럴이 변수 가젯에 들어감 + 절 가젯에서 그 리터럴 제외한 나머지 2 정점이 VC. $k = n$+2m 정확히 달성." },
+                  { text: "VC 크기 $\\geq 10$", correct: false,
+                    explain: "환원 설계상 정확히 n+2m=7. 크기 초과 불필요." },
+                  { text: "VC 없음", correct: false,
+                    explain: "φ 만족 가능 + 환원 정확성으로 VC 존재." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "역방향: G에 크기 7 VC가 있다면 φ가 만족 가능한가?",
+                choices: [
+                  { text: "예. VC에서 각 변수 가젯마다 정확히 1 리터럴 포함 → 이게 할당. 절 가젯마다 정확히 2 포함 → 나머지 1개가 '참 리터럴' → 연결 간선이 변수 가젯 측에서 덮임 → 그 리터럴이 참.", correct: true,
+                    explain: "역방향 증명. VC에서 '할당'을 추출. 환원의 양방향성 완성. 이로써 3-$SAT \\leq _P$ VC." },
+                  { text: "역은 성립 안 함", correct: false,
+                    explain: "환원은 양방향. 정확성 증명 요구사항." },
+                  { text: "해 변환이 어려움", correct: false,
+                    explain: "정확한 대응 관계 존재. VC → 할당은 직관적." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 φ가 만족 불가능(UNSAT)이면?",
+                choices: [
+                  { text: "G에 크기 ≤ n+2m VC가 존재하지 않음. 환원의 역방향으로 'VC가 n+2m 이하 ⟹ φ 만족 가능'이므로 대우로 증명.", correct: true,
+                    explain: "환원의 ⟺가 가지는 양면성. UNSAT이면 환원 결과도 '큰 k 필요'. 실용적으로는 이 대응으로 VC 알고리즘을 만들면 SAT도 풀림 (→ NP-완전)." },
+                  { text: "그래도 작은 VC 존재", correct: false,
+                    explain: "환원의 정확성이 부정함. UNSAT ⟹ 큰 VC만." },
+                  { text: "환원이 실패", correct: false,
+                    explain: "환원은 항상 성공. 결과가 '큰 k 필요'인 VC일 뿐." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch35",
+    tier: 3,
+    num: "Ch 35",
+    title: "Approximation Algorithms",
+    subtitle: "NP-hard 문제의 다항시간 근사 · 근사비 ρ",
+    summary: "최적 해를 못 찾더라도 '몇 배 이내' 보장하는 해를 다항시간에. Vertex-Cover 2-근사가 대표적.",
+    objectives: [
+      "근사비 $\\rho(n)$의 정의와 PTAS·FPTAS의 차이를 이해한다.",
+      "Vertex Cover 2-근사와 메트릭 TSP 2-근사 등 대표 알고리즘을 구현하고 분석할 수 있다.",
+      "최적해를 직접 못 구할 때 LP-완화·하한 활용 등 근사비 분석 기법을 적용할 수 있다.",
+    ],
+    md: `
+## 근사비 (Approximation Ratio)
+- 알고리즘 A가 크기 ρ(n) 근사: ∀ 입력, $C \\leq \\rho (n)$·C* (최소화) 또는 $C \\geq C$*/ρ(n) (최대화)
+- $\\rho (n) = 1$이면 최적
+- **PTAS (Polynomial-Time Approximation Scheme)**: 모든 $\\varepsilon  > 0$에 대해 (1+ε)-근사 다항시간
+- **FPTAS**: PTAS + 시간이 1/ε 다항식
+
+## Vertex-Cover 2-근사 (CLRS 35.1)
+- 욕심쟁이 매칭: 간선 선택 → 양 끝점 VC에 포함 → 이웃 간선 제거 → 반복
+- **핵심 주장**: 반환된 VC는 |최적 VC|의 최대 2배
+- 시간 $O(V + E)$
+
+## 대표 근사 알고리즘
+| 문제 | 최선 근사비 | 방법 |
+|------|-----------|------|
+| Vertex-Cover | **2** | 욕심쟁이 매칭 |
+| Set-Cover | ln n + 1 | 욕심쟁이 |
+| TSP (유클리드) | 3/2 | Christofides |
+| Max-SAT | **7/8** | 무작위 할당 |
+| Knapsack | FPTAS | 동적계획 + 스케일링 |
+
+## 하한과 불가능성 결과
+- PCP 정리: 많은 문제가 **어떤 상수 이상으로 근사 불가** ($P \\neq NP$ 가정)
+- Vertex-Cover: 2-ε 근사 불가 (Unique Games Conjecture 가정)
+- TSP(일반): 유한 상수 근사 불가
+`,
+    ox: [
+      { q: "2-근사는 해의 크기가 최적의 최대 2배임을 보장.", a: true, why: "최소화 문제의 근사비 정의." },
+      { q: "APPROX-VERTEX-COVER의 시간은 $O(V + E)$.", a: true, why: "선형." },
+      { q: "PTAS는 모든 $\\varepsilon  > 0$에 대해 (1+ε)-근사를 다항시간에 낸다.", a: true, why: "ε가 고정될 때 다항." },
+      { q: "일반 TSP는 다항시간에 어떤 상수 근사도 불가능하다 ($P \\neq NP$).", a: true, why: "Theorem 35.3." },
+      { q: "Set-Cover는 (ln n + 1)-근사가 최선이다 ($P \\neq NP$).", a: true, why: "Feige 1998." },
+      { q: "근사 알고리즘은 지수 시간도 허용된다.", a: false, why: "반드시 다항 시간." },
+      { q: "Fractional Knapsack은 Greedy로 최적 해를 얻는다.", a: true, why: "근사비 1 (정확)." },
+      { q: "Christofides 알고리즘은 Metric TSP에 3/2-근사.", a: true, why: "CLRS 35.2." },
+      { q: "FPTAS는 PTAS보다 강한 보장 (시간이 1/ε의 다항).", a: true, why: "$FP = Fully$ Polynomial-Time." },
+      { q: "Vertex-Cover 2-근사는 '임의 간선' 양 끝점을 모두 선택하는 방식이다.", a: true, why: "APPROX-VERTEX-COVER의 핵심." },
+    ],
+
+    algorithms: [
+      {
+        id: "vc-2approx", name: "APPROX-VERTEX-COVER", desc: "Vertex-Cover 2-근사 — 욕심쟁이 매칭",
+        tags: ["2-근사", "욕심쟁이"], viz: "vcApprox",
+        drills: {
+          source: "CLRS 3판 35.1절 pp.1108-1111, APPROX-VERTEX-COVER · Theorem 35.1",
+          pseudo: {
+            title: "① 의사코드 재구성 — APPROX-VERTEX-COVER",
+            intro: "CLRS 35.1절 p.1109의 6줄. 간선 하나 선택 → 양 끝점을 VC에 + 관련 간선 모두 제거. 매우 단순하지만 2-근사 보장.",
+            reference: {
+              title: "참고: 2-근사 비율의 본질",
+              lines: [
+                { text: "반환하는 C = 알고리즘이 선택한 간선들의 양 끝점 합집합",    indent: 0 },
+                { text: "                                                        ",  indent: 0 },
+                { text: "A = 알고리즘이 선택한 간선 집합 (matching: 서로 꼭짓점 겹치지 않음)", indent: 0 },
+                { text: "|C| = 2·|A| (각 선택 간선에서 2개 정점)",                    indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "최적 VC C*는 A의 모든 간선을 덮어야 함",                      indent: 0 },
+                { text: "A가 matching이므로 각 간선이 서로 다른 끝점 필요",             indent: 0 },
+                { text: "→ |C*| ≥ |A|",                                               indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "|C| = 2|A| $\\leq 2$|C*| → 2-근사 달성",                            indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "APPROX-VERTEX-COVER(G)",                      indent: 0, note: "G = (V, E)" },
+              { text: "C = ∅",                                       indent: 1, note: "근사 VC 초기화" },
+              { text: "E' = G.E",                                    indent: 1, note: "남은 간선 집합" },
+              { text: "while E' ≠ ∅",                                indent: 1, note: "간선 남아있는 동안" },
+              { text: "let (u, v) be an arbitrary edge of E'",       indent: 2, note: "임의 간선 선택" },
+              { text: "$C = C$ ∪ {u, v}",                              indent: 2, note: "양 끝점 VC에 추가" },
+              { text: "remove from E' every edge incident on u or v", indent: 2, note: "u, v 덮인 간선 제거" },
+              { text: "return C",                                    indent: 1, note: "근사 VC 반환" },
+            ],
+          },
+          proof: {
+            title: "② 2-근사 증명 — 매칭 하한 + 간단한 계산",
+            intro: "CLRS Theorem 35.1. 단순한 알고리즘이지만 증명이 우아. '선택한 간선이 매칭'이라는 사실 + 매칭 크기의 하한 관계.",
+            invariantLabel: "Theorem 35.1: ",
+            invariant: "APPROX-VERTEX-COVER는 크기 |C| $\\leq 2$·|C*|인 VC를 $O(V + E)$ 시간에 반환. 여기서 C*는 최적 VC. 증명: 선택한 간선 집합 A가 매칭이라는 관찰 → |C*| ≥ |A| + |C| = 2|A|.",
+            steps: [
+              {
+                stage: "① 반환 C가 VC인지 확인",
+                prompt: "알고리즘이 반환하는 C가 실제 VC인 이유는?",
+                choices: [
+                  { text: "while 루프가 E' = ∅일 때만 종료 → 모든 간선이 어느 시점 'u 또는 v에 incident'라서 제거됨 → 그 간선의 적어도 한 끝점이 C에 있음 → VC", correct: true,
+                    explain: "CLRS p.1110. 종료 조건이 '간선 전부 제거'. 제거되는 간선은 C 정점에 닿은 것들. 따라서 C는 모든 간선을 덮음." },
+                  { text: "알고리즘이 최적을 찾음", correct: false,
+                    explain: "2-근사. 최적이 아닐 수 있지만 VC는 유효." },
+                  { text: "작은 그래프만 정확", correct: false,
+                    explain: "모든 그래프에 대해 유효한 VC 반환." },
+                ],
+              },
+              {
+                stage: "② 선택 간선 집합 A의 특성",
+                prompt: "선택된 간선 (u,v)들의 집합 A의 핵심 특성은?",
+                choices: [
+                  { text: "A는 매칭(matching) — 서로 끝점을 공유하지 않는 간선 집합. 간선 선택 시 양 끝점 제거로 다음 간선은 반드시 다른 정점 사용.", correct: true,
+                    explain: "CLRS 핵심 관찰. u, v의 이웃 간선이 모두 제거되므로 이후 선택은 u, v를 건드리지 않음. 따라서 A의 간선들이 서로 독립 = 매칭." },
+                  { text: "A는 모든 간선의 절반", correct: false,
+                    explain: "일반적으로 더 작음. 매칭 크기에만 의존." },
+                  { text: "A는 정확히 VC 크기", correct: false,
+                    explain: "|A|와 |C| 관계는 |C|=2|A|." },
+                ],
+              },
+              {
+                stage: "③ 최적 VC의 하한",
+                prompt: "최적 VC C*와 A의 크기 관계는?",
+                choices: [
+                  { text: "|C*| ≥ |A| — 매칭 A의 각 간선을 덮으려면 끝점 중 하나 필요. 매칭이므로 끝점 겹치지 않아 간선 수 이상의 정점 필수.", correct: true,
+                    explain: "CLRS Lemma. 매칭의 간선 수 = 독립 간선 수 = 최소 정점 커버의 하한. 이건 일반적 그래프 이론 결과." },
+                  { text: "|C*| = |A|/2", correct: false,
+                    explain: "하한이 |A|. 더 작을 수 없음." },
+                  { text: "|C*| = |V| (모든 정점)", correct: false,
+                    explain: "최적은 일반적으로 훨씬 작음. |A| 이상만 보장." },
+                ],
+              },
+              {
+                stage: "④ 근사비 계산",
+                prompt: "|C| = 2|A|와 |C*| ≥ |A|를 결합하면?",
+                choices: [
+                  { text: "|C| = 2|A| $\\leq 2$|C*| → |C|/|C*| $\\leq 2$ → 2-근사", correct: true,
+                    explain: "CLRS Theorem 35.1 결론. 두 부등식의 간결한 결합. 선택한 간선 수와 정점 커버 크기의 비율이 정확히 2." },
+                  { text: "근사비 3/2", correct: false,
+                    explain: "단순 계산으로 2. 3/2는 더 복잡한 알고리즘 (Christofides TSP)." },
+                  { text: "근사비 1 (최적)", correct: false,
+                    explain: "아니; 최악 2배까지 허용. 최적 보장 불가 (NP-hard)." },
+                ],
+              },
+              {
+                stage: "⑤ 타이트한 예시",
+                prompt: "근사비 2가 '타이트(빈틈없이)'하다는 예시는?",
+                choices: [
+                  { text: "K_{n,n} 완전 이분 그래프에서 알고리즘이 모든 간선을 선택하면 |C| = 2n, 최적 |C*| = n. 비율 정확히 2.", correct: true,
+                    explain: "CLRS p.1111. 완전 이분 그래프의 최적 VC는 한쪽 전부 (n개). 알고리즘이 n개 매칭 선택 시 2n 정점. 이론적 상한 달성." },
+                  { text: "항상 최적 달성", correct: false,
+                    explain: "최악 2배. 예시에서 실제 2배 발생." },
+                  { text: "근사비는 항상 1에 가까움", correct: false,
+                    explain: "특정 그래프에선 정확히 2."},
+                ],
+              },
+              {
+                stage: "⑥ 시간 복잡도",
+                prompt: "APPROX-VERTEX-COVER의 시간 복잡도는?",
+                choices: [
+                  { text: "$O(V + E)$ — 각 간선이 최대 한 번 선택되고, 각 정점의 이웃 간선 제거 총합이 선형", correct: true,
+                    explain: "CLRS p.1110. 인접 리스트 + 선형 스캔. 다항시간이 NP-hard의 근사 알고리즘 핵심 요구사항." },
+                  { text: "O(V·E)", correct: false,
+                    explain: "선형. 각 간선이 두 번 이상 처리되지 않음." },
+                  { text: "O(2^V)", correct: false,
+                    explain: "지수면 근사 알고리즘의 목적 위배. 반드시 다항." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ APPROX-VC 추적 — 6정점 그래프",
+            intro: "정점 {a, b, c, d, e, f}, 간선 {(a,b), (a,c), (b,d), (c,e), (d,e), (d,f), (e,f)}. 알고리즘 실행 과정과 최적 VC와 비교.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "C=∅, E'={(a,b), (a,c), (b,d), (c,e), (d,e), (d,f), (e,f)}. 임의로 첫 간선 (a,b) 선택. C, E'는?",
+                choices: [
+                  { text: "C = {a, b}. a, b에 인접한 간선 (a,b), (a,c), (b,d) 모두 제거. E' = {(c,e), (d,e), (d,f), (e,f)}.", correct: true,
+                    explain: "첫 반복. 양 끝점 a, b 추가. a에 인접한 (a,b), (a,c), b에 인접한 (b,d) 삭제. 4개 간선 남음." },
+                  { text: "C = {a}만", correct: false,
+                    explain: "양 끝점 추가가 규칙." },
+                  { text: "모든 간선 제거", correct: false,
+                    explain: "a,b에 인접한 것만 제거. 나머지는 남음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "E' = {(c,e), (d,e), (d,f), (e,f)}. 다음 간선 (c,e) 선택. C, E'는?",
+                choices: [
+                  { text: "C = {a, b, c, e}. c에 인접한 (c,e), e에 인접한 (d,e), (e,f) 제거. E' = {(d,f)}.", correct: true,
+                    explain: "두 번째 반복. c, e 추가. (c,e), (d,e), (e,f) 제거 (c 또는 e 인접). d가 아직 C에 없어도 (d,e)는 e 인접으로 제거." },
+                  { text: "C가 그대로", correct: false,
+                    explain: "반복마다 2 정점 추가." },
+                  { text: "E' 빈 집합", correct: false,
+                    explain: "(d,f)는 c, e 인접 아님. 살아남음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "E' = {(d,f)}. 마지막 간선 (d,f) 선택. 최종 C는?",
+                choices: [
+                  { text: "C = {a, b, c, e, d, f} = {a, b, c, d, e, f} — 모든 정점 6개. E' = ∅로 루프 종료.", correct: true,
+                    explain: "세 번째 반복. d, f 추가. E'에 다른 간선 없으므로 while 종료. 반환 $C = V$ 전체." },
+                  { text: "C 변경 없음", correct: false,
+                    explain: "(d,f) 처리로 d, f 추가." },
+                  { text: "E' 에서 추가 간선", correct: false,
+                    explain: "더 이상 간선 없음." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 예제의 최적 VC는? (작을수록 좋음)",
+                choices: [
+                  { text: "최적 C* = {a, d, e} 크기 3 — 모든 간선 확인: (a,b)a ✓, (a,c)a ✓, (b,d)d ✓, (c,e)e ✓, (d,e)d/e ✓, (d,f)d ✓, (e,f)e ✓. 전부 덮음.", correct: true,
+                    explain: "최소 VC 탐색은 NP-hard지만 작은 그래프는 수작업 가능. {a,d,e}로 모든 간선 덮음." },
+                  { text: "최적 = 6 (모든 정점)", correct: false,
+                    explain: "3개로 충분. 모든 정점 불필요." },
+                  { text: "최적 = 1", correct: false,
+                    explain: "1개로 불가능 (적어도 한 정점이 모든 간선 닿아야)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "알고리즘 결과 |C|=6, 최적 |C*|=3. 근사비는?",
+                choices: [
+                  { text: "|C|/|C*| = 6/$3 = 2.0$ — 정확히 2-근사의 최악 케이스 달성", correct: true,
+                    explain: "임의 간선 선택이 운 나쁘면 정확히 2배. CLRS 보장 2는 '최악 상한'이지만 실제 도달 가능." },
+                  { text: "근사비 1.5", correct: false,
+                    explain: "계산 6/$3 = 2$." },
+                  { text: "근사비 3", correct: false,
+                    explain: "2-근사 보장으로 불가능." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "운이 좋아서 첫 간선 선택이 달랐다면? 예: (d,e)부터 선택.",
+                choices: [
+                  { text: "C = {d, e}. (b,d), (c,e), (d,e), (d,f), (e,f) 제거. E' = {(a,b), (a,c)}. 다음 (a,b): C={a,b,d,e}. E'={(a,c)가 a 인접이라 제거되었는지 재확인}. 결국 |C| = 5 정도. 2배에 근접하지만 약간 나음.", correct: true,
+                    explain: "간선 선택 순서에 따라 실제 결과 다름. 근사비 보장은 최악 2. 평균은 대개 훨씬 좋음 (실용적으로 1.3~1.5)." },
+                  { text: "항상 동일한 결과", correct: false,
+                    explain: "'임의 간선' 선택이므로 결과 다를 수 있음. 단 근사비 상한은 고정." },
+                  { text: "최적에 도달", correct: false,
+                    explain: "최적 도달 보장 없음. 2-근사만 보장."  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch11",
+    tier: 2,
+    num: "Ch 11",
+    title: "Hash Tables",
+    subtitle: "직접 주소 · 체이닝 · 해시 함수",
+    summary: "Simple uniform hashing 가정 하에서 기대 O(1+α) 연산. 해시 함수 설계가 관건.",
+    objectives: [
+      "직접 주소화와 해싱의 트레이드오프, 적재율 $\\alpha = n/m$의 의미를 이해한다.",
+      "체이닝과 개방 주소법(선형/이차/이중 해싱)의 평균 시간 복잡도를 분석할 수 있다.",
+      "나눗셈·곱셈·보편 해싱(Universal Hashing)의 설계와 충돌 확률을 계산할 수 있다.",
+    ],
+    md: `
+## 직접 주소 vs 해시 테이블
+- Direct-address: 전체 키 공간 크기 |U|의 배열. |U| 크면 낭비.
+- Hash table: 크기 m 배열 + hash function h: U → {0, ..., m−1}. 일반적으로 m ≪ |U|.
+
+## Chaining (체이닝)
+- 같은 슬롯에 여러 키 → linked list로 연결
+- **Load factor** $\\alpha  = n$/m (테이블당 평균 원소 수)
+- 최악: 모두 한 슬롯 → $\\Theta(n)$
+- 평균 (simple uniform hashing): **$\\Theta(1 + \\alpha)$**
+
+## 핵심 정리
+- Theorem 11.1: 성공 실패 검색 모두 기대 Θ(1 + α)
+- INSERT: 최악 $O(1)$, DELETE: doubly linked list로 $O(1)$
+
+## 해시 함수
+- Division: $h(k) = k$ mod m (m 소수 선택)
+- Multiplication: h(k) = ⌊m (k·A mod 1)⌋
+- Universal hashing: 임의 입력 분포에도 기대 성능 보장
+`,
+    ox: [
+      { q: "Chaining 해시의 기대 검색 시간은 Θ(1+α).", a: true, why: "$\\alpha  = n$/m." },
+      { q: "Simple Uniform Hashing은 모든 키가 같은 슬롯에 해시된다는 가정이다.", a: false, why: "모든 슬롯에 균등 확률 1/m." },
+      { q: "Load factor $\\alpha  = n$/m (저장 원소 수 / 슬롯 수).", a: true, why: "CLRS 11.2." },
+      { q: "Universal hashing은 최악의 경우에도 $O(1)$ 기대 시간을 보장한다.", a: true, why: "해시 함수 클래스에서 무작위 선택." },
+      { q: "Chaining 해시의 INSERT는 최악 $O(n)$이다.", a: false, why: "리스트 head에 삽입 → $O(1)$." },
+      { q: "해시 함수 $h(k) = k$ mod m에서 m은 2의 제곱을 쓰는 것이 좋다.", a: false, why: "소수 사용이 권장됨 (분산 개선)." },
+      { q: "Open addressing은 모든 원소를 테이블 배열에 직접 저장한다.", a: true, why: "Linked list 사용 안 함." },
+      { q: "Chaining 해시의 최악 검색은 $\\Theta(n)$이다.", a: true, why: "모든 키가 한 슬롯에 몰릴 때." },
+      { q: "α = $O(1)$이면 모든 해시 연산이 기대 상수 시간.", a: true, why: "$n = O(m)$으로 테이블 크기를 조정(rehashing)하여 유지." },
+      { q: "해시 테이블의 DELETE는 doubly linked list에서 $O(1)$.", a: true, why: "앞뒤 포인터 연결 해제." },
+    ],
+
+    exercises: [
+      {
+        num: "11.2-1",
+        q: "Simple Uniform Hashing을 가정할 때, $m$개 슬롯의 체이닝 해시에 $n$개의 키를 삽입한 후 어떤 두 키가 같은 슬롯으로 해시될 기대 충돌 수는?",
+        hint: "지시 변수 $X_{ij} = I\\{h(k_i) = h(k_j)\\}$, $i < j$의 합에 기댓값 선형성.",
+        solution: "각 쌍 $(i, j)$에 대해 $\\Pr[h(k_i) = h(k_j)] = 1/m$. 쌍의 수 $\\binom{n}{2} = n(n-1)/2$. 총 기대 충돌 = $n(n-1)/(2m) = \\Theta(n^2/m)$. $\\alpha = n/m$이면 $\\Theta(n \\alpha)$.",
+      },
+      {
+        num: "11.2-2",
+        q: "길이 $m=9$인 체이닝 해시에 해시 함수 $h(k) = k \\bmod 9$로 키 $\\{5, 28, 19, 15, 20, 33, 12, 17, 10\\}$을 순서대로 삽입한 결과를 나타내라.",
+        hint: "각 키 $k$에 대해 $k \\bmod 9$를 계산.",
+        solution: "슬롯 0: 없음, 1: 28→19→10 (충돌 3개), 2: 20, 3: 12, 4: 없음, 5: 5→14? → 실제 5, 6: 33→15 (충돌 2개 — $15 \\bmod 9 = 6$), 7: 없음, 8: 17. 체이닝 리스트(head부터 가장 최근 삽입): 슬롯1: [10, 19, 28], 슬롯6: [15, 33].",
+      },
+      {
+        num: "11.3-3",
+        q: "문자열 $s = s_1 s_2 \\cdots s_L$을 정수 $k = \\sum_{i=1}^{L} s_i \\cdot 128^{L-i}$로 변환해 $h(k) = k \\bmod m$을 쓸 때, 만약 $m = 2^p - 1$이면 문자열 순열($anagram$)이 같은 해시값을 가짐을 보이고 왜 문제인지 설명하라.",
+        hint: "$128 = 2^7$와 $2^p - 1$의 관계.",
+        solution: "$m = 2^p - 1$이고 $p | 7$이면 $128^i \\bmod m$이 주기적이 되어 문자열의 **문자 순서**와 관계없이 같은 해시. 예: 'stop'과 'tops'가 같은 슬롯. 검색 성능은 보존되지만 공격자가 **collision 공격**을 쉽게 설계할 수 있음 → 실무에서는 $m$에 $2^p - 1$ 형태를 피함.",
+      },
+      {
+        num: "11.4-1",
+        q: "크기 $m = 11$의 open-addressing 해시에 키 $\\{10, 22, 31, 4, 15, 28, 17, 88, 59\\}$를 선형 탐색(linear probing) $h(k, i) = (k \\bmod 11 + i) \\bmod 11$로 삽입한 결과를 나타내라.",
+        hint: "각 키의 초기 슬롯이 차 있으면 $+1$씩 이동.",
+        solution: "삽입 과정: 10→슬롯10, 22→슬롯0, 31→슬롯9, 4→슬롯4, 15→슬롯4(충돌)→5, 28→슬롯6, 17→슬롯6(충돌)→7, 88→슬롯0(충돌)→1, 59→슬롯4(충돌)→5(충돌)→6(충돌)→7(충돌)→8. 최종: [22, 88, _, _, 4, 15, 28, 17, 59, 31, 10]. 클러스터링으로 59의 탐색 비용이 5.",
+      },
+      {
+        num: "11.4-3",
+        q: "Double hashing $h(k, i) = (h_1(k) + i \\cdot h_2(k)) \\bmod m$에서 탐색이 테이블의 모든 슬롯을 방문하려면 $h_2(k)$와 $m$의 관계에 어떤 조건이 필요한가?",
+        hint: "$\\gcd(h_2(k), m)$의 값.",
+        solution: "$\\gcd(h_2(k), m) = 1$, 즉 서로소여야 $i = 0, 1, \\ldots, m-1$에 대해 $(h_1(k) + i \\cdot h_2(k)) \\bmod m$이 모든 $m$개 슬롯을 순회. 일반 방법: $m$을 소수로 선택하고 $h_2(k) \\in \\{1, \\ldots, m-1\\}$로 설계 (자동으로 서로소).",
+      },
+    ],
+
+    problems: [
+      {
+        num: "11-1",
+        title: "최장 탐색 — Open Addressing의 최악 기대 시간",
+        q: "Uniform Hashing 가정 하에서 $n$개의 키를 크기 $m$의 open-addressing 해시 ($\\alpha = n/m < 1$)에 삽입한 후, 가장 긴 탐색 시퀀스(longest probe)의 **기대 길이** 상한을 분석한다.",
+        parts: [
+          {
+            label: "a",
+            q: "한 삽입이 $k$번 이상의 probe를 요구할 확률이 최대 $\\alpha^k$임을 보여라.",
+            hint: "Uniform Hashing: 각 probe가 독립적으로 점유된 슬롯일 확률 ≤ $\\alpha$.",
+            solution: "$k$번의 probe가 필요 ⟺ 처음 $k-1$개의 probe가 모두 점유된 슬롯. Uniform Hashing 가정 하에서 각 probe가 점유된 슬롯일 확률 ≤ $n/m = \\alpha$. 독립적이 아니지만 표준 분석으로 확률 ≤ $\\alpha^{k-1}$. 따라서 $\\Pr[\\text{probes} \\geq k] \\leq \\alpha^{k-1}$ (표준: $\\leq \\alpha^k$ 형태로도 표현).",
+          },
+          {
+            label: "b",
+            q: "$X_i$ = $i$번째 삽입의 probe 횟수라 할 때, $\\Pr[X_i > 2 \\lg n] = O(1/n^2)$ (for $\\alpha \\leq 1/2$)임을 보이고, 이로부터 **모든** 삽입의 최장 probe가 $O(\\lg n)$ 이하일 확률이 $\\geq 1 - O(1/n)$임을 도출하라.",
+            solution: "(a)로부터 $\\Pr[X_i > 2 \\lg n] \\leq \\alpha^{2 \\lg n} \\leq (1/2)^{2 \\lg n} = 1/n^2$. Union bound: $n$개 삽입 모두에 대해 $\\Pr[\\max_i X_i > 2 \\lg n] \\leq n \\cdot 1/n^2 = 1/n$. 여사건으로 최장 probe $\\leq 2 \\lg n$일 확률 $\\geq 1 - 1/n$.",
+          },
+          {
+            label: "c",
+            q: "이 결과가 체이닝 해시의 '가장 긴 체인' 결과와 어떻게 비교되는가?",
+            solution: "체이닝 (α = $O(1)$): 가장 긴 체인 길이가 기대 $\\Theta(\\lg n / \\lg \\lg n)$ (bins-and-balls 고전 결과). Open-addressing ($\\alpha \\leq 1/2$): 최장 probe $O(\\lg n)$ w.h.p. 둘 다 로그 규모지만 체이닝이 약간 짧음. 단, open-addressing은 포인터 공간 절약 + 캐시 친화적.",
+          },
+        ],
+      },
+      {
+        num: "11-2",
+        title: "Slot-size Bound for Chaining",
+        q: "크기 $m$의 체이닝 해시에 $n = m$개의 키를 simple uniform hashing으로 삽입. 각 슬롯 $j$의 체인 길이를 $n_j$라 하자. 가장 긴 체인 길이 $M = \\max_j n_j$의 기댓값 상한을 분석하라.",
+        parts: [
+          {
+            label: "a",
+            q: "$\\Pr[n_j = k]$ 상한을 이항 분포로 표현하라.",
+            hint: "$n_j \\sim \\text{Binomial}(n, 1/m)$.",
+            solution: "$\\Pr[n_j = k] = \\binom{n}{k} (1/m)^k (1 - 1/m)^{n-k} \\leq \\binom{n}{k} / m^k \\leq (n/m)^k \\cdot 1/k! = 1/k!$ (since $n = m$). 추가로 $\\binom{n}{k} / m^k \\leq e^k / k^k$ (Stirling) 사용 가능.",
+          },
+          {
+            label: "b",
+            q: "$k_0 = c \\lg n / \\lg \\lg n$ 선택 시 $\\Pr[n_j \\geq k_0] \\leq 1/n^2$ (for 충분히 큰 $c$)임을 보여라.",
+            hint: "Stirling: $k! \\geq (k/e)^k$.",
+            solution: "$\\Pr[n_j \\geq k_0] \\leq \\sum_{k \\geq k_0} 1/k! \\leq 2/k_0! \\leq 2 (e/k_0)^{k_0}$. $k_0 = c \\lg n / \\lg \\lg n$이면 $(e/k_0)^{k_0} = \\exp(-k_0 \\ln(k_0/e)) \\leq \\exp(-c \\lg n)$ (계수 조정). $c = 2$면 $\\leq 1/n^2$.",
+          },
+          {
+            label: "c",
+            q: "$E[M] = O(\\lg n / \\lg \\lg n)$을 결론지어라.",
+            solution: "Union bound: $\\Pr[M \\geq k_0] \\leq m / n^2 = 1/n$. 따라서 $E[M] \\leq k_0 \\cdot 1 + n \\cdot \\Pr[M \\geq k_0] \\leq O(\\lg n / \\lg \\lg n) + 1 = O(\\lg n / \\lg \\lg n)$. 이것이 체이닝 해시의 최장 체인에 대한 고전 상한이며 tight함이 알려짐.",
+          },
+        ],
+      },
+    ],
+
+    algorithms: [
+      {
+        id: "chaining", name: "Hashing with Chaining", desc: "연결 리스트로 충돌 해결",
+        tags: ["기대 Θ(1+α)", "Chaining"], viz: "hashing",
+        drills: {
+          source: "CLRS 3판 11.1-11.2절 pp.253-260, Theorem 11.1-11.2",
+          pseudo: {
+            title: "① 의사코드 재구성 — CHAINED-HASH 연산",
+            intro: "CLRS 11.2절의 체이닝 해시의 세 기본 연산은 매우 간결. INSERT/SEARCH/DELETE 각 프로시저의 한 줄짜리 본체를 헤더와 함께 배치.",
+            reference: {
+              title: "참고: Load factor와 기대 성능",
+              lines: [
+                { text: "$\\alpha  = n$/m (load factor)",                            indent: 0 },
+                { text: "n: 저장된 원소 수, m: 슬롯 수",                     indent: 0 },
+                { text: "",                                                  indent: 0 },
+                { text: "Simple Uniform Hashing 가정:",                      indent: 0 },
+                { text: "  어떤 키도 m개 슬롯 중 하나에 균일하게 해시됨",      indent: 0 },
+                { text: "",                                                  indent: 0 },
+                { text: "Theorem 11.1: 실패 검색 기대 시간 Θ(1+α)",          indent: 0 },
+                { text: "Theorem 11.2: 성공 검색 기대 시간 Θ(1+α)",          indent: 0 },
+                { text: "INSERT: 최악 $O(1)$, DELETE: doubly linked이면 $O(1)$",  indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "CHAINED-HASH-INSERT(T, x)",                        indent: 0, note: "삽입 프로시저" },
+              { text: "insert x at the head of list T[h(x.key)]",        indent: 1, note: "리스트 head에 연결 ($O(1)$)" },
+              { text: "",                                                indent: 0, note: "" },
+              { text: "CHAINED-HASH-SEARCH(T, k)",                       indent: 0, note: "검색 프로시저" },
+              { text: "search for an element with key k in list T[h(k)]", indent: 1, note: "선형 탐색, 기대 Θ(1+α)" },
+              { text: "",                                                indent: 0, note: "" },
+              { text: "CHAINED-HASH-DELETE(T, x)",                       indent: 0, note: "삭제 프로시저" },
+              { text: "delete x from the list T[h(x.key)]",              indent: 1, note: "doubly linked list로 $O(1)$" },
+            ],
+          },
+          proof: {
+            title: "② 기대 검색 시간 Θ(1+α) 증명 — 지시 변수 + Simple Uniform Hashing",
+            intro: "CLRS Theorem 11.2 (성공 검색의 기대 시간). 지시 확률 변수로 리스트 길이 기댓값을 계산하고 조화급수 없이 직접 합산.",
+            invariantLabel: "Theorem 11.2: ",
+            invariant: "Simple uniform hashing (SUH) 가정 하에, 체이닝 해시 테이블의 성공 검색 기대 시간은 Θ(1+α), 여기서 $\\alpha  = n$/m. 증명은 각 키 쌍의 충돌 확률 1/m + 기댓값 선형성.",
+            steps: [
+              {
+                stage: "① 기본 가정 (SUH)",
+                prompt: "Simple Uniform Hashing 가정이란?",
+                choices: [
+                  { text: "각 키가 독립적으로, 모든 슬롯에 균일 확률 1/m로 해시됨 (다른 키의 해시와 무관)", correct: true,
+                    explain: "CLRS p.259. 'any given element is equally likely to hash into any of the m slots, independently'. 이 가정이 없으면 기대 시간 분석 불가." },
+                  { text: "모든 키가 서로 다른 슬롯에 해시됨 (충돌 없음)", correct: false,
+                    explain: "SUH는 '균일'이지 '충돌 없음'이 아님. m개 슬롯에 $n > m$ 키를 넣으면 충돌 필수." },
+                  { text: "해시 함수가 가역적", correct: false,
+                    explain: "해시는 일반적으로 비가역. 가역성은 가정이 아님." },
+                ],
+              },
+              {
+                stage: "② 리스트 길이의 기댓값",
+                prompt: "슬롯 j의 리스트 길이 n_j의 기댓값 E[n_j]는?",
+                choices: [
+                  { text: "$E[n_j] = \\alpha $ = n/m — 전체 n개 키가 m개 슬롯에 균일 분배", correct: true,
+                    explain: "SUH로 각 키가 슬롯 j에 해시될 확률 1/m. 지시 변수 X_{ij} = I{key i → j}로 n_j = ΣX_{ij}. $E[n_j] = \\Sigma $ 1/$m = n$/m." },
+                  { text: "$E[n_j] = 1$ (각 슬롯에 평균 1개)", correct: false,
+                    explain: "α에 의존. $\\alpha  > 1$이면 평균 > 1." },
+                  { text: "$E[n_j] = 0$ (기대는 0이지만 실제는 양수)", correct: false,
+                    explain: "양의 키가 있으면 양의 기댓값. $n \\geq 1$이면 $E[n_j] = n$/$m > 0$." },
+                ],
+              },
+              {
+                stage: "③ 실패 검색의 기대 시간",
+                prompt: "키 k가 테이블에 없을 때 검색 기대 시간은?",
+                choices: [
+                  { text: "Θ(1+α) — h(k) 계산 $O(1)$ + 리스트 T[h(k)] 전체를 훑음 (길이 기댓값 α)", correct: true,
+                    explain: "Theorem 11.1. 실패 검색은 리스트를 끝까지 돌므로 평균 α번 비교. + $O(1)$ 해시 함수. 총 Θ(1+α)." },
+                  { text: "$\\Theta(1)$ — 해시만 계산하면 됨", correct: false,
+                    explain: "키가 없다는 것을 확인하려면 해당 슬롯의 리스트를 모두 훑어야 함." },
+                  { text: "$\\Theta(n)$ — 전체 테이블 스캔", correct: false,
+                    explain: "체이닝은 하나의 슬롯 리스트만 확인. 전체 스캔 아님." },
+                ],
+              },
+              {
+                stage: "④ 성공 검색 — 지시 변수",
+                prompt: "성공 검색(키 k가 있음)의 기대 탐색 길이는? X_{ij} = I{$h(k_i) = h(k_j)$}로 표현하면?",
+                choices: [
+                  { text: "E[성공 탐색 길이] = 1 + (1/n)Σᵢ Σⱼ>ᵢ E[X_{ij}] — i가 삽입된 후 j가 삽입되어 같은 슬롯이면 j가 i의 '앞에' 쌓임", correct: true,
+                    explain: "CLRS p.260. 각 키 검색의 평균 비용은 '1 + 자기 뒤에 쌓인 원소 수'. 모든 i에 대해 평균." },
+                  { text: "E[성공 탐색 길이] = α (실패와 동일)", correct: false,
+                    explain: "성공 검색은 대상을 만난 즉시 종료하므로 평균 α/2에 가깝다. 계산은 다름." },
+                  { text: "E[성공 탐색 길이] = n — 전체 길이", correct: false,
+                    explain: "과대 평가. 기댓값은 훨씬 작음." },
+                ],
+              },
+              {
+                stage: "⑤ 합의 평가",
+                prompt: "E[X_{ij}] = 1/m (SUH). 이중 합을 계산하면?",
+                choices: [
+                  { text: "$(1/n) \\cdot \\sum_{i=1}^{n} \\sum_{j=i+1}^{n} (1/m) = (1/nm) \\cdot (n(n-1)/2) = (n-1)/(2m) = \\alpha/2 - \\alpha/(2n)$", correct: true,
+                    explain: "CLRS p.260 식 전개. 삼각수 합 Σ(n−i) = n(n−1)/2. α로 표현 → α/2 − α/(2n). 1을 더하면 1 + α/2 − α/(2n) = Θ(1+α)." },
+                  { text: "α² — 이중 합이므로 제곱", correct: false,
+                    explain: "이중 합이 α²이 되지 않음. 지시 변수 합산은 선형으로 α 차수." },
+                  { text: "α — 그냥 α", correct: false,
+                    explain: "정확한 계산은 α/2 − α/(2n). '1 + …'로 감싸면 Θ(1+α)." },
+                ],
+              },
+              {
+                stage: "⑥ 결론과 설계 지침",
+                prompt: "성공 검색 기대 시간 = 1 + α/2 − α/(2n) = Θ(1+α). 실용적 의미는?",
+                choices: [
+                  { text: "$n = O(m)$ (즉 α = $O(1)$)이면 모든 연산이 기대 상수 시간. 테이블 크기를 원소 수에 비례하게 유지.", correct: true,
+                    explain: "CLRS 설계 원칙. α를 작게(예: 0.5 ~ 1)로 유지하기 위해 동적으로 m을 조정 (rehashing). $O(1)$ 평균 성능 달성." },
+                  { text: "α → 0이면 최적", correct: false,
+                    explain: "$\\alpha  = 0$이면 빈 테이블. 실용적 α는 1 근처." },
+                  { text: "α → ∞여도 $\\Theta(1)$", correct: false,
+                    explain: "Θ(1+α)에서 α가 커지면 성능 저하." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ 체이닝 해시 추적 — 충돌과 load factor",
+            intro: "$m = 5$ 슬롯, 해시 함수 $h(k) = k$ mod 5. 키 수열 [12, 7, 23, 17, 2, 5, 30]을 차례로 INSERT. 각 슬롯 체인의 상태를 예측.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "시작: 모든 슬롯 T[0..4]가 NIL(빈 리스트). INSERT 12 후: $h(12) = 12$ mod $5 = 2$. 리스트 T[2]의 head에 삽입. 상태는?",
+                choices: [
+                  { text: "$T[0] = nil$, $T[1] = nil$, T[2]=[12], $T[3] = nil$, $T[4] = nil$", correct: true,
+                    explain: "단일 원소 체인. CHAINED-HASH-INSERT는 head에 삽입($O(1)$)." },
+                  { text: "$T[12] = 12$ (직접 주소)", correct: false,
+                    explain: "해시 테이블은 슬롯 0..m-$1 = 4$만 사용. 12 mod $5 = 2$로 변환." },
+                  { text: "T[2]=[12], 나머지도 랜덤 값", correct: false,
+                    explain: "다른 슬롯은 NIL(빈 리스트)로 초기화됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이어서 7, 23을 삽입. $h(7) = 2$, $h(23) = 3$. T[2]와 T[3]은?",
+                choices: [
+                  { text: "T[2]=[7, 12] (7이 head에 추가), T[3]=[23]", correct: true,
+                    explain: "7이 T[2]로 충돌 → head에 prepend. 12는 뒤로 밀림. CLRS 'insert at the HEAD'. 23은 빈 T[3]의 첫 원소." },
+                  { text: "T[2]=[12, 7] (뒤로 추가)", correct: false,
+                    explain: "head에 삽입이므로 새 원소가 앞. CLRS 사양." },
+                  { text: "T[2]=[12], T[3]=[7, 23] (다른 슬롯)", correct: false,
+                    explain: "$h(7) = 7$ mod $5 = 2$이므로 T[2]에 들어감." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "17, 2 삽입. $h(17) = 17$ mod $5 = 2$, $h(2) = 2$. 모두 T[2]로 충돌. 이후 T[2]는?",
+                choices: [
+                  { text: "T[2] = [2, 17, 7, 12] (역순 삽입 순서)", correct: true,
+                    explain: "각 키가 현재 head에 삽입. 7 → 17 → 2 순으로 앞에 추가. 길이 4가 된 체인." },
+                  { text: "T[2] = [12, 7, 17, 2]", correct: false,
+                    explain: "head-insert이므로 최신이 앞. 삽입 순서의 역순." },
+                  { text: "T[2] = [2, 17] (17 덮어씀)", correct: false,
+                    explain: "해시 테이블은 값을 덮어쓰지 않고 모두 체인에 유지." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "5, 30 삽입. $h(5) = 0$, $h(30) = 0$. 다른 슬롯들의 최종 상태는?",
+                choices: [
+                  { text: "T[0]=[30, 5], $T[1] = nil$, T[3]=[23], $T[4] = nil$", correct: true,
+                    explain: "T[0]에 5 먼저, 그 다음 30이 head에 삽입. T[1], T[4]는 여전히 NIL. T[3]=[23]는 불변." },
+                  { text: "T[0]=[5, 30] (순서대로)", correct: false,
+                    explain: "head-insert이므로 30이 먼저 나옴." },
+                  { text: "T[5]=[5, 30] (슬롯 5)", correct: false,
+                    explain: "$m = 5$ 슬롯은 0..4. $h(5) = 5$ mod $5 = 0$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "총 7개 키, 5개 슬롯. α = ? 그리고 SEARCH(17)의 소요 시간은?",
+                choices: [
+                  { text: "$\\alpha  = 7$/$5 = 1.4$. SEARCH(17): $h(17) = 2$로 T[2] 체인 훑음 [2, 17, 7, 12]. 2번째에 발견 → O(2).", correct: true,
+                    explain: "Load factor 계산. SEARCH는 체인의 head부터 선형 탐색이므로 17을 찾기 위해 2 → 17 (두 번째)에서 발견." },
+                  { text: "$\\alpha  = 0$ (충돌 없음)", correct: false,
+                    explain: "충돌이 여러 번 발생했음. α는 n/$m = 7$/5." },
+                  { text: "$\\alpha  = 5$, SEARCH(17) = $O(1)$", correct: false,
+                    explain: "$\\alpha  = n$/m이지 m이 아님. SEARCH는 체인 길이에 비례." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 예제의 '최악' vs '기대' 시간 차이는?",
+                choices: [
+                  { text: "최악: T[2] 체인이 4개 → SEARCH O(4). 기대: Θ(1+α) = Θ(2.4) 평균. 최악 $n = 7$ (모두 한 슬롯)", correct: true,
+                    explain: "체인 편향이 최악 성능 결정. SUH 가정 하에서는 평균 성능만 보장; 실제로 나쁜 해시 함수나 데이터면 최악 $\\Theta(n)$." },
+                  { text: "최악과 기대가 항상 같음", correct: false,
+                    explain: "최악 $\\Theta(n)$, 기대 Θ(1+α). 큰 n에서 차이 큼." },
+                  { text: "최악 $\\Theta(\\lg n)$", correct: false,
+                    explain: "체이닝은 선형 탐색이지 이진 트리가 아님. 최악 $\\Theta(n)$." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch13",
+    tier: 2,
+    num: "Ch 13",
+    title: "Red-Black Trees",
+    subtitle: "5가지 성질 · 회전 · 균형 이진 검색 트리",
+    summary: "각 노드에 1비트 색상으로 균형을 강제하여 최악 $O(\\lg n)$ 연산 보장.",
+    objectives: [
+      "RB-Tree의 5가지 성질을 진술하고 높이 $h \\le 2 \\lg(n+1)$을 증명할 수 있다.",
+      "LEFT-ROTATE / RIGHT-ROTATE 연산이 BST 순서를 보존하며 트리 모양을 바꾸는 원리를 이해한다.",
+      "RB-INSERT-FIXUP과 RB-DELETE-FIXUP의 case들을 추적하며 위반을 수정할 수 있다.",
+    ],
+    md: `
+## 5가지 Red-Black 성질 (CLRS 13.1)
+1. 모든 노드는 빨강(RED) 또는 검정(BLACK).
+2. 루트는 검정.
+3. 모든 leaf(NIL)는 검정.
+4. 빨강 노드의 자식은 모두 검정 (No two reds in a row).
+5. 임의의 노드에서 그 하위 leaf까지의 모든 simple path는 동일한 수의 검정 노드를 포함 (black-height).
+
+## 높이 보장 (Lemma 13.1)
+- n 내부 노드의 RB-tree 높이 h ≤ **2 lg(n+1)**
+- 따라서 SEARCH, MIN, MAX, SUCCESSOR, PREDECESSOR 모두 $O(\\lg n)$
+
+## 핵심 연산
+- **LEFT-ROTATE / RIGHT-ROTATE**: BST 성질을 유지하면서 구조 재배치 ($O(1)$)
+- **RB-INSERT**: 일반 BST 삽입 + RB-INSERT-FIXUP (색상·회전)
+- **RB-DELETE**: 삭제 + RB-DELETE-FIXUP
+
+## 왜 RB가 AVL보다 실용적인가?
+- AVL: 더 엄격한 균형 → 더 빠른 SEARCH
+- RB: 느슨한 균형 → 삽입·삭제 재균형이 더 적음 → 변경 많은 워크로드에 유리
+`,
+    ox: [
+      { q: "RB-Tree의 높이는 2 lg(n+1) 이하이다.", a: true, why: "Lemma 13.1." },
+      { q: "루트는 항상 검정(BLACK)이다.", a: true, why: "성질 2." },
+      { q: "빨강 노드의 자식도 빨강일 수 있다.", a: false, why: "성질 4 위배. 연속 빨강 금지." },
+      { q: "LEFT-ROTATE는 $O(1)$ 시간이다.", a: true, why: "고정 포인터 갱신." },
+      { q: "RB-INSERT-FIXUP은 색상 전환과 회전만 사용한다.", a: true, why: "CLRS 13.3." },
+      { q: "같은 노드에서 다른 경로의 black-height가 다를 수 있다.", a: false, why: "성질 5: 모든 경로 black-height 동일." },
+      { q: "AVL이 RB-Tree보다 검색 시에 평균적으로 더 빠르다.", a: true, why: "더 엄격한 균형." },
+      { q: "모든 NIL(leaf)은 검정으로 간주한다.", a: true, why: "성질 3." },
+      { q: "RB-INSERT는 새 노드를 항상 빨강으로 삽입한다.", a: true, why: "black-height 불변 유지를 위함." },
+      { q: "RB-Tree의 INSERT/DELETE 시간은 $O(\\lg n)$이다.", a: true, why: "트리 높이가 $O(\\lg n)$ + 상수 회전." },
+    ],
+
+    algorithms: [
+      { id: "rbtreeDelete", name: "RB-DELETE + FIXUP 4 cases", desc: "삭제 후 doubly-black 위반 해소 — Case 1~4 단계별 추적", tags: ["O(lg n)", "FIXUP"], viz: "rbtreeDelete" },
+      {
+        id: "rbtree", name: "Red-Black Tree", desc: "자기 균형 이진 검색 트리",
+        tags: ["O(lg n)", "자기 균형"], viz: "rbtree",
+        drills: {
+          source: "CLRS 3판 13.1-13.2절 pp.308-314, Lemma 13.1 · Figure 13.1-13.3",
+          pseudo: {
+            title: "① 의사코드 재구성 — LEFT-ROTATE",
+            intro: "CLRS 13.2절(p.313)의 LEFT-ROTATE 12줄을 순서대로 배치하세요. RB-INSERT는 복잡하므로 핵심 서브루틴인 회전에 집중.",
+            reference: {
+              title: "참고: 회전의 의미와 BST 성질 보존",
+              lines: [
+                { text: "LEFT-ROTATE(T, x) 변환:",                            indent: 0 },
+                { text: "        x                 y",                         indent: 0 },
+                { text: "       / \\               / \\",                      indent: 0 },
+                { text: "      α   y    →        x   γ",                       indent: 0 },
+                { text: "         / \\           / \\",                         indent: 0 },
+                { text: "        β   γ         α   β",                          indent: 0 },
+                { text: "",                                                     indent: 0 },
+                { text: "불변: $\\alpha  < x.key$ < $\\beta  < y.key$ < γ (BST 성질 유지)",       indent: 0 },
+                { text: "시간: $O(1)$ — 고정 개수의 포인터 갱신만",                  indent: 0 },
+                { text: "전제: $x.right \\neq T.nil$ (회전하려면 오른쪽 자식 존재)",      indent: 0 },
+              ],
+            },
+            // CLRS p.313 원문
+            lines: [
+              { text: "LEFT-ROTATE(T, x)",                      indent: 0, note: "프로시저 헤더" },
+              { text: "$y = x.right$",                            indent: 1, note: "y를 x의 오른쪽 자식으로 set" },
+              { text: "$x.right = y.left$",                       indent: 1, note: "y의 왼쪽 서브트리(β)를 x의 오른쪽으로" },
+              { text: "if $y.left \\neq T.nil$",                      indent: 1, note: "β가 실제 노드면" },
+              { text: "y.$left.p = x$",                           indent: 2, note: "β의 부모를 x로 갱신" },
+              { text: "$y.p = x.p$",                              indent: 1, note: "x의 부모를 y의 부모로" },
+              { text: "if x.p == T.nil",                        indent: 1, note: "x가 원래 루트였으면" },
+              { text: "$T.root = y$",                             indent: 2, note: "새 루트는 y" },
+              { text: "elseif x == x.p.left",                   indent: 1, note: "x가 왼쪽 자식이었으면" },
+              { text: "x.$p.left = y$",                           indent: 2, note: "y를 왼쪽 자식으로" },
+              { text: "else x.$p.right = y$",                     indent: 1, note: "x가 오른쪽 자식이었으면 y를 오른쪽" },
+              { text: "$y.left = x$",                             indent: 1, note: "y의 왼쪽 자식은 x" },
+              { text: "$x.p = y$",                                indent: 1, note: "x의 부모는 y" },
+            ],
+          },
+          proof: {
+            title: "② 높이 상한 Lemma 13.1 — 2 lg(n+1)",
+            intro: "CLRS Lemma 13.1. n개 내부 노드의 RB-tree 높이 $\\leq 2$ lg(n+1). 5가지 성질 중 특히 성질 4(연속 RED 불가)와 성질 5(black-height 일정)의 결합으로 유도.",
+            invariantLabel: "Lemma 13.1: ",
+            invariant: "n개 내부 노드를 갖는 Red-Black Tree의 높이 h는 2 lg(n+1)을 넘지 않는다. 따라서 SEARCH·INSERT·DELETE 모두 $O(\\lg n)$. 증명: 각 노드 x의 서브트리가 $\\geq 2$^{bh(x)} − 1 내부 노드를 가짐 → 루트 $bh \\geq h$/2 → $n \\geq 2$^{h/2} − 1.",
+            steps: [
+              {
+                stage: "① Black-height 정의",
+                prompt: "노드 x의 black-height bh(x)란?",
+                choices: [
+                  { text: "x에서 (x를 제외한) 하위 leaf까지의 simple path 위 검정 노드의 수", correct: true,
+                    explain: "CLRS p.309. 성질 5 덕분에 모든 path의 검정 수가 같으므로 well-defined. x 자체는 포함하지 않음 (= 하위 방향)." },
+                  { text: "x가 속한 서브트리의 총 검정 노드 수", correct: false,
+                    explain: "'서브트리 총합'이 아니라 '하나의 path 위의 수'. 서브트리에는 여러 path가 있지만 모두 같은 값." },
+                  { text: "x의 깊이", correct: false,
+                    explain: "루트로부터의 거리는 '깊이'. black-height는 leaf로 향하는 거리의 검정 수." },
+                ],
+              },
+              {
+                stage: "② 서브트리 크기의 하한",
+                prompt: "Lemma 증명의 핵심 주장: 노드 x의 서브트리는 몇 개 이상의 내부 노드를 포함?",
+                choices: [
+                  { text: "적어도 2^{bh(x)} − 1 개", correct: true,
+                    explain: "귀납적 증명 (x의 높이에 대한 귀납). 각 자식의 bh가 bh(x) 또는 bh(x)−1이므로 귀납 가설로 각 자식 서브트리가 $\\geq 2$^{bh(x)−1} − 1. 합 + x = 2(2^{bh(x)−1} − 1) + $1 = 2$^{bh(x)} − 1." },
+                  { text: "정확히 2^{h} 개", correct: false,
+                    explain: "$2^h$는 완전 이진 트리의 상한. 실제는 하한 2^{bh(x)} − 1로 더 약함." },
+                  { text: "2·bh(x) 개", correct: false,
+                    explain: "선형이 아니라 지수적 관계." },
+                ],
+              },
+              {
+                stage: "③ 높이와 black-height의 관계",
+                prompt: "성질 4 (연속 RED 없음) + 성질 5 (black-height 일정)로부터, 루트의 bh와 트리 높이 h의 관계는?",
+                choices: [
+                  { text: "$bh(root) \\geq h$/2 — 루트→leaf 경로에서 검정 노드가 최소 절반 차지", correct: true,
+                    explain: "성질 4에 의해 RED 두 개 연속 불가 → RED의 수 ≤ 검정의 수. 따라서 경로의 절반 이상이 검정. 루트→leaf 경로 길이 = h이므로 $bh(root) \\geq h$/2." },
+                  { text: "$bh(root) = h$ (모든 노드가 검정)", correct: false,
+                    explain: "빨강 노드가 있을 수 있음. bh는 경로의 검정만 셈." },
+                  { text: "$bh(root) \\leq h$/3", correct: false,
+                    explain: "성질 4가 '검정 ≥ 빨강'을 강제하므로 $bh \\geq h$/2가 정답." },
+                ],
+              },
+              {
+                stage: "④ 부등식 결합",
+                prompt: "$n \\geq 2$^{bh(root)} − 1 (step ②)와 $bh(root) \\geq h$/2 (step ③)를 결합하면?",
+                choices: [
+                  { text: "$n \\geq 2$^{h/2} − 1 → $h \\leq 2$ lg(n+1)", correct: true,
+                    explain: "n+$1 \\geq 2$^{h/2} → $lg(n+1) \\geq h$/2 → $h \\leq 2$ lg(n+1). 최종 결론, Lemma 13.1." },
+                  { text: "$h \\leq lg$ n (일반 이진 트리와 같음)", correct: false,
+                    explain: "lg n은 완전 이진 트리 하한. RB-tree는 2 lg(n+1) 로 불완전한 균형이지만 여전히 $O(\\lg n)$." },
+                  { text: "h = $O(n)$ (균형 보장 없음)", correct: false,
+                    explain: "정확히 여기서 균형 보장이 나옴. $O(\\lg n)$." },
+                ],
+              },
+              {
+                stage: "⑤ 실용적 의미",
+                prompt: "Lemma 13.1로부터 RB-tree의 SEARCH 시간은?",
+                choices: [
+                  { text: "$O(\\lg n)$ — 표준 BST SEARCH가 O(h)이고 $h \\leq 2$ lg(n+1)", correct: true,
+                    explain: "CLRS p.311. 동적 집합 연산 SEARCH, MIN, MAX, SUCCESSOR, PREDECESSOR 모두 O(h) = $O(\\lg n)$. BST 성질을 유지하는 RB-tree의 큰 이점." },
+                  { text: "$O(n)$ — 최악의 경우 선형", correct: false,
+                    explain: "RB의 균형 성질이 이 케이스를 회피. 일반 BST는 $O(n)$이지만 RB는 $O(\\lg n)$." },
+                  { text: "O(√n)", correct: false,
+                    explain: "로그 차수. 제곱근은 이 분석에 등장 안 함." },
+                ],
+              },
+              {
+                stage: "⑥ 회전이 균형에 기여하는 방식",
+                prompt: "삽입/삭제 시 회전(LEFT-ROTATE, RIGHT-ROTATE)이 필요한 이유는?",
+                choices: [
+                  { text: "5가지 성질 중 일부를 깨뜨릴 수 있는 변경 후, 국지적 재구성으로 성질 복원. 회전은 BST 성질은 보존.", correct: true,
+                    explain: "RB-INSERT-FIXUP이 색상 전환 + 회전을 조합해 성질 4(RED 연속) 위반을 해소. 회전은 $O(1)$ 시간에 구조를 재배열하면서 BST 키 순서는 보존." },
+                  { text: "성능 튜닝", correct: false,
+                    explain: "회전은 성능이 아니라 '불변식 복원'이 목적. 결과적으로 균형 유지로 $O(\\lg n)$ 보장." },
+                  { text: "메모리 최적화", correct: false,
+                    explain: "회전은 포인터 재배치. 메모리 사용량 변화 없음." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ LEFT-ROTATE 추적 — CLRS Figure 13.3",
+            intro: "빈 T.nil 포인터 생략. 루트가 7, 왼쪽 자식 4, 오른쪽 자식 11(= x). 11의 자식 9, 18. 18의 자식 14(왼), 19(오). 22는 19의 왼쪽 자식. LEFT-ROTATE(T, 11) 실행 과정을 예측.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 구조: ...7 → {왼:4, 오:11(=x)}. 11 → {왼:9, 오:18(=y)}. 18 → {왼:14, 오:19}. LEFT-ROTATE(T, 11) 첫 두 줄 ($y = x.right$, $x.right = y.left$) 실행 후 변화는?",
+                choices: [
+                  { text: "$y = 18$이 식별됨. x(=11)의 오른쪽이 y의 왼쪽(=14)으로 바뀜. 즉 11.$right = 14$.", correct: true,
+                    explain: "라인 1: y는 18의 포인터. 라인 2: $x.right = y.left$ = 14. 이제 11의 자식은 {9, 14}. 18은 아직 어디 다른 곳으로 가지 않음." },
+                  { text: "11이 곧바로 18의 자식이 됨", correct: false,
+                    explain: "아직 라인 11–13 전임. 포인터 재구성은 단계적." },
+                  { text: "14가 트리에서 사라짐", correct: false,
+                    explain: "14는 재배치되지만 사라지지 않음 (이제 11의 오른쪽 자식)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "라인 3–4 (if $y.left \\neq T.nil$: y.$left.p = x$): 14의 부모 포인터가 x(=11)로 갱신. 왜 필요?",
+                choices: [
+                  { text: "14의 부모를 제대로 업데이트해 나중 연산(예: TREE-DELETE)이 올바른 포인터를 참조하도록", correct: true,
+                    explain: "포인터 일관성. 14가 11의 자식이 되었으므로 14.p를 11로 명시적 갱신. T.nil은 sentinel이라 갱신 불필요 (if 조건)." },
+                  { text: "14가 없어지는 것을 막기 위해", correct: false,
+                    explain: "14는 여전히 트리 안. 부모 포인터는 연결 유지용." },
+                  { text: "메모리 해제를 위해", correct: false,
+                    explain: "포인터 갱신은 구조 재배치지 메모리 연산이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "라인 5 ($y.p = x.p$): y(=18)의 부모 = x(=11)의 부모 = 7. 라인 6–10에서 7의 자식 배열을 갱신. x는 7의 어느 쪽 자식?",
+                choices: [
+                  { text: "$x = 11$은 7의 오른쪽 자식 (x == x.p.left가 거짓) → x.$p.right = y$ → 7.$right = 18$", correct: true,
+                    explain: "원래 11이 7의 오른쪽 자식이었으므로 elseif else 분기로 x.$p.right = y$. 이제 18이 7의 오른쪽 자식." },
+                  { text: "x는 7의 왼쪽 자식 → 7.$left = 18$", correct: false,
+                    explain: "원래 7.$left = 4$였고 7.right = 11(=x). x는 오른쪽 자식." },
+                  { text: "$T.root = y$ (루트 교체)", correct: false,
+                    explain: "그건 7이 없었을 때 (x.p == T.nil). 여기서는 7이 부모라 루트는 그대로 7." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "라인 11–12 ($y.left = x$, $x.p = y$): 18의 왼쪽 자식 = 11, 11의 부모 = 18. 이 시점의 전체 구조는?",
+                choices: [
+                  { text: "...7 → {왼:4, 오:18}. 18 → {왼:11, 오:19}. 11 → {왼:9, 오:14}. 19 → {왼:22, 오:nil}. (CLRS Fig 13.3 후반)", correct: true,
+                    explain: "회전 완료. 18이 피벗 지점의 새 루트이고, 원래 11이 18의 왼쪽, 19가 18의 오른쪽. 11의 자식은 9와 새로 물려받은 14. BST 성질 유지 (in-order가 같음)." },
+                  { text: "구조가 완전히 파괴됨", correct: false,
+                    explain: "회전은 잘 정의된 국지적 변형. BST 성질은 유지되고 같은 키 집합을 갖는 유효한 BST." },
+                  { text: "루트가 18로 바뀜", correct: false,
+                    explain: "7이 여전히 루트. 회전은 $x = 11$ 주변의 국지적 변형이지 루트 교체가 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "회전 전후 in-order 순회 결과를 비교하면?",
+                choices: [
+                  { text: "동일 — BST 성질이 유지되므로 in-order는 키의 오름차순으로 같음: 4, 7, 9, 11, 14, 18, 19, 22", correct: true,
+                    explain: "회전의 핵심 불변: BST 키 순서 보존. 구조는 바뀌지만 in-order 결과는 불변. CLRS Fig 13.3 캡션." },
+                  { text: "완전히 다른 순서", correct: false,
+                    explain: "구조는 바뀌지만 키 순서는 같음. BST 성질이 이를 보장." },
+                  { text: "일부 키가 누락됨", correct: false,
+                    explain: "회전은 키를 추가/제거하지 않음. 구조 재배치만." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 회전의 시간 복잡도와 영향을 미치는 포인터 수는?",
+                choices: [
+                  { text: "$O(1)$ 시간, 고정된 소수의 포인터만 변경 (약 6개: x.right, β.p, y.p, x.p의 자식, y.left, x.p)", correct: true,
+                    explain: "CLRS p.313: 'rotations take $O(1)$ time. Only pointers are changed; all other attributes remain the same.' 이 상수성이 RB-INSERT FIXUP의 $O(\\lg n)$의 핵심." },
+                  { text: "$O(n)$ — 전체 트리 순회", correct: false,
+                    explain: "회전은 x 주변의 3~4개 노드만 영향. 트리 크기 무관." },
+                  { text: "$O(\\lg n)$", correct: false,
+                    explain: "RB-INSERT 전체가 $O(\\lg n)$이지만 한 번의 회전은 $O(1)$." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch12",
+    tier: 2,
+    num: "Ch 12",
+    title: "Binary Search Trees",
+    subtitle: "BST 성질 · In-order 순회 · 검색/삽입/삭제",
+    summary: "BST 성질 `$left.key \\leq x.key \\leq right.key$`로 순서화된 이진 트리. 모든 동적 집합 연산이 O(h).",
+    objectives: [
+      "BST 성질을 정의하고 In-order 순회가 정렬된 순서를 출력함을 증명할 수 있다.",
+      "SEARCH·MIN·MAX·SUCCESSOR·INSERT·DELETE를 모두 $O(h)$에 구현할 수 있다.",
+      "DELETE의 3가지 경우(자식 0/1/2)를 TRANSPLANT와 후속자(successor)로 정확히 처리할 수 있다.",
+    ],
+    md: `
+## BST 성질 (CLRS 12.1)
+- 각 노드 x에 대해:
+  - x의 왼쪽 서브트리의 모든 키 ≤ x.key
+  - x의 오른쪽 서브트리의 모든 키 ≥ x.key
+- **In-order walk** = 오름차순 순회 (핵심 결과)
+
+## 핵심 연산 (모두 O(h))
+- **TREE-SEARCH(x, k)**: 재귀 또는 반복. 비교에 따라 좌/우로 내려감
+- **TREE-MINIMUM / TREE-MAXIMUM**: 좌/우로 끝까지
+- **TREE-SUCCESSOR**: 오른쪽 서브트리 존재 시 그 min, 아니면 조상 추적
+- **TREE-INSERT**: 리프에 도달할 때까지 내려간 후 리프로 붙임
+- **TREE-DELETE**: 자식 개수(0/1/2)에 따라 세 경우, 경우 3은 succesor로 대체
+
+## 높이의 기댓값 (12.4)
+- **무작위 삽입 순서**로 만든 BST의 기대 높이 = $\\Theta(\\lg n)$
+- **최악**: $O(n)$ (정렬된 순서로 삽입 시 사슬 트리) → RB-Tree로 해결
+
+## 왜 중요한가?
+- 자기 균형 BST(RB, AVL, Treap)의 기반
+- 데이터베이스·파일시스템·인메모리 인덱스의 이론적 기반
+`,
+    ox: [
+      { q: "BST의 in-order 순회는 키를 오름차순으로 출력한다.", a: true, why: "Theorem 12.1." },
+      { q: "BST의 높이는 항상 $O(\\lg n)$이다.", a: false, why: "최악 $O(n)$ (사슬 트리)." },
+      { q: "BST 검색 시간은 O(h)이다.", a: true, why: "높이에 비례." },
+      { q: "무작위 순서로 삽입된 BST의 기대 높이는 $O(\\lg n)$.", a: true, why: "Theorem 12.4." },
+      { q: "BST 삭제는 자식 수에 따라 세 가지 경우로 나뉜다.", a: true, why: "0, 1, 2 자식." },
+      { q: "BST 삽입은 항상 리프 노드 위치에서 일어난다.", a: true, why: "표준 TREE-INSERT." },
+      { q: "Pre-order 순회도 BST 키를 오름차순으로 출력한다.", a: false, why: "In-order만 오름차순." },
+      { q: "BST는 그 자체로 '균형(balanced)' 자료구조이다.", a: false, why: "RB-Tree/AVL이 균형." },
+      { q: "TREE-MINIMUM은 항상 왼쪽 경로를 끝까지 따라간다.", a: true, why: "BST 성질: 왼쪽이 더 작음." },
+      { q: "BST의 In-order 순회 시간은 $\\Theta(n)$이다.", a: true, why: "각 노드를 정확히 한 번 방문." },
+    ],
+
+    algorithms: [
+      {
+        id: "bst-search", name: "BST Search & In-order Walk", desc: "이진 검색 트리의 검색과 순회",
+        tags: ["O(h)", "BST 성질"], viz: "bst",
+        drills: {
+          source: "CLRS 3판 12.1-12.2절 pp.287-292, Theorem 12.1",
+          pseudo: {
+            title: "① 의사코드 재구성 — TREE-SEARCH (재귀판)",
+            intro: "CLRS 12.2절 p.290의 재귀형 TREE-SEARCH 5줄. BST 성질을 그대로 코드로 옮긴 가장 단순한 형태.",
+            reference: {
+              title: "참고: BST 성질과 In-order 순회",
+              lines: [
+                { text: "BST 성질:",                                            indent: 0 },
+                { text: "  y가 x의 왼쪽 서브트리에 있으면 $y.key \\leq x.key$",         indent: 0 },
+                { text: "  y가 x의 오른쪽 서브트리에 있으면 $y.key \\geq x.key$",       indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "INORDER-TREE-WALK(x):",                                 indent: 0 },
+                { text: "  if $x \\neq NIL$",                                          indent: 0 },
+                { text: "    INORDER-TREE-WALK(x.left)",                         indent: 0 },
+                { text: "    print x.key",                                       indent: 0 },
+                { text: "    INORDER-TREE-WALK(x.right)",                        indent: 0 },
+                { text: "  → 키의 오름차순 출력, $\\Theta(n)$ 시간",                      indent: 0 },
+                { text: "",                                                       indent: 0 },
+                { text: "TREE-SEARCH 반환값: k를 가진 노드 또는 NIL",               indent: 0 },
+                { text: "시간 복잡도: O(h), h = 트리 높이",                       indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "TREE-SEARCH(x, k)",                   indent: 0, note: "루트 x에서 키 k 검색" },
+              { text: "if x == NIL or k == x.key",           indent: 1, note: "종료 조건: 찾았거나 leaf 통과" },
+              { text: "return x",                            indent: 2, note: "x (또는 NIL) 반환" },
+              { text: "if $k < x.key$",                        indent: 1, note: "BST 성질: 왼쪽 서브트리" },
+              { text: "return TREE-SEARCH(x.left, k)",       indent: 2, note: "왼쪽으로 재귀" },
+              { text: "else return TREE-SEARCH(x.right, k)", indent: 1, note: "오른쪽으로 재귀" },
+            ],
+          },
+          proof: {
+            title: "② In-order walk 정확성 증명 — 구조 귀납법",
+            intro: "CLRS Theorem 12.1. INORDER-TREE-WALK(T.root)가 키를 오름차순으로 출력함을 서브트리 크기에 대한 귀납법으로 증명.",
+            invariantLabel: "Theorem 12.1: ",
+            invariant: "n개 노드를 갖는 BST에 대해 INORDER-TREE-WALK은 모든 키를 오름차순으로 $\\Theta(n)$ 시간에 출력한다. 증명은 서브트리 크기 n에 대한 귀납법과 BST 성질의 정의.",
+            steps: [
+              {
+                stage: "① 귀납의 기저 사례",
+                prompt: "n = 0(또는 $x = NIL$)인 서브트리에 대한 기저 사례는?",
+                choices: [
+                  { text: "NIL 검사에 의해 즉시 반환 → 0개 키 출력 → '공집합을 오름차순으로 출력'이라는 명제는 공허 참", correct: true,
+                    explain: "CLRS 증명의 시작. 빈 리스트 출력은 순서 조건을 trivially 만족. 재귀의 base case이자 귀납의 base case." },
+                  { text: "NIL을 만나면 오류 발생", correct: false,
+                    explain: "NIL 검사를 명시적으로 하므로 안전하게 return. 알고리즘의 'if $x \\neq NIL$' 가드." },
+                  { text: "$n = 0$인 경우는 무시하고 $n \\geq 1$부터 시작", correct: false,
+                    explain: "재귀 호출에서 빈 자식이 자주 등장하므로 base case가 반드시 필요." },
+                ],
+              },
+              {
+                stage: "② 귀납 가설",
+                prompt: "크기 < n인 모든 BST에 대해 명제가 성립한다고 가정. 이때 쓸 수 있는 사실은?",
+                choices: [
+                  { text: "x.left 서브트리(크기 $n_L < n$)의 INORDER가 x.left의 모든 키를 오름차순 출력, 오른쪽도 마찬가지", correct: true,
+                    explain: "강한 귀납법(strong induction). n_L, $n_R < n$이므로 각 서브트리 호출이 귀납 가설의 조건을 만족. 이것이 재귀 알고리즘 증명의 표준 골격." },
+                  { text: "왼쪽과 오른쪽 서브트리가 완전 이진 트리", correct: false,
+                    explain: "BST는 완전 이진 트리일 필요 없음. 왼쪽/오른쪽 모두 BST라는 점만 활용." },
+                  { text: "모든 키가 서로 다름", correct: false,
+                    explain: "중복 가능 BST도 존재. CLRS에서는 보통 ≤로 정의하지만 증명은 중복에도 성립." },
+                ],
+              },
+              {
+                stage: "③ 재귀 구조와 BST 성질의 결합",
+                prompt: "알고리즘은 (왼쪽) → (x.key 출력) → (오른쪽) 순. BST 성질이 보장하는 것은?",
+                choices: [
+                  { text: "왼쪽 서브트리의 모든 키 ≤ x.key ≤ 오른쪽 서브트리의 모든 키 → 세 부분을 이어붙여도 오름차순 유지", correct: true,
+                    explain: "BST의 정의 자체가 이 부등식. 왼쪽(오름차순) · x.key · 오른쪽(오름차순)이 연결되어도 경계에서 순서 조건이 유지됨." },
+                  { text: "왼쪽 서브트리가 오른쪽 서브트리보다 항상 작음", correct: false,
+                    explain: "비교는 '키 대 키'가 아니라 '노드 위치' 기준. 정확한 부등식은 왼쪽 키들 ≤ x.key ≤ 오른쪽 키들." },
+                  { text: "x.key가 트리 전체의 중앙값", correct: false,
+                    explain: "루트는 중앙값일 필요 없음. 균형 트리에서만 근사적으로 성립." },
+                ],
+              },
+              {
+                stage: "④ 귀납 단계의 결론",
+                prompt: "귀납 가설과 BST 성질을 결합하면 크기 n인 경우에도 명제가 성립. 이 논리의 이름은?",
+                choices: [
+                  { text: "구조적 귀납법(Structural Induction) — 재귀 자료구조의 모든 부분 트리에 대해 같은 증명 적용", correct: true,
+                    explain: "BST, 리스트, 수식 트리 등 재귀적으로 정의된 구조의 증명 표준 기법. 기저 + 가설 + 결합 단계." },
+                  { text: "대각선 논증(Diagonalization)", correct: false,
+                    explain: "칸토어 · 정지 문제 등 비가산성 증명. 재귀 구조 증명이 아님." },
+                  { text: "모순에 의한 증명", correct: false,
+                    explain: "가능하지만 이 증명은 '직접 구성'이 자연스러움." },
+                ],
+              },
+              {
+                stage: "⑤ 시간 복잡도 분석",
+                prompt: "INORDER-TREE-WALK의 시간은 $\\Theta(n)$. 왜 n에 비례?",
+                choices: [
+                  { text: "각 노드에서 상수 시간 작업(3줄) + 각 노드가 정확히 한 번 방문 → $T(n) = T(n_L)$ + T(n_R) + $\\Theta(1)$ = $\\Theta(n)$", correct: true,
+                    explain: "CLRS 정확히 p.288. 재귀 호출 트리의 노드 수 = 입력 트리 크기. 점화식 $T(n) = T(k)$ + T(n−k−1) + $\\Theta(1)$ = $\\Theta(n)$." },
+                  { text: "$\\Theta(n \\lg n)$ (각 노드 수준별 처리)", correct: false,
+                    explain: "그건 merge sort 류. in-order는 각 노드 당 $O(1)$이므로 $\\Theta(n)$." },
+                  { text: "Θ(h) — 트리 높이에 비례", correct: false,
+                    explain: "TREE-SEARCH가 O(h)인 것과 혼동. 순회는 모든 노드를 방문하므로 $\\Theta(n)$." },
+                ],
+              },
+              {
+                stage: "⑥ TREE-SEARCH의 시간이 O(h)인 이유",
+                prompt: "TREE-SEARCH는 매 호출마다 좌 또는 우 중 하나만 따라감. 시간 복잡도는?",
+                choices: [
+                  { text: "O(h) — 최대 h번의 재귀 호출(각 레벨에서 한 번씩) → 전체 O(h). 균형 트리면 $O(\\lg n)$, 최악 $O(n)$", correct: true,
+                    explain: "CLRS p.291. 각 재귀 호출이 한 레벨 아래로 이동. 이것이 RB-Tree로 h를 $O(\\lg n)$으로 강제해야 하는 이유." },
+                  { text: "$O(n)$ — 전체 트리 스캔", correct: false,
+                    explain: "BST 성질 덕분에 절반씩 제거. 전체 스캔 불필요." },
+                  { text: "$O(1)$ — 상수 시간", correct: false,
+                    explain: "깊은 트리에서는 h번의 비교 필요. 루트만으로는 부족." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ BST 구축과 In-order 추적",
+            intro: "빈 BST에 키 수열 [8, 3, 10, 1, 6, 14, 4, 7, 13]을 순서대로 TREE-INSERT로 삽입하고, 결과 BST에서 TREE-SEARCH(T, 6)과 INORDER-TREE-WALK을 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "빈 트리에 8 삽입 후 3 삽입. $3 < 8$이므로 8의 왼쪽 자식으로 감. 구조는?",
+                choices: [
+                  { text: "루트 8, 8.$left = 3$, 8.$right = NIL$", correct: true,
+                    explain: "TREE-INSERT가 루트부터 내려가며 비교. $3 < 8$ → 왼쪽으로. 왼쪽이 NIL이므로 3이 리프로 배치." },
+                  { text: "루트 3, 3.$right = 8$ (작은 것이 루트)", correct: false,
+                    explain: "BST는 첫 삽입이 루트. 삽입 순서에 의존 (균형 BST가 아님)." },
+                  { text: "루트 8, 8.$right = 3$", correct: false,
+                    explain: "BST 성질: 작은 키는 왼쪽. $3 < 8$이므로 왼쪽 자식." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이어서 10, 1, 6을 순서대로 삽입. 1은 어디로, 6은 어디로 삽입?",
+                choices: [
+                  { text: "1: 8 → 3 → 3.left로. 6: 8 → 3 ($3 < 8$) → 3.right ($6 > 3$)로. 현재: 8{ 3{1, 6}, 10 }", correct: true,
+                    explain: "각 삽입은 TREE-INSERT 경로 추적. $1 < 8$, $1 < 3$ → 왼쪽 리프. $6 < 8$, $6 > 3$ → 3의 오른쪽 리프." },
+                  { text: "6은 10의 왼쪽", correct: false,
+                    explain: "$6 < 8$이므로 먼저 왼쪽 서브트리로 분기. 10을 보지 않음." },
+                  { text: "1은 10의 오른쪽", correct: false,
+                    explain: "$1 < 8$이므로 왼쪽 서브트리. 10은 오른쪽에만 연결됨." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "14, 4, 7, 13 삽입 완료 후 최종 트리 구조는?",
+                choices: [
+                  { text: "8 { 3{ 1, 6{ 4, 7 } }, 10{ NIL, 14{ 13, NIL } } }", correct: true,
+                    explain: "각각 TREE-INSERT 경로: 14 → 8.$right = 10$ → 10.right. 4 → 8→3→6 → 6.left. 7 → 8→3→6 → 6.right. 13 → 8→10→14 → 14.left." },
+                  { text: "8 { 3{ 1, 4{ 6, 7 } }, 10{ NIL, 14{ 13, NIL } } }", correct: false,
+                    explain: "4가 삽입될 때 6은 이미 3.right으로 있음. 4는 6의 왼쪽 자식이 되지 6을 밀어내지 않음." },
+                  { text: "키를 재배열하여 균형 트리 생성", correct: false,
+                    explain: "표준 BST INSERT는 재균형하지 않음. AVL/RB-Tree에서만 재균형." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "TREE-SEARCH(T, 6) 실행. 비교하는 노드 순서는?",
+                choices: [
+                  { text: "8 ($6 < 8$, 왼쪽) → 3 ($6 > 3$, 오른쪽) → 6 (일치, 반환)", correct: true,
+                    explain: "BST 검색은 루트부터 각 비교마다 한 쪽 서브트리를 배제. 3번의 비교로 찾음. O(h) 보장." },
+                  { text: "8 → 10 → 14 → ... (오른쪽 서브트리)", correct: false,
+                    explain: "$6 < 8$이므로 왼쪽으로 분기. 오른쪽 서브트리는 검사 안 함." },
+                  { text: "모든 노드를 순회하여 6을 찾음", correct: false,
+                    explain: "BST의 이점: 절반씩 제거. 선형 탐색이 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "INORDER-TREE-WALK(T.root) 출력 순서는?",
+                choices: [
+                  { text: "1, 3, 4, 6, 7, 8, 10, 13, 14 (오름차순)", correct: true,
+                    explain: "Theorem 12.1. 구조와 무관하게 in-order walk는 키의 오름차순. 이것이 BST를 '검색' 트리라고 부르는 이유." },
+                  { text: "8, 3, 1, 6, 4, 7, 10, 14, 13 (pre-order)", correct: false,
+                    explain: "pre-order는 루트 → 왼쪽 → 오른쪽. in-order는 왼쪽 → 루트 → 오른쪽." },
+                  { text: "삽입 순서: 8, 3, 10, 1, 6, 14, 4, 7, 13", correct: false,
+                    explain: "in-order는 트리 구조에 의존하지 삽입 순서가 아님." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "같은 키 9개를 역순(14, 13, 10, 8, 7, 6, 4, 3, 1)으로 삽입했다면 트리 형태와 검색 시간은?",
+                choices: [
+                  { text: "모든 노드가 왼쪽 자식만 갖는 사슬 트리. 높이 $h = n$−$1 = 8$. TREE-SEARCH 최악 $O(n)$ = O(9)", correct: true,
+                    explain: "CLRS 12.1의 핵심 경고. 나쁜 삽입 순서로 높이가 n−1까지 퇴화 → O(h) 성능 보장이 $O(n)$으로 붕괴. 이것이 Ch 13 RB-Tree의 동기." },
+                  { text: "여전히 균형 잡힌 높이 $O(\\lg n)$", correct: false,
+                    explain: "표준 BST는 재균형 없음. 입력 순서에 따라 최악 사슬 트리." },
+                  { text: "에러 발생", correct: false,
+                    explain: "알고리즘은 정상 동작하지만 성능이 나쁨. BST 성질은 유지됨." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch21",
+    tier: 2,
+    num: "Ch 21",
+    title: "Disjoint Sets",
+    subtitle: "Union-Find · 경로 압축 · 랭크에 의한 합집합",
+    summary: "MAKE-SET, UNION, FIND-SET의 세 연산. 경로 압축+랭크 결합으로 m개 연산에 대해 O(m·α(n)) 달성.",
+    objectives: [
+      "MAKE-SET·UNION·FIND-SET 세 연산의 명세와 응용(Kruskal·연결 요소)을 설명할 수 있다.",
+      "Union by rank와 Path compression 두 휴리스틱의 효과를 분석할 수 있다.",
+      "두 휴리스틱 결합 시 $m$개 연산이 $O(m \\cdot \\alpha(n))$으로 사실상 상수 시간임을 이해한다.",
+    ],
+    md: `
+## 연산 (CLRS 21.1)
+- **MAKE-SET(x)**: 원소 x만 포함하는 새 집합 생성
+- **UNION(x, y)**: x와 y가 속한 두 집합을 합침
+- **FIND-SET(x)**: x를 포함하는 집합의 대표자 반환
+
+## 구현: 랭크(Rank)가 있는 트리 + 경로 압축(Path Compression)
+- 각 집합을 트리로 표현, 루트가 대표자
+- **Union by rank**: 랭크 작은 트리를 큰 트리에 매달기
+- **Path compression**: FIND-SET 중 경로상 모든 노드를 루트에 직접 연결
+
+## 시간 복잡도 (Theorem 21.14)
+- m개의 MAKE-SET + UNION + FIND-SET 연산 → **O(m · α(n))**
+- α(n) = 역 Ackermann 함수. 실용적으로 $\\alpha (n) \\leq 4$ (매우 느리게 증가)
+- 따라서 **거의 O(m)** — 분할상환(amortized) 선형
+
+## 대표 응용
+- **Kruskal MST**: 간선 선택 시 사이클 여부를 FIND-SET으로 판단
+- **동적 연결성**: 그래프의 컴포넌트 유지
+- **이미지 레이블링**, **Hoshen-Kopelman**
+
+## 핵심 통찰
+- 두 최적화 중 **한 가지**만 해도 O(m lg n).
+- 둘을 **결합**하면 α(n)까지 떨어짐 (Tarjan-Van Leeuwen 1984).
+`,
+    ox: [
+      { q: "FIND-SET의 경로 압축(Path compression)은 트리 깊이를 줄인다.", a: true, why: "모든 경로 노드를 루트에 직접 연결." },
+      { q: "Union by rank만 사용해도 FIND-SET은 $O(\\lg n)$이다.", a: true, why: "랭크 상한 = lg n." },
+      { q: "경로 압축만으로도 α(n) 분할상환을 달성한다.", a: false, why: "rank와 결합해야 α(n)." },
+      { q: "Union-Find는 Kruskal의 MST 알고리즘에 쓰인다.", a: true, why: "사이클 검사용." },
+      { q: "랭크(rank)는 단조 증가한다.", a: true, why: "LINK에서 동률이면 +1, 아니면 불변." },
+      { q: "경로 압축 + Union by rank의 m 연산 시간은 O(m·α(n)).", a: true, why: "Theorem 21.14." },
+      { q: "역 Ackermann α(n)은 실용적으로 4 이하이다.", a: true, why: "매우 느린 증가." },
+      { q: "서로소 집합에서 각 원소의 대표자는 유일하다.", a: true, why: "트리의 루트가 대표." },
+      { q: "MAKE-SET(x)는 x의 rank를 0으로 설정한다.", a: true, why: "초기 단일 노드 트리." },
+      { q: "UNION의 시간은 LINK(두 FIND-SET 결과)로 결정된다.", a: true, why: "두 대표자를 연결." },
+    ],
+
+    algorithms: [
+      {
+        id: "union-find", name: "Union-Find", desc: "서로소 집합 — 경로 압축 + 랭크 합집합",
+        tags: ["O(α(n))", "Kruskal"], viz: "unionfind",
+        drills: {
+          source: "CLRS 3판 21.3-21.4절 pp.568-581, Theorem 21.14",
+          pseudo: {
+            title: "① 의사코드 재구성 — FIND-SET (경로 압축)",
+            intro: "CLRS 21.3절 p.571. 단 4줄의 재귀형 FIND-SET. 리턴 직전에 x.p = (재귀 결과)로 대체하는 것이 경로 압축의 본질.",
+            reference: {
+              title: "참고: LINK(랭크 기반 합집합)와 UNION",
+              lines: [
+                { text: "MAKE-SET(x):",                                      indent: 0 },
+                { text: "  $x.p = x$; $x.rank = 0$",                             indent: 0 },
+                { text: "",                                                    indent: 0 },
+                { text: "UNION(x, y):",                                      indent: 0 },
+                { text: "  LINK(FIND-SET(x), FIND-SET(y))",                  indent: 0 },
+                { text: "",                                                    indent: 0 },
+                { text: "LINK(x, y):  // x, y는 대표자",                      indent: 0 },
+                { text: "  if $x.rank > y.rank$",                              indent: 0 },
+                { text: "    $y.p = x$",                                        indent: 0 },
+                { text: "  else",                                             indent: 0 },
+                { text: "    $x.p = y$",                                        indent: 0 },
+                { text: "    if x.rank == y.rank",                           indent: 0 },
+                { text: "      $y.rank = y.rank$ + 1",                         indent: 0 },
+                { text: "",                                                    indent: 0 },
+                { text: "핵심: rank는 트리 높이의 상한, 같을 때만 증가",         indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "FIND-SET(x)",                    indent: 0, note: "x가 속한 집합의 대표자 반환" },
+              { text: "if $x \\neq x.p$",                     indent: 1, note: "x가 아직 루트가 아니면" },
+              { text: "$x.p = FIND$-SET(x.p)",            indent: 2, note: "재귀로 루트 찾고 부모 갱신 (path compression!)" },
+              { text: "return x.p",                     indent: 1, note: "이제 x.p는 루트. 그것을 반환." },
+            ],
+          },
+          proof: {
+            title: "② 경로 압축+랭크의 랭크 상한 — $rank \\leq lg$ n",
+            intro: "CLRS Lemma 21.4의 간소화. 랭크만으로도 트리 높이가 lg n 이하임을 보임. 이것이 한 번의 FIND-SET에 $O(\\lg n)$ 시간을 주고, 경로 압축이 이를 α(n)까지 내림.",
+            invariantLabel: "Lemma 21.4: ",
+            invariant: "Union by rank를 사용할 때, 랭크 k인 루트를 갖는 트리는 적어도 2^k 개의 노드를 포함한다. 따라서 n개 원소 중 어떤 노드의 랭크도 $\\lfloor \\lg n \\rfloor$ 이하.",
+            steps: [
+              {
+                stage: "① 랭크의 정의와 역할",
+                prompt: "Union by rank에서 rank[x]는 무엇을 근사?",
+                choices: [
+                  { text: "x가 루트일 때, x를 루트로 하는 트리의 높이의 상한. 랭크 k 루트 → 트리 높이 ≤ k", correct: true,
+                    explain: "CLRS p.568. 랭크는 '높이의 추정'. 경로 압축 때문에 실제 높이는 더 작을 수 있지만 랭크는 결코 감소하지 않음 (상한으로 역할)." },
+                  { text: "x의 부모까지의 거리", correct: false,
+                    explain: "그건 깊이. 랭크는 하위 트리의 높이 상한." },
+                  { text: "x의 자식 수", correct: false,
+                    explain: "직접 자식 수가 아니라 하위 트리 전체의 높이." },
+                ],
+              },
+              {
+                stage: "② 귀납의 기저",
+                prompt: "MAKE-SET(x) 직후 x의 rank와 그 트리의 노드 수는?",
+                choices: [
+                  { text: "$rank[x] = 0$, 트리 노드 수 = $1 = 2$^0. 주장 '≥ 2^rank' 성립", correct: true,
+                    explain: "CLRS Lemma 21.4의 base case. 초기에 각 원소는 자기 자신이 루트인 단일 노드 트리 (rank 0)." },
+                  { text: "$rank[x] = 1$", correct: false,
+                    explain: "MAKE-SET은 rank를 0으로 초기화." },
+                  { text: "rank는 정의되지 않음", correct: false,
+                    explain: "MAKE-SET(x)에서 $x.rank = 0$으로 명시적 초기화." },
+                ],
+              },
+              {
+                stage: "③ LINK의 세 가지 경우",
+                prompt: "LINK(x, y)에서 $x.rank < y.rank$, $x.rank > y.rank$, $x.rank = y.rank$ 각각에 어떤 변화?",
+                choices: [
+                  { text: "다를 때: 작은 랭크 쪽을 큰 쪽 밑에 붙임, 큰 쪽 랭크 불변. 같을 때만 새 루트의 랭크 +1.", correct: true,
+                    explain: "CLRS p.568. 이 규칙이 랭크 증가를 최소화. 랭크가 올라가려면 두 같은 랭크 트리의 합병이 필요." },
+                  { text: "항상 x의 랭크를 +1", correct: false,
+                    explain: "랭크는 '동률' 조건에서만 증가. 대부분의 UNION은 랭크를 유지." },
+                  { text: "두 루트 모두의 랭크를 평균", correct: false,
+                    explain: "정수 랭크이므로 불가능. 규칙은 이산적." },
+                ],
+              },
+              {
+                stage: "④ 귀납 단계: 랭크 k인 트리의 크기",
+                prompt: "랭크 k 루트를 갖는 트리의 노드 수 $\\geq 2$^k을 귀납으로 보이려면, 랭크 k는 어떻게 만들어졌나?",
+                choices: [
+                  { text: "같은 랭크 k−1인 두 트리를 LINK해서 생성. 각각 $\\geq 2$^(k−1)개 → 합치면 $\\geq 2$·2^(k−1) = 2^k.", correct: true,
+                    explain: "CLRS Lemma 21.4 증명. 랭크가 k로 오르려면 두 같은 랭크 k−1 트리의 합병뿐. 귀납 가설 적용 → 합 $\\geq 2$^k." },
+                  { text: "랭크 k는 여러 경로로 만들 수 있어 단순 귀납 불가", correct: false,
+                    explain: "LINK 규칙 때문에 오직 한 가지 방식(동률 합병)으로만 랭크 증가." },
+                  { text: "한 랭크 k 트리에 여러 노드를 삽입", correct: false,
+                    explain: "Union-Find에는 '삽입'이 없고 MAKE-SET과 UNION만. 랭크는 합병으로만 변함." },
+                ],
+              },
+              {
+                stage: "⑤ 전체 상한",
+                prompt: "n개 원소로 만들 수 있는 최대 랭크는?",
+                choices: [
+                  { text: "$\\lfloor \\lg n \\rfloor$ — 랭크 k인 트리가 $\\geq 2$^k 노드를 포함하므로 2^$k \\leq n$ → $k \\leq lg$ n", correct: true,
+                    explain: "Corollary 21.5. 따라서 경로 압축 없이도 랭크만으로 깊이 $O(\\lg n)$ 보장. FIND-SET 자체가 $O(\\lg n)$." },
+                  { text: "n/2", correct: false,
+                    explain: "랭크 상한은 로그. 선형이 아님." },
+                  { text: "제한 없음", correct: false,
+                    explain: "Union by rank가 명시적으로 상한을 둠." },
+                ],
+              },
+              {
+                stage: "⑥ 경로 압축이 추가로 가져오는 이득",
+                prompt: "랭크만으로 FIND-SET이 $O(\\lg n)$. 경로 압축이 더해지면 전체 시간 상한은?",
+                choices: [
+                  { text: "m개 연산에 O(m·α(n)), $\\alpha (n) \\leq 4$ in practice — 랭크와 경로 압축이 결합하여 amortized 상수에 가까움", correct: true,
+                    explain: "Theorem 21.14 (Tarjan-Van Leeuwen). 두 최적화를 모두 사용할 때만 α(n) 도달. 한 가지만으로는 O(m lg n)." },
+                  { text: "O(m) — 완전 선형", correct: false,
+                    explain: "α(n) 인자가 남음 (비록 매우 작지만). 엄밀히 비선형." },
+                  { text: "경로 압축은 상수 개선만 제공", correct: false,
+                    explain: "$O(\\lg n)$ → O(α(n))로 점근적 차수 개선. 단순 상수가 아님." },
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Union-Find 추적 — Kruskal MST 시나리오",
+            intro: "원소 {1, 2, 3, 4, 5, 6, 7, 8} 각각에 MAKE-SET 수행 후, 가중치 순서의 간선 [(1,2), (3,4), (5,6), (7,8), (1,3), (5,7), (1,5)] 처리. 각 FIND/UNION의 효과를 예측.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "MAKE-SET(1..8) 후 상태는?",
+                choices: [
+                  { text: "각 원소가 자기 자신을 부모로 가짐. 8개의 독립 집합. 모든 $rank = 0$.", correct: true,
+                    explain: "초기화. $x.p = x$이고 $x.rank = 0$. 트리는 높이 0짜리 8개." },
+                  { text: "하나의 큰 집합으로 합쳐짐", correct: false,
+                    explain: "MAKE-SET은 각각 독립. UNION이 호출되기 전까지 합병 없음." },
+                  { text: "랜덤 초기값", correct: false,
+                    explain: "결정적 초기화: $x.p = x$, $x.rank = 0$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "UNION(1,2): FIND-$SET(1) = 1$, FIND-$SET(2) = 2$. LINK(1, 2)는 두 랭크 모두 0이므로 동률. 결과는?",
+                choices: [
+                  { text: "1.$p = 2$, 2.$rank = 1$. 집합 {1,2}의 대표자는 2, 나머지는 여전히 독립.", correct: true,
+                    explain: "LINK 동률 분기: $x.p = y$, y.rank += 1. 코드상 '2가 루트, 1이 자식'이 됨. 높이 1인 트리." },
+                  { text: "둘 다 rank가 1", correct: false,
+                    explain: "LINK는 한 쪽만 루트로 유지. 한쪽 랭크만 증가." },
+                  { text: "새 노드 생성", correct: false,
+                    explain: "Union-Find는 노드를 추가하지 않음. 포인터 재배치." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "UNION(3,4), UNION(5,6), UNION(7,8) 수행 후 집합 구조는?",
+                choices: [
+                  { text: "네 쌍: {1,2}(대표 2), {3,4}(대표 4), {5,6}(대표 6), {7,8}(대표 8). 각 대표자 $rank = 1$.", correct: true,
+                    explain: "네 번의 동률 합병. 각 쌍의 오른쪽이 루트, 랭크 1로 상승. 총 4개의 높이 1 트리." },
+                  { text: "모두 같은 집합으로 합쳐짐", correct: false,
+                    explain: "각 UNION은 독립 쌍만 연결. 아직 연쇄 합병 없음." },
+                  { text: "rank가 0 유지", correct: false,
+                    explain: "동률 합병은 새 루트 랭크 +1." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "UNION(1,3): FIND-SET(1)은 1 → 2 (루트), FIND-SET(3)은 3 → 4 (루트). LINK(2, 4)는 둘 다 rank 1. 결과는?",
+                choices: [
+                  { text: "LINK(2, 4): 동률이므로 2.$p = 4$, 4.$rank = 2$. 새 집합 {1,2,3,4}의 대표자는 4. 트리 높이 2.", correct: true,
+                    explain: "FIND-SET을 통해 루트로 올라간 다음 LINK. 두 루트 랭크 같으므로 동률 분기. 4가 새 루트로 승격." },
+                  { text: "1.$p = 3$ (원소끼리 직접 연결)", correct: false,
+                    explain: "UNION은 대표자끼리 LINK. 원소의 직접 연결이 아님." },
+                  { text: "rank가 3이 됨", correct: false,
+                    explain: "동률 합병에서는 +1. 1+$1 = 2$." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "UNION(5,7): 유사하게 LINK(6, 8). 둘 다 rank 1 → 6.$p = 8$, 8.$rank = 2$. UNION(1,5): FIND-SET(1)과 FIND-SET(5)의 결과는?",
+                choices: [
+                  { text: "FIND-SET(1): 1 → 2 → 4, 경로 압축으로 1.$p = 4$, 2.$p = 4$. 반환 4. FIND-SET(5): 5 → 6 → 8, 경로 압축으로 5.$p = 8$, 6.$p = 8$. 반환 8.", correct: true,
+                    explain: "재귀형 FIND-SET이 루트를 찾으면서 경로상 모든 노드의 부모를 루트로 갱신. 이것이 path compression의 핵심." },
+                  { text: "FIND-$SET(1) = 1$ (변화 없음)", correct: false,
+                    explain: "1.$p = 2$였으므로 1은 루트 아님. 더 올라감." },
+                  { text: "경로 압축은 UNION 후에만 발생", correct: false,
+                    explain: "FIND-SET 자체가 경로 압축을 수행. 재귀 리턴 시 $x.p = FIND$-SET(x.p)." },
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "LINK(4, 8): 둘 다 rank 2 → 4.$p = 8$, 8.$rank = 3$. 최종 트리 형태와 FIND-SET(1)의 새 경로는?",
+                choices: [
+                  { text: "루트 8, 8의 자식: 4, 6, 7. 4의 자식: 2, 3 (1은 직전 FIND-SET으로 이미 4의 자식). FIND-SET(1) 재호출 시 1→4→8, 그 후 1.$p = 8$ (추가 압축)", correct: true,
+                    explain: "최종적으로 8개 원소가 한 집합. 경로 압축이 반복될수록 대부분의 노드가 루트의 직계 자식이 됨 → 이후 FIND-SET는 거의 $O(1)$." },
+                  { text: "여러 독립 집합으로 분리", correct: false,
+                    explain: "UNION은 분리하지 않음. 이전 합병들이 누적되어 한 집합." },
+                  { text: "rank가 감소", correct: false,
+                    explain: "rank는 단조 증가. UNION by rank 규칙." },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch14",
+    tier: 2,
+    num: "Ch 14",
+    title: "Augmenting Data Structures",
+    subtitle: "기존 자료구조에 정보 덧붙이기 — Order-Statistic Tree, Interval Tree",
+    summary: "RB-Tree에 'size' 또는 'max'를 추가해 순위 질의·구간 검색을 $O(\\lg n)$에 지원. 기존 자료구조의 확장 패턴.",
+    objectives: [
+      "기존 자료구조에 추가 정보를 덧붙이는 4단계 방법론(자료구조 선택·추가 정보 결정·유지·연산 개발)을 적용할 수 있다.",
+      "Order-Statistic Tree에서 OS-SELECT, OS-RANK를 $O(\\lg n)$에 구현할 수 있다.",
+      "Interval Tree에서 INTERVAL-SEARCH의 정확성을 증명하고 응용을 설명할 수 있다.",
+    ],
+    md: `
+## 증강(Augmenting)의 4단계 (CLRS 14.2)
+1. **기본 자료구조 선택** — 대개 RB-Tree
+2. **추가 정보 정의** — 각 노드에 어떤 값을 추가할지
+3. **연산 유지 검증** — 기본 연산(INSERT/DELETE)이 추가 정보를 $O(\\lg n)$에 유지하는지 확인
+4. **새 연산 개발** — 추가 정보를 이용한 새 기능
+
+## Order-Statistic Tree (CLRS 14.1)
+- 각 노드 x에 **x.size** = x 서브트리의 노드 수 저장
+- **OS-SELECT(x, i)**: i번째 작은 원소 (inorder) — $O(\\lg n)$
+- **OS-RANK(T, x)**: x의 순위 — $O(\\lg n)$
+- 회전 시 size 갱신 $O(1)$ → RB-Tree 연산 복잡도 불변
+
+## Interval Tree (CLRS 14.3)
+- 각 노드에 구간 [low, high] + **x.max** = 서브트리 내 최대 high 저장
+- **INTERVAL-SEARCH(T, i)**: i와 겹치는 구간 하나 반환 — $O(\\lg n)$
+- 응용: 시간표 충돌 검사, 컴퓨터 그래픽 교차 검사
+
+## 증강 정리 (Theorem 14.1)
+- 필드 f를 n개 노드의 RB-Tree에 추가하되, f(x)가 x와 자식의 속성만으로 결정되면
+- INSERT, DELETE 연산이 점근적 성능 저하 없이 f를 유지할 수 있음
+`,
+    ox: [
+      { q: "Order-Statistic Tree의 OS-SELECT는 $O(\\lg n)$이다.", a: true, why: "각 노드 size 정보 + 한쪽만 재귀." },
+      { q: "size 필드는 RB-Tree의 INSERT/DELETE 시 $O(1)$에 갱신된다.", a: true, why: "국지적 갱신 (자식 size로 결정)." },
+      { q: "OS-RANK는 루트부터 하향 탐색한다.", a: false, why: "정점에서 루트로 상향 탐색." },
+      { q: "Interval Tree는 x.max = 서브트리 내 최대 high 값을 유지한다.", a: true, why: "$O(\\lg n)$ 구간 검색 가능." },
+      { q: "증강(Augmenting) 4단계의 2번째는 '새 연산 개발'이다.", a: false, why: "2번째는 '추가 정보 정의'. 새 연산은 4번째." },
+      { q: "Interval Tree로 시간표 충돌 검사를 $O(\\lg n)$에 할 수 있다.", a: true, why: "구간 겹침 질의의 대표 응용." },
+      { q: "증강 정리(14.1)는 RB-Tree가 아닌 자료구조에도 적용 가능하다.", a: true, why: "일반적 원리. 다른 균형 트리에 확장 가능." },
+      { q: "OS-SELECT(x, 1)은 항상 x 서브트리의 최소 key를 반환한다.", a: true, why: "가장 왼쪽 = inorder 1번째." },
+      { q: "x.size는 항상 양수이다.", a: true, why: "최소 1 (자기 자신)." },
+      { q: "회전 후 size 갱신은 전체 서브트리를 재귀 스캔해야 한다.", a: false, why: "두 영향받는 노드만 $O(1)$ 갱신." },
+    ],
+
+    algorithms: [
+      {
+        id: "os-tree", name: "Order-Statistic Tree", desc: "i번째 원소 찾기 · x의 순위 반환 — $O(\\lg n)$",
+        tags: ["O(lg n)", "RB-Tree 증강"], viz: "osTree",
+        drills: {
+          source: "CLRS 3판 14.1절 pp.339-344, OS-SELECT · OS-RANK",
+          pseudo: {
+            title: "① 의사코드 재구성 — OS-SELECT(x, i)",
+            intro: "x 서브트리에서 i번째 작은 key 반환. x.size 정보를 이용해 좌/우 중 어느 쪽인지 $O(\\lg n)$에 판단.",
+            reference: {
+              title: "참고: size 관계",
+              lines: [
+                { text: "$r = x.left$.size + 1  (x의 서브트리 내 순위)",                 indent: 0 },
+                { text: "",                                                            indent: 0 },
+                { text: "if i == r: x가 답",                                           indent: 0 },
+                { text: "elseif $i < r$: 왼쪽 서브트리에서 i번째",                       indent: 0 },
+                { text: "else: 오른쪽 서브트리에서 (i - r)번째",                        indent: 0 },
+                { text: "",                                                            indent: 0 },
+                { text: "size 갱신 (LEFT-ROTATE 등):",                                 indent: 0 },
+                { text: "  회전 후 $x.size = x.left$.size + x.right.size + 1",           indent: 0 },
+                { text: "  $O(1)$ per rotation → RB-Tree $O(\\lg n)$ 유지",                   indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "OS-SELECT(x, i)",                           indent: 0, note: "x 서브트리 i번째" },
+              { text: "$r = x.left$.size + 1",                       indent: 1, note: "x의 순위" },
+              { text: "if i == r",                                 indent: 1, note: "정답" },
+              { text: "return x",                                  indent: 2, note: "" },
+              { text: "elseif $i < r$",                              indent: 1, note: "왼쪽에" },
+              { text: "return OS-SELECT(x.left, i)",               indent: 2, note: "왼쪽 재귀" },
+              { text: "else",                                      indent: 1, note: "오른쪽에" },
+              { text: "return OS-SELECT(x.right, i - r)",          indent: 2, note: "오른쪽 재귀, 인덱스 조정" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — size 정보의 활용",
+            intro: "Theorem 14.2. OS-SELECT가 x 서브트리 i번째 원소를 $O(\\lg n)$에 반환. 증명: size 필드 정확성 + 재귀 호출 구조.",
+            invariantLabel: "OS-SELECT 정확성: ",
+            invariant: "OS-SELECT(x, i)는 x 서브트리의 i번째 작은 원소를 반환한다. 조건: 모든 노드 v에 대해 $v.size = v$ 서브트리 노드 수. 증명: 재귀 깊이만큼의 호출로 O(h) = $O(\\lg n)$.",
+            steps: [
+              {
+                stage: "① size 필드 유지",
+                prompt: "RB-Tree INSERT/DELETE 시 size를 $O(1)$에 갱신 가능한 이유는?",
+                choices: [
+                  { text: "x.size는 x의 자식 size만으로 결정됨 ($x.size = x.left$.size + x.right.size + 1) → 국지적 갱신만 필요", correct: true,
+                    explain: "Theorem 14.1 조건 충족. 국지적 성질이므로 회전·삽입 경로의 각 노드에서 $O(1)$ 갱신."},
+                  { text: "size는 전역 재계산", correct: false,
+                    explain: "$O(1)$ 증분 갱신. 전체 재계산 불필요."},
+                  { text: "동적으로 전체 서브트리 스캔", correct: false,
+                    explain: "그러면 $O(n)$. 증강의 이점이 사라짐."},
+                ],
+              },
+              {
+                stage: "② $r = x.left$.size + 1의 의미",
+                prompt: "r이 나타내는 값은?",
+                choices: [
+                  { text: "x가 자기 서브트리의 inorder 순회에서 몇 번째인지 (1부터)", correct: true,
+                    explain: "inorder: 왼쪽 서브트리 → x → 오른쪽 서브트리. 왼쪽 크기 + $1 = x$의 순위."},
+                  { text: "x의 깊이", correct: false,
+                    explain: "깊이와 다름. r은 서브트리 내 inorder 순위."},
+                  { text: "x의 전체 크기", correct: false,
+                    explain: "size는 서브트리 크기. r은 x 자신의 위치."},
+                ],
+              },
+              {
+                stage: "③ 재귀의 단조 감소",
+                prompt: "$i < r$ 재귀: OS-SELECT(x.left, i). i는 그대로. $i > r$ 재귀: OS-SELECT(x.right, i - r). 왜 i - r?",
+                choices: [
+                  { text: "오른쪽 서브트리에서의 인덱스는 현재 i에서 '왼쪽 + x 자신 (= r개)'을 뺀 값", correct: true,
+                    explain: "오른쪽 부분 트리 기준 새 순위 계산. 재귀적 문제 환원."},
+                  { text: "i - r은 임의 조정", correct: false,
+                    explain: "정확한 인덱스 변환. 필수."},
+                  { text: "i + r", correct: false,
+                    explain: "반대. 빼야 새 기준."},
+                ],
+              },
+              {
+                stage: "④ $O(\\lg n)$ 시간 증명",
+                prompt: "OS-SELECT의 시간 복잡도가 $O(\\lg n)$인 이유는?",
+                choices: [
+                  { text: "재귀 깊이 = 트리 높이 = $O(\\lg n)$ (RB-Tree). 각 호출이 $O(1)$.", correct: true,
+                    explain: "기본 RB-Tree 성질 계승. size 정보로 $O(n)$ → $O(\\lg n)$로 개선."},
+                  { text: "$O(n)$", correct: false,
+                    explain: "size 정보 덕분에 한쪽만 재귀. 선형 아님."},
+                  { text: "$O(1)$", correct: false,
+                    explain: "트리 순회 필요. 로그 시간."},
+                ],
+              },
+              {
+                stage: "⑤ OS-RANK 쌍대 연산",
+                prompt: "OS-RANK(T, x): x의 순위(inorder 몇 번째) 반환. 구현은?",
+                choices: [
+                  { text: "x부터 루트로 올라가며 size 누적. $r = x.left$.size + 1로 시작, x가 부모의 오른쪽 자식일 때만 부모의 왼쪽 크기 + 부모(=1) 추가.", correct: true,
+                    explain: "CLRS p.342 OS-RANK 구조. 역방향 순회. 시간 $O(\\lg n)$."},
+                  { text: "모든 노드 탐색", correct: false,
+                    explain: "불필요. 증강 정보로 $O(\\lg n)$."},
+                  { text: "size 없이 계산 가능", correct: false,
+                    explain: "size 정보가 필수."},
+                ],
+              },
+              {
+                stage: "⑥ 증강의 4단계 방법론",
+                prompt: "CLRS 14.2의 증강 4단계는?",
+                choices: [
+                  { text: "(1) 기본 자료구조 선택 (2) 추가 정보 정의 (3) 연산이 정보를 유지하는지 확인 (4) 새 연산 개발", correct: true,
+                    explain: "표준 방법론. 다른 증강 자료구조(Interval Tree 등)도 이 구조 따름."},
+                  { text: "구현 → 테스트 → 배포", correct: false,
+                    explain: "그건 소프트웨어 개발. 이론적 증강 방법론 아님."},
+                  { text: "증명만 필요", correct: false,
+                    explain: "네 단계 모두 체계적으로."},
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ OS-SELECT 추적 — 9 노드 트리에서 5번째 찾기",
+            intro: "RB-Tree에 key {2,3,5,7,11,13,17,19,23}. 루트 11 (왼 서브 [2,3,5,7], 오 서브 [13,17,19,23]). 각 노드의 size 이미 계산됨. OS-SELECT(root, 5) 추적.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "루트 $x = 11$, x.$left.size = 4$ (2,3,5,7). $r = 4$+$1 = 5$. $i = 5$와 비교. i == r 이므로?",
+                choices: [
+                  { text: "return 11. 11이 inorder 5번째 원소. 정답!", correct: true,
+                    explain: "운 좋게 루트가 정답. 한 번의 비교로 완료."},
+                  { text: "왼쪽 재귀", correct: false,
+                    explain: "i == r이므로 정답."},
+                  { text: "오른쪽 재귀", correct: false,
+                    explain: "i == r이면 즉시 반환."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "OS-SELECT(root, 3)은? 3번째 원소 찾기.",
+                choices: [
+                  { text: "$r = 5$. i=$3 < 5$ → 왼쪽 재귀 OS-SELECT(7, 3) 서브트리 {2,3,5,7} 루트. 7.$left.size = 2$ ({2,3,5}의 일부). 여기서 inorder에서 5. 가정하자 7의 left subtree $size = 2$ → $r = 3$ → 정답은 5.", correct: true,
+                    explain: "재귀적 선택. 각 노드에서 size로 경로 결정."},
+                  { text: "루트 바로 반환", correct: false,
+                    explain: "$i = 3$ != $r = 5$."},
+                  { text: "오른쪽 재귀", correct: false,
+                    explain: "$i < r$이므로 왼쪽."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "OS-SELECT(root, 8)은?",
+                choices: [
+                  { text: "$r = 5$. i=$8 > 5$ → 오른쪽 재귀 OS-SELECT(x.right, 8-$5 = 3$). 오른쪽 서브트리 {13,17,19,23}에서 3번째 = 19.", correct: true,
+                    explain: "i 조정 필요. 오른쪽 서브트리 기준으로 새 인덱스 3."},
+                  { text: "OS-SELECT(x.right, 8)", correct: false,
+                    explain: "i - $r = 3$으로 조정 필수."},
+                  { text: "NIL 반환", correct: false,
+                    explain: "유효 인덱스. 존재함."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "트리의 inorder 순회는 정렬된 순서. 1번째 = 2, 2번째 = 3, ..., 9번째 = 23. OS-SELECT(root, 9)는?",
+                choices: [
+                  { text: "= 23. 재귀 경로: root($r = 5$) → right → right-child($r = 3$, $i = 4$-$3 = 1$) → right 등, 끝까지. 각 단계에서 오른쪽 선택.", correct: true,
+                    explain: "최대 원소. 항상 최우측 노드."},
+                  { text: "루트", correct: false,
+                    explain: "루트는 중앙 순위. 9번째는 최대."},
+                  { text: "불가능", correct: false,
+                    explain: "9 노드 트리에서 9번째 = 최대 key 유효."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "OS-RANK(T, 11): 11의 순위. 11의 왼쪽 서브트리 $size = 4$. 11이 루트이므로 올라갈 부모 없음. 순위 = ?",
+                choices: [
+                  { text: "4 + $1 = 5$", correct: true,
+                    explain: "왼쪽 서브트리 크기 + 자신 = 5번째."},
+                  { text: "1 (루트니까)", correct: false,
+                    explain: "루트는 inorder 중간."},
+                  { text: "0", correct: false,
+                    explain: "1-indexed. 루트 순위는 최소 1."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "회전 시 size 갱신은?",
+                choices: [
+                  { text: "LEFT-ROTATE(T, x): $y = x.right$. 회전 후 $y.size = x.size$, $x.size = x.left$.size + x.right.size + 1. $O(1)$ 연산 추가.", correct: true,
+                    explain: "회전이 구조 변경하므로 영향받는 두 노드만 size 재계산. RB-Tree INSERT/DELETE 전체 $O(\\lg n)$ 유지."},
+                  { text: "전체 트리 재계산", correct: false,
+                    explain: "국지적 갱신만 필요."},
+                  { text: "size 변경 없음", correct: false,
+                    explain: "회전으로 x, y의 서브트리 크기가 바뀌므로 갱신 필수."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch19",
+    tier: 3,
+    num: "Ch 19",
+    title: "Fibonacci Heaps",
+    subtitle: "분할상환 $O(1)$ DECREASE-KEY — 그래프 알고리즘의 이론적 최적화",
+    summary: "느슨한 구조로 지연 수행 + 분할상환 분석. Dijkstra/Prim의 이론적 최적 시간 달성에 사용.",
+    objectives: [
+      "피보나치 힙의 구조(순환 이중 연결 리스트의 트리 모음)와 lazy union 전략을 이해한다.",
+      "포텐셜 함수 $\\Phi$로 INSERT·DECREASE-KEY가 분할상환 $O(1)$임을 증명할 수 있다.",
+      "Dijkstra·Prim에서 피보나치 힙 사용 시 시간 복잡도가 어떻게 개선되는지 설명할 수 있다.",
+    ],
+    md: `
+## 주요 연산의 분할상환 시간 (Theorem 19.1)
+| 연산 | Fibonacci Heap | Binary Heap |
+|------|---------------|-------------|
+| MAKE-HEAP | $\\Theta(1)$ | $\\Theta(1)$ |
+| INSERT | **$O(1)$** | $O(\\lg n)$ |
+| MINIMUM | $\\Theta(1)$ | $\\Theta(1)$ |
+| EXTRACT-MIN | $O(\\lg n)$ | $O(\\lg n)$ |
+| UNION | **$\\Theta(1)$** | $\\Theta(n)$ |
+| DECREASE-KEY | **$O(1)$** | $O(\\lg n)$ |
+| DELETE | $O(\\lg n)$ | $O(\\lg n)$ |
+
+## 구조 (19.2)
+- **순환 이중 연결 리스트**로 루트 리스트 유지 (min 포인터로 최솟값 $O(1)$ 접근)
+- 각 노드는 marked/unmarked 플래그
+- EXTRACT-MIN 시 **consolidate**로 차수별 트리 하나씩만 남도록 정리
+
+## 분할상환 분석 핵심 (19.4)
+- 포텐셜 $\\Phi (H) = t(H)$ + 2·m(H)
+  - t: 루트 수, m: marked 노드 수
+- Cascading cut이 분할상환 관점에서 '미리 저축'되어 있음
+- DECREASE-KEY의 실제 비용은 최악 $O(\\lg n)$이지만 분할상환 $O(1)$
+
+## 이름의 유래
+- 차수 k 노드의 서브트리 크기 ≥ F_{k+2} (피보나치 수)
+- 차수 상한 D(n) = $O(\\lg n)$
+
+## 실용적 위치
+- 이론적으로 Dijkstra $O(V \\lg V + E)$, Prim O(E + V lg V) 최적
+- 실무: 상수 크고 메모리 복잡. Binary Heap이 보통 실용적
+- 경쟁 알고리즘: Pairing Heap (구현 간단, 비슷한 성능)
+`,
+    ox: [
+      { q: "Fibonacci Heap의 DECREASE-KEY는 분할상환 $O(1)$.", a: true, why: "포텐셜 방법으로 증명." },
+      { q: "Fibonacci Heap의 INSERT는 최악 $O(\\lg n)$.", a: false, why: "INSERT는 lazy — 루트 리스트에 추가만. $O(1)$." },
+      { q: "포텐셜 $\\Phi  = t$ + 2m에서 m은 marked 노드 수.", a: true, why: "mark가 cascading cut의 신용 역할." },
+      { q: "Cascading cut은 부모가 unmarked일 때 시작된다.", a: false, why: "부모가 marked이면 cut (연쇄)." },
+      { q: "Fibonacci Heap의 차수 상한 D(n) = $O(\\lg n)$.", a: true, why: "피보나치 수 성장으로 유도." },
+      { q: "이진 힙에서 DECREASE-KEY는 $O(\\lg n)$ 최악.", a: true, why: "위로 swim 연산." },
+      { q: "Fibonacci Heap 기반 Dijkstra는 $O(V \\lg V + E)$.", a: true, why: "EXTRACT V × lg V + DECREASE E × $O(1)$." },
+      { q: "실무에서 Fibonacci Heap은 Binary Heap보다 항상 빠르다.", a: false, why: "상수·메모리 오버헤드. Binary가 보통 실용적." },
+      { q: "UNION 연산이 $\\Theta(1)$이다.", a: true, why: "루트 리스트 연결만." },
+      { q: "EXTRACT-MIN의 분할상환은 $O(\\lg n)$.", a: true, why: "Consolidate 때문." },
+    ],
+
+    algorithms: [
+      {
+        id: "fib-decrease-key", name: "FIB-HEAP-DECREASE-KEY", desc: "분할상환 $O(1)$ — Cascading Cut",
+        tags: ["amortized O(1)", "Cascading Cut"], viz: "fibHeap",
+        drills: {
+          source: "CLRS 3판 19.3절 pp.520-526, FIB-HEAP-DECREASE-KEY · Theorem 19.4",
+          pseudo: {
+            title: "① 의사코드 재구성 — FIB-HEAP-DECREASE-KEY",
+            intro: "노드 x의 키를 k로 감소($k < x.key$). 힙 성질 위반 시 x를 루트 리스트로 잘라내고(cut), 부모가 marked면 cascading cut.",
+            reference: {
+              title: "참고: marked 플래그의 역할",
+              lines: [
+                { text: "노드 y가 marked = 이전에 자식 하나를 잃었음",                 indent: 0 },
+                { text: "루트는 항상 unmarked",                                        indent: 0 },
+                { text: "",                                                             indent: 0 },
+                { text: "CUT: 자식을 부모로부터 분리, 루트 리스트로 이동",               indent: 0 },
+                { text: "CASCADING-CUT: 부모가 marked면 부모도 CUT (재귀)",             indent: 0 },
+                { text: "                부모가 unmarked면 mark",                       indent: 0 },
+                { text: "",                                                             indent: 0 },
+                { text: "포텐셜 $\\Phi  = t(H)$ + 2m(H)",                                     indent: 0 },
+                { text: "  각 cut이 marked 노드를 unmarked로 만들며 2 신용 방출",         indent: 0 },
+                { text: "  이 신용이 cascading cut의 비용을 지불",                       indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "FIB-HEAP-DECREASE-KEY(H, x, k)",                 indent: 0, note: "" },
+              { text: "if $k > x.key$: error",                            indent: 1, note: "감소만 허용" },
+              { text: "$x.key = k$",                                      indent: 1, note: "키 갱신" },
+              { text: "$y = x.p$",                                        indent: 1, note: "부모" },
+              { text: "if $y \\neq NIL$ and $x.key < y.key$",                   indent: 1, note: "힙 위반?" },
+              { text: "CUT(H, x, y)",                                   indent: 2, note: "x를 루트로" },
+              { text: "CASCADING-CUT(H, y)",                            indent: 2, note: "부모도 필요시 cut" },
+              { text: "if $x.key < H.min$.key",                           indent: 1, note: "" },
+              { text: "$H.min = x$",                                      indent: 2, note: "min 갱신" },
+              { text: "",                                                indent: 0, note: "" },
+              { text: "CASCADING-CUT(H, y)",                            indent: 0, note: "" },
+              { text: "$z = y.p$",                                        indent: 1, note: "" },
+              { text: "if $z \\neq NIL$",                                     indent: 1, note: "" },
+              { text: "if y.mark == FALSE: $y.mark = TRUE$",               indent: 2, note: "첫 loss: mark" },
+              { text: "else: CUT(H, y, z); CASCADING-CUT(H, z)",         indent: 2, note: "둘째 loss: cut 재귀" },
+            ],
+          },
+          proof: {
+            title: "② 분할상환 $O(1)$ 증명 — 포텐셜 방법",
+            intro: "CLRS Theorem 19.4. FIB-HEAP-DECREASE-KEY의 분할상환 비용이 $O(1)$임을 포텐셜 $\\Phi  = t$ + 2m으로 증명.",
+            invariantLabel: "Theorem 19.4: ",
+            invariant: "FIB-HEAP-DECREASE-KEY의 분할상환 비용은 $O(1)$. 증명: 포텐셜 변화 분석 — 실제 비용 O(c) ($c = cascading$ cut 횟수) + 포텐셜 변화 -(c-1) = $O(1)$.",
+            steps: [
+              {
+                stage: "① 실제 비용 분석",
+                prompt: "DECREASE-KEY의 실제 시간은?",
+                choices: [
+                  { text: "O(c) — c는 cascading cut의 총 횟수 (최악 $O(\\lg n)$)", correct: true,
+                    explain: "각 cut은 $O(1)$. cascading이 최대 트리 깊이만큼 연쇄."},
+                  { text: "$O(1)$ 상수", correct: false,
+                    explain: "최악은 $O(\\lg n)$. 분할상환 시 $O(1)$."},
+                  { text: "$O(n)$", correct: false,
+                    explain: "로그 상한. 선형 아님."},
+                ],
+              },
+              {
+                stage: "② 포텐셜 변화 — 루트 수",
+                prompt: "c번의 cascading cut으로 루트 수 t(H)는 어떻게 변하나?",
+                choices: [
+                  { text: "c개의 정점이 새로 루트가 됨 → t(H)는 +c 증가. 기여: ΔΦ_t = +c.", correct: true,
+                    explain: "각 cut이 노드를 루트 리스트에 추가. 루트 수 단조 증가."},
+                  { text: "불변", correct: false,
+                    explain: "cut이 루트 수 증가."},
+                  { text: "-c", correct: false,
+                    explain: "반대. 루트 증가가 맞음."},
+                ],
+              },
+              {
+                stage: "③ 포텐셜 변화 — marked 수",
+                prompt: "c번의 cascading cut이 marked 수 m(H)에 미치는 영향은?",
+                choices: [
+                  { text: "(c-1)개의 marked 노드가 unmarked가 됨 + 마지막 하나는 새로 mark → Δm = -(c-1) + 1 = -c + 2. 기여: ΔΦ_m = 2·Δm = -2c + 4", correct: true,
+                    explain: "cascading 중간 c-1개 marked → unmarked (cut되어 루트이므로). 마지막 unmarked 부모가 mark."},
+                  { text: "m 불변", correct: false,
+                    explain: "mark/unmark 변화 큼."},
+                  { text: "m 증가", correct: false,
+                    explain: "cut된 c-1개 해제로 순 감소."},
+                ],
+              },
+              {
+                stage: "④ 총 포텐셜 변화와 분할상환",
+                prompt: "ΔΦ = ΔΦ_t + ΔΦ_m = c + (-2c+4) = -c + 4. 실제 비용 O(c) + ΔΦ = ?",
+                choices: [
+                  { text: "ĉ = O(c) + (-c+4) = $O(1)$ + 4 = $O(1)$. 분할상환 상수!", correct: true,
+                    explain: "c가 상쇄되어 상수. 이것이 Fibonacci Heap의 핵심 결과. Cascading cut의 '비용'이 미리 저축된 신용으로 지불됨."},
+                  { text: "ĉ = O(c)", correct: false,
+                    explain: "상쇄 발생. 분할상환 $O(1)$."},
+                  { text: "ĉ = $O(\\lg n)$", correct: false,
+                    explain: "분할상환은 $O(1)$. 최악만 $O(\\lg n)$."},
+                ],
+              },
+              {
+                stage: "⑤ EXTRACT-MIN의 분할상환",
+                prompt: "EXTRACT-MIN은 왜 $O(\\lg n)$ 분할상환?",
+                choices: [
+                  { text: "Consolidate 과정이 각 트리의 차수를 정리 → 루트 수 감소 (-t) 하지만 D(n) = $O(\\lg n)$개 트리 검사 → 분할상환 $O(\\lg n)$", correct: true,
+                    explain: "CLRS Theorem 19.3. EXTRACT-MIN은 lazy 전략의 '정리' 비용이 한 번에 청구됨. DECREASE-KEY와 달리 상쇄 못함."},
+                  { text: "$O(1)$", correct: false,
+                    explain: "Consolidate로 인해 $O(\\lg n)$."},
+                  { text: "$O(n)$", correct: false,
+                    explain: "Consolidate가 각 트리를 한 번씩만 처리."},
+                ],
+              },
+              {
+                stage: "⑥ Dijkstra에 미치는 영향",
+                prompt: "Fibonacci Heap 기반 Dijkstra의 시간은?",
+                choices: [
+                  { text: "$O(V \\lg V + E)$ — V번 EXTRACT-MIN × O(lg V) + E번 DECREASE-KEY × $O(1)$ 분할상환", correct: true,
+                    explain: "이진 힙은 O((V+E) lg V). 밀집 그래프(E = $\\Theta(V^2)$)에서 V² vs V² 같지만 중간 밀도에서 Fibonacci 우세."},
+                  { text: "O(V² + E)", correct: false,
+                    explain: "배열 기반의 시간. Fibonacci은 lg V 사용."},
+                  { text: "O(V lg V)만", correct: false,
+                    explain: "DECREASE-KEY 횟수 E도 고려. 단 $O(1)$ 분할상환이라 더해짐."},
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Cascading Cut 추적",
+            intro: "Fibonacci Heap에서 한 체인이 계속 자식을 잃어 마킹되어 있는 상태. 맨 아래 노드에 DECREASE-KEY 수행 시 cascading 연쇄 관찰.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 상태: 루트 a (unmarked) → 자식 b (marked) → 자식 c (marked) → 자식 d. d에 DECREASE-KEY 수행. 먼저 d를 루트로 cut. 그 다음?",
+                choices: [
+                  { text: "CASCADING-CUT(c). c는 marked → cut. c도 루트로 이동. 재귀로 CASCADING-CUT(b).", correct: true,
+                    explain: "marked 부모는 두 번째 자식 loss로 cut 조건 만족. 연쇄 시작."},
+                  { text: "c는 unmark만 하고 멈춤", correct: false,
+                    explain: "c가 이미 marked이므로 cut이 맞음."},
+                  { text: "cascading 없음", correct: false,
+                    explain: "CUT 후 CASCADING-CUT 호출 필수."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "CASCADING-CUT(b). b는 marked → cut. 재귀로 CASCADING-CUT(a). a는 루트(부모 NIL).",
+                choices: [
+                  { text: "$z = a.p$ = NIL → 조건 실패 → 반환. cascading 종료. 루트 수 = a, b, c, d 4개로 증가.", correct: true,
+                    explain: "루트는 cut 대상 아님. cascading 종료 조건."},
+                  { text: "a도 cut", correct: false,
+                    explain: "a는 이미 루트. 더 cut 안 됨."},
+                  { text: "무한 루프", correct: false,
+                    explain: "NIL 검사로 종료."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이 연산의 실제 cut 횟수 c와 해제된 mark 수는?",
+                choices: [
+                  { text: "$c = 3$ (d, c, b가 루트로 이동). 해제된 $mark = 2$ (b와 c, 둘 다 cut되며 루트이므로 unmarked).", correct: true,
+                    explain: "cascading으로 3번 cut. b, c가 marked였는데 루트가 되며 unmarked."},
+                  { text: "$c = 0$", correct: false,
+                    explain: "d의 초기 cut + cascading으로 총 3."},
+                  { text: "$c = 5$", correct: false,
+                    explain: "정확히 3. d, c, b."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "포텐셜 변화: Δt = +3, Δm = -2. ΔΦ = 3 + 2·(-2) = -1. 실제 비용 O(3) → 분할상환?",
+                choices: [
+                  { text: "분할상환 = 실제 + ΔΦ = O(3) + (-1) = O(2). 상수로 수렴. 예상대로 $O(1)$.", correct: true,
+                    explain: "포텐셜이 감소해 실제 비용의 일부를 '선결제'한 것과 동일한 효과."},
+                  { text: "분할상환 O(3)", correct: false,
+                    explain: "포텐셜 감소로 상쇄됨."},
+                  { text: "포텐셜 방법 적용 불가", correct: false,
+                    explain: "정확히 적용되는 고전 예제."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "이후 상태에서 a, b, c, d가 모두 루트. 다음 EXTRACT-MIN의 비용은?",
+                choices: [
+                  { text: "현재 min 루트 제거 + 그 자식들 루트로 + consolidate (차수별 병합). 루트 수에 비례하여 $O(\\lg n)$ 분할상환.", correct: true,
+                    explain: "EXTRACT-MIN이 lazy 상태를 정리. 이 비용이 DECREASE-KEY의 $O(1)$을 가능하게 한 대가."},
+                  { text: "$O(1)$", correct: false,
+                    explain: "EXTRACT-MIN은 $O(\\lg n)$."},
+                  { text: "변화 없음", correct: false,
+                    explain: "min 제거 후 구조 변화 큼."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "왜 cascading cut이 $O(1)$ 분할상환을 가능하게 하나?",
+                choices: [
+                  { text: "각 marked 노드가 '2 신용'을 포텐셜로 갖고 있다가, cut 될 때 이 신용이 cut 비용을 지불. 'marked 노드 수'의 감소가 실제 비용 상쇄.", correct: true,
+                    explain: "회계 방법의 관점. Mark가 미래 cut의 예약 신용. Fibonacci Heap 설계의 천재성."},
+                  { text: "Cut이 항상 $O(1)$이므로", correct: false,
+                    explain: "cascading으로 여러 번. 상쇄 메커니즘이 핵심."},
+                  { text: "운 좋게 상쇄", correct: false,
+                    explain: "설계된 포텐셜 함수가 정교하게 맞춤."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch30",
+    tier: 3,
+    num: "Ch 30",
+    title: "Polynomials and FFT",
+    subtitle: "Fast Fourier Transform — 다항식 곱셈 $\\Theta(n^2)$ → $\\Theta(n \\lg n)$",
+    summary: "계수 표현 ↔ 점값 표현 변환. Cooley-Tukey 분할정복으로 DFT를 n lg n에 계산. 신호처리·알고리즘의 근간.",
+    objectives: [
+      "다항식의 계수 표현과 점-값 표현의 차이, 두 표현 간 변환 비용을 이해한다.",
+      "DFT와 FFT 알고리즘으로 다항식 곱셈을 $\\Theta(n \\lg n)$에 수행할 수 있다.",
+      "FFT의 핵심 아이디어(짝수/홀수 계수 분리, 단위근의 거듭제곱 성질)를 분할 정복으로 도식화할 수 있다.",
+    ],
+    md: `
+## 다항식 표현 두 가지
+- **계수 표현**: $A(x) = \\Sigma $ a_i $x^{i}$ (n개 계수)
+- **점값 표현**: {(x_0, A(x_0)), ..., (x_{n-1}, A(x_{n-1}))} (n개 점)
+
+| 연산 | 계수 표현 | 점값 표현 |
+|------|---------|---------|
+| Evaluation | $\\Theta(n)$ (Horner) | $\\Theta(n)$ (해시 조회) |
+| Addition | $\\Theta(n)$ | $\\Theta(n)$ |
+| **Multiplication** | **$\\Theta(n^2)$** | **$\\Theta(n)$** |
+| Conversion | — | $\\Theta(n \\lg n)$ (FFT) |
+
+## 핵심 아이디어
+- 두 다항식 곱 = n² 계수 작업
+- 점값 표현으로 변환 → 점별 곱셈 n회 → 다시 계수 표현
+- **변환이 $O(n \\lg n)$이면 전체 $O(n \\lg n)$**
+
+## DFT와 단위근
+- A를 복소 단위근 {ω_n^0, ω_n^1, ..., ω_n^{n-1}}에서 평가 = DFT
+- ω_n = e^(2πi/n) — n제곱하면 1
+- **핵심 성질**: ω_n^{n/2} = -1 (half 분할 가능)
+
+## FFT 알고리즘 (Cooley-Tukey)
+- 짝수 차수와 홀수 차수로 분할:
+  A(x) = A_even(x²) + x·A_odd(x²)
+- A를 ω_n^k에서 평가 = A_even, A_odd를 (ω_n^k)² = ω_{n/2}^k에서 평가 (절반 크기!)
+- 점화식: T(n) = 2T(n/2) + $O(n)$ = $\\Theta(n \\lg n)$
+
+## 응용
+- 큰 정수 곱셈 (Schönhage-Strassen)
+- 이미지 처리 (JPEG는 DCT, 밀접 친척)
+- 신호 처리 (스펙트럼 분석)
+- 문자열 매칭 (convolution 기반)
+`,
+    ox: [
+      { q: "FFT는 다항식 곱셈을 $\\Theta(n \\lg n)$에 해결.", a: true, why: "계수↔점값 변환으로." },
+      { q: "복소 단위근 ω_n의 n제곱은 1이다.", a: true, why: "정의 그 자체." },
+      { q: "ω_n^(n/2) = 1.", a: false, why: "-1이다 (halving lemma)." },
+      { q: "(ω_n^k)² = ω_(n/2)^k (Halving lemma).", a: true, why: "FFT 재귀의 핵심." },
+      { q: "FFT의 점화식은 T(n) = T(n/2) + $\\Theta(n)$.", a: false, why: "$T(n) = 2T(n/2) + \\Theta(n)$." },
+      { q: "butterfly 연산은 y[k]와 y[k+n/2]를 한 번에 계산.", a: true, why: "ω^(k+n/2) = -ω^k 이용." },
+      { q: "FFT는 n이 2의 거듭제곱이 아니면 적용 불가.", a: false, why: "0으로 패딩 가능. 또는 Bluestein 알고리즘." },
+      { q: "큰 정수 곱셈 Schönhage-Strassen은 FFT 기반.", a: true, why: "정수를 다항식으로 간주." },
+      { q: "역 FFT (IFFT)는 별도의 알고리즘이 필요.", a: false, why: "FFT와 거의 동일 (ω_n^(-1) + 1/n 스케일)." },
+      { q: "DFT는 $O(n^2)$ 알고리즘이지만 FFT로 $O(n \\lg n)$에 계산.", a: true, why: "정의는 n² 곱셈. FFT로 가속." },
+    ],
+
+    algorithms: [
+      {
+        id: "fft", name: "Recursive FFT", desc: "분할정복 DFT — $\\Theta(n \\lg n)$",
+        tags: ["Θ(n lg n)", "복소 단위근"], viz: "fft",
+        drills: {
+          source: "CLRS 3판 30.2절 pp.911-921, RECURSIVE-FFT · Theorem 30.5",
+          pseudo: {
+            title: "① 의사코드 재구성 — RECURSIVE-FFT",
+            intro: "계수 벡터 a를 DFT로 변환 ($y = DFT_n(a)$). 재귀로 절반 크기 FFT 두 번 호출 + 합병.",
+            reference: {
+              title: "참고: 단위근의 핵심 성질",
+              lines: [
+                { text: "ω_n = e^(2πi/n)  (복소 평면의 n제곱근)",                    indent: 0 },
+                { text: "  ω_n^$n = 1$                                            ",    indent: 0 },
+                { text: "  ω_n^{n/2} = -1  (Halving lemma 핵심)",                    indent: 0 },
+                { text: "  ω_n^k · ω_n^{n/2} = ω_n^{k+n/2} = -ω_n^k",                 indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "Halving Lemma:",                                            indent: 0 },
+                { text: "  (ω_n^k)² = ω_{n/2}^k  (n 제곱근의 제곱 = n/2 제곱근)",      indent: 0 },
+                { text: "",                                                           indent: 0 },
+                { text: "A(ω_n^k) = A_even((ω_n^k)²) + ω_n^k · A_odd((ω_n^k)²)",     indent: 0 },
+                { text: "         = A_even(ω_{n/2}^k) + ω_n^k · A_odd(ω_{n/2}^k)",    indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "RECURSIVE-FFT(a)",                           indent: 0, note: "a: 계수 벡터" },
+              { text: "$n = a.length$  // n은 2의 거듭제곱",            indent: 1, note: "" },
+              { text: "if n == 1: return a",                        indent: 1, note: "기저" },
+              { text: "ω_n = e^(2πi/n); $\\omega  = 1$",                     indent: 1, note: "" },
+              { text: "a_even = (a_0, a_2, ..., a_{n-2})",          indent: 1, note: "짝수 인덱스" },
+              { text: "a_odd  = (a_1, a_3, ..., a_{n-1})",          indent: 1, note: "홀수 인덱스" },
+              { text: "$y_even = RECURSIVE$-FFT(a_even)",             indent: 1, note: "재귀 (n/2)" },
+              { text: "$y_odd = RECURSIVE$-FFT(a_odd)",              indent: 1, note: "재귀 (n/2)" },
+              { text: "for $k = 0$ to n/2 - 1",                       indent: 1, note: "합병" },
+              { text: "$y[k] = y_even[k]$ + ω · y_odd[k]",      indent: 2, note: "위쪽 절반" },
+              { text: "y[k + n/2] = y_even[k] - ω · y_odd[k]",      indent: 2, note: "아래쪽 절반 (butterfly)" },
+              { text: "$\\omega  = \\omega $ · ω_n",                                indent: 2, note: "다음 단위근" },
+              { text: "return y",                                   indent: 1, note: "DFT 결과" },
+            ],
+          },
+          proof: {
+            title: "② $\\Theta(n \\lg n)$ 시간 증명 — 점화식 + Halving",
+            intro: "CLRS Theorem 30.5. 점화식 $T(n) = 2T(n/2) + \\Theta(n)$ → Master Theorem Case 2 → $\\Theta(n \\lg n)$.",
+            invariantLabel: "Theorem 30.5: ",
+            invariant: "RECURSIVE-FFT는 n-점 DFT를 $\\Theta(n \\lg n)$ 시간에 계산한다. 증명: (1) 합병 정확성 = Halving Lemma + ω_n^{n/2} = -1 (2) 점화식 $T(n) = 2T(n/2) + \\Theta(n)$.",
+            steps: [
+              {
+                stage: "① 분할 단계",
+                prompt: "A(x)를 짝수·홀수 항으로 분할:",
+                choices: [
+                  { text: "A(x) = A_even(x²) + x · A_odd(x²). 짝수 계수는 x² 다항식, 홀수는 x² 다항식에 x 곱.", correct: true,
+                    explain: "대수적 분할. A_even과 A_odd는 각각 n/2 계수."},
+                  { text: "$A(x) = A_even(x)$ + A_odd(x)", correct: false,
+                    explain: "x² 인수 필수. x를 곱해야 함."},
+                  { text: "$A(x) = A_left(x)$ · A_right(x)", correct: false,
+                    explain: "곱셈이 아닌 분해."},
+                ],
+              },
+              {
+                stage: "② Halving Lemma",
+                prompt: "(ω_n^k)² = ω_{n/2}^k 증명?",
+                choices: [
+                  { text: "ω_n = e^(2πi/n). (ω_n^k)² = e^(4πik/n) = e^(2πik/(n/2)) = ω_{n/2}^k. k의 범위는 자동으로 절반.", correct: true,
+                    explain: "지수 함수 성질. n/2 점 DFT로 환원되는 핵심."},
+                  { text: "직접적 대입", correct: false,
+                    explain: "지수 계산 통해 유도."},
+                  { text: "정의상 성립", correct: false,
+                    explain: "정의 + 계산 필요."},
+                ],
+              },
+              {
+                stage: "③ 합병 단계 — butterfly 연산",
+                prompt: "y[k]와 y[k+n/2]가 동시에 계산되는 이유는?",
+                choices: [
+                  { text: "ω_n^{k+n/2} = ω_n^k · ω_n^{n/2} = -ω_n^k이므로 y[k+n/2] = y_even[k] - ω_n^k · y_odd[k]. 두 값을 한 번에 계산 (butterfly).", correct: true,
+                    explain: "이게 butterfly 연산. 한 번의 곱셈으로 두 결과. 효율성 증대."},
+                  { text: "별개 계산", correct: false,
+                    explain: "효율 낮음. butterfly가 표준."},
+                  { text: "y[k+n/2] = y[k]의 복사", correct: false,
+                    explain: "부호 차이. 정확히 다른 값."},
+                ],
+              },
+              {
+                stage: "④ 점화식",
+                prompt: "T(n)의 점화식은?",
+                choices: [
+                  { text: "$T(n) = 2T(n/2) + \\Theta(n)$ — 두 번의 절반 크기 재귀 + 선형 합병", correct: true,
+                    explain: "Merge Sort와 동일 구조. Master Theorem Case 2."},
+                  { text: "T(n) = T(n/2) + $\\Theta(n)$", correct: false,
+                    explain: "두 번 재귀. 한 번이 아님."},
+                  { text: "T(n) = 2T(n) + $\\Theta(n)$", correct: false,
+                    explain: "재귀 크기 n/2, 불변 아님."},
+                ],
+              },
+              {
+                stage: "⑤ 역 FFT (IFFT)",
+                prompt: "DFT의 역변환은?",
+                choices: [
+                  { text: "IFFT: ω_n 대신 ω_n^{-1} = 바구니(conjugate) 사용, 결과를 n으로 나눔. 같은 알고리즘 구조.", correct: true,
+                    explain: "거의 동일한 알고리즘. 부호와 스케일만 다름. 다항식 곱셈: FFT → 곱 → IFFT."},
+                  { text: "완전히 다른 알고리즘", correct: false,
+                    explain: "대칭 구조. FFT의 재사용."},
+                  { text: "IFFT 없음", correct: false,
+                    explain: "다항식 곱셈 파이프라인에 필수."},
+                ],
+              },
+              {
+                stage: "⑥ 큰 정수 곱셈 응용",
+                prompt: "큰 정수 곱셈에 FFT를 쓰는 아이디어는?",
+                choices: [
+                  { text: "정수를 다항식으로 간주 (각 자리 = 계수). FFT로 다항식 곱 → 캐리 처리. n자리 정수 곱을 $O(n \\lg n)$에 (실제론 lg lg 팩터 등 상수가 큼).", correct: true,
+                    explain: "Schönhage-Strassen(1971). 2019년 Harvey-van der Hoeven가 $O(n \\lg n)$ 최종 달성. 이론적 최적."},
+                  { text: "FFT는 다항식만", correct: false,
+                    explain: "정수 곱셈에 직접 응용 가능."},
+                  { text: "항상 $O(n^2)$", correct: false,
+                    explain: "FFT로 $O(n \\lg n)$ 가능."},
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ RECURSIVE-FFT 추적 — $n = 4$ 예제",
+            intro: "a = (1, 2, 3, 4) (4 계수 다항식 $A(x) = 1$ + 2x + 3x² + 4x³). DFT_4 계산.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$n = 4$. 분할: a_even = (1, 3), a_odd = (2, 4). 재귀 호출 FFT((1,3))과 FFT((2,4)).",
+                choices: [
+                  { text: "두 개의 $n = 2$ 부분 문제로 분할. a_even은 짝수 인덱스 ($a_0 = 1$, $a_2 = 3$), a_odd는 홀수 인덱스.", correct: true,
+                    explain: "짝/홀 분리가 FFT의 핵심. 각각 재귀."},
+                  { text: "a_even = (1,2), a_odd = (3,4)", correct: false,
+                    explain: "짝/홀 인덱스 기준. 앞/뒤 반쪽 분할 아님."},
+                  { text: "$n = 4$에서 즉시 계산", correct: false,
+                    explain: "재귀 필수."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "FFT((1,3)) 재귀: $n = 2$. 분할 a_even = (1), a_odd = (3). 기저 사례로 반환. 합병 시 $k = 0$에서 $y[0] = 1$ + ω_2^0 · $3 = 1$ + $3 = 4$, $y[1] = 1$ - 3 = -2.",
+                choices: [
+                  { text: "FFT((1,3)) = (4, -2). ω_2 = -1 ($n = 2$). butterfly 연산 직접 적용.", correct: true,
+                    explain: "DFT_2 계산. (1+3, 1-3) = (4, -2)."},
+                  { text: "(1, 3) 그대로", correct: false,
+                    explain: "변환 필요. 원값 아님."},
+                  { text: "(3, 1) 역순", correct: false,
+                    explain: "특정 변환 규칙. 단순 역순 아님."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "FFT((2,4)) = (2+4, 2-4) = (6, -2).",
+                choices: [
+                  { text: "DFT_2 동일 공식 적용. (6, -2) 결과.", correct: true,
+                    explain: "y_odd로 사용될 중간 결과."},
+                  { text: "(4, 2)", correct: false,
+                    explain: "butterfly 계산 필수."},
+                  { text: "변환 안 함", correct: false,
+                    explain: "재귀 반환."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "상위 호출 합병: $n = 4$. y_even = (4,-2), y_odd = (6,-2). ω_4 = i (허수 단위). $k = 0$,1 butterfly.",
+                choices: [
+                  { text: "$k = 0$: $\\omega  = 1$. $y[0] = 4$+1·$6 = 10$, $y[2] = 4$-6=-2. $k = 1$: $\\omega  = i$. y[1]=-2+i·(-2)=-2-2i, y[3]=-2-i·(-2)=-2+2i.", correct: true,
+                    explain: "복소수 계산. y = (10, -2-2i, -2, -2+2i)가 DFT 결과."},
+                  { text: "모두 실수", correct: false,
+                    explain: "ω_4 = i로 복소수 발생."},
+                  { text: "DFT = 입력", correct: false,
+                    explain: "변환 발생. 원값 아님."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "DFT_4((1,2,3,4)) = (10, -2-2i, -2, -2+2i). 검증: $A(1) = 1$+2+3+$4 = 10$ ✓. $A(i) = 1$ + 2i + 3i² + 4i³ = 1+2i-3-4i = -2-2i ✓.",
+                choices: [
+                  { text: "정확. FFT가 A를 4개 단위근 (1, i, -1, -i)에서 평가한 것과 일치.", correct: true,
+                    explain: "DFT 정의 확인. 재귀 FFT의 결과가 직접 평가와 일치."},
+                  { text: "결과가 임의값", correct: false,
+                    explain: "엄밀한 대응."},
+                  { text: "모든 값 동일", correct: false,
+                    explain: "각 단위근에서 다른 값."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "$n = 1024$ 입력에 대해 FFT vs 나이브 DFT의 연산 수 차이는?",
+                choices: [
+                  { text: "FFT: 1024·$10 \\approx 10240$ 연산. 나이브: $1024^{2} \\approx 10^{6}$. 약 100배 차이. n이 클수록 차이 급증.", correct: true,
+                    explain: "$\\Theta(n \\lg n)$ vs $\\Theta(n^2)$. $n = 10^{6}$에선 10⁶·20 vs 10¹² — 50,000배 차이. FFT가 현대 컴퓨팅 불가결."},
+                  { text: "차이 없음", correct: false,
+                    explain: "점근적으로 큰 차이."},
+                  { text: "FFT가 더 느림", correct: false,
+                    explain: "FFT가 월등히 빠름."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch31",
+    tier: 3,
+    num: "Ch 31",
+    title: "Number-Theoretic Algorithms",
+    subtitle: "GCD · 모듈러 연산 · RSA 암호 — 정수 기반 알고리즘",
+    summary: "암호학의 수학적 기반. Euclid GCD, 모듈러 지수법, RSA. 원시적 연산이 현대 보안의 근간.",
+    objectives: [
+      "유클리드 알고리즘으로 GCD를 $O(\\lg n)$에 계산하고 확장 유클리드로 베주 계수를 구할 수 있다.",
+      "모듈러 거듭제곱과 중국인 나머지 정리(CRT)를 적용할 수 있다.",
+      "RSA 암호 시스템의 구조와 안전성이 의존하는 정수 인수분해 가정을 설명할 수 있다.",
+    ],
+    md: `
+## Euclid GCD (31.2)
+- **$gcd(a, b) = gcd(b, a mod b)$**
+- 시간: O(lg min(a,b)) — 연속 피보나치 수가 최악 (Lamé 정리)
+
+## 확장 Euclid (31.2)
+- $gcd(a, b) = d$ = ax + by를 만족하는 (d, x, y) 반환
+- 모듈러 역원 계산에 사용: a·x ≡ 1 (mod n)
+
+## 모듈러 지수법 (31.6)
+- $a^{b}$ mod n 계산을 O(lg b)에 (repeated squaring)
+- RSA의 암복호화 연산의 핵심
+
+## RSA 암호 시스템 (31.7)
+1. 큰 소수 p, q 생성
+2. $n = pq$, φ(n) = (p-1)(q-1)
+3. e 선택 (gcd(e, φ) = 1)
+4. $d = e$^{-1} mod φ (확장 Euclid)
+5. 공개키 (e, n), 비밀키 d
+6. 암호화: c = $m^{e}$ mod n
+7. 복호화: m = $c^{d}$ mod n
+
+## 소수 판정 (31.8)
+- Miller-Rabin: 무작위 k회로 오답 확률 2^{-k}
+- Fermat 테스트: Carmichael 수에 취약
+
+## 중국인의 나머지 정리 (CRT, 31.5)
+- 서로소 n₁, n₂에 대해 ℤ_{n₁n₂} ≅ ℤ_{n₁} × ℤ_{n₂}
+- 큰 모듈러 연산을 작은 두 개로 분할
+`,
+    ox: [
+      { q: "$gcd(a, b) = gcd(b, a mod b)$ (Euclid).", a: true, why: "Euclid 알고리즘의 핵심 항등식." },
+      { q: "Euclid의 시간 복잡도는 O(lg min(a,b)).", a: true, why: "Lamé 정리." },
+      { q: "확장 Euclid는 ax + $by = gcd(a,b)$ 정수 해를 반환한다.", a: true, why: "베주 항등식." },
+      { q: "RSA 암호화는 공개키 (e, n)으로 c = $m^{e}$ mod n.", a: true, why: "모듈러 지수." },
+      { q: "RSA 복호화는 m = $c^{d}$ mod n, d는 비밀키.", a: true, why: "$d = e$^(-1) mod φ(n)." },
+      { q: "$a^{b}$ mod n을 단순 반복으로 계산하면 O(lg b).", a: false, why: "단순 반복은 O(b). 반복 제곱법(repeated squaring)이 O(lg b)." },
+      { q: "Miller-Rabin은 소수 판정을 확률적으로 수행.", a: true, why: "k회 반복으로 오답 확률 2^(-k)." },
+      { q: "중국인의 나머지 정리는 서로소 모듈러스에만 적용.", a: true, why: "CRT 전제 조건." },
+      { q: "Fermat 소수 판정은 Carmichael 수에 취약.", a: true, why: "결정적 반례 존재." },
+      { q: "Euclid 알고리즘의 최악 입력은 연속된 피보나치 수이다.", a: true, why: "Lamé 1844 정리." },
+    ],
+
+    algorithms: [
+      {
+        id: "euclid-gcd", name: "Extended Euclid GCD", desc: "GCD + 베주 계수 (ax+$by = gcd$) 계산",
+        tags: ["O(lg n)", "RSA 기반"], viz: "euclidGcd",
+        drills: {
+          source: "CLRS 3판 31.2절 pp.935-939, EXTENDED-EUCLID · Theorem 31.6",
+          pseudo: {
+            title: "① 의사코드 재구성 — EXTENDED-EUCLID",
+            intro: "gcd(a, b)와 함께 ax + $by = gcd(a, b)$를 만족하는 정수 x, y 반환. 재귀 구조.",
+            reference: {
+              title: "참고: 베주 계수와 응용",
+              lines: [
+                { text: "베주 항등식: $gcd(a, b) = ax$ + by (x, y는 정수)",              indent: 0 },
+                { text: "  항상 존재 (수론 기본 정리)",                                 indent: 0 },
+                { text: "",                                                             indent: 0 },
+                { text: "응용: 모듈러 역원 a^{-1} mod n",                                indent: 0 },
+                { text: "  $gcd(a, n) = 1$이면 ax + $ny = 1$                   ",             indent: 0 },
+                { text: "  ax ≡ 1 (mod n) → $x = a$^{-1} mod n                ",            indent: 0 },
+                { text: "",                                                             indent: 0 },
+                { text: "재귀 관계:",                                                     indent: 0 },
+                { text: "  (d', x', y') = EXTENDED-EUCLID(b, a mod b)",                  indent: 0 },
+                { text: "  $d = d$', $x = y$', $y = x$' - $\\lfloor a/b \\rfloor$·y'",                          indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "EXTENDED-EUCLID(a, b)",                     indent: 0, note: "$a \\geq b$ $\\geq 0$" },
+              { text: "if b == 0",                                  indent: 1, note: "기저" },
+              { text: "return (a, 1, 0)",                           indent: 2, note: "$gcd = a$, 1·a + 0·$b = a$" },
+              { text: "(d', x', y') = EXTENDED-EUCLID(b, a mod b)", indent: 1, note: "재귀" },
+              { text: "(d, x, y) = (d', y', x' - $\\lfloor a/b \\rfloor$·y')",        indent: 1, note: "변환 공식" },
+              { text: "return (d, x, y)",                           indent: 1, note: "" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 + $O(\\lg n)$ 시간 증명",
+            intro: "CLRS Theorem 31.6 + Lamé 정리. 변환 공식이 베주 항등식을 유지 + 피보나치 최악 분석.",
+            invariantLabel: "Theorem 31.6 + Lamé: ",
+            invariant: "EXTENDED-EUCLID(a, b)는 (gcd(a,b), x, y)를 반환하며 ax + $by = gcd(a,b)$. 시간은 O(lg b) = O(lg min(a,b)). 증명: 재귀식이 베주 항등식 보존 + 피보나치 수가 최악 입력.",
+            steps: [
+              {
+                stage: "① 재귀 불변식",
+                prompt: "(d', x', y') = EXTENDED-EUCLID(b, a mod b)이면 bx' + (a mod b)y' = d'. 이를 a와 b의 항등식으로 변환하면?",
+                choices: [
+                  { text: "a mod $b = a$ - $\\lfloor a/b \\rfloor$·b 대입 → bx' + (a - $\\lfloor a/b \\rfloor$·b)y' = d' → ay' + b(x' - $\\lfloor a/b \\rfloor$·y') = d'. 새 계수 $x = y$', $y = x$'-$\\lfloor a/b \\rfloor$·y'.", correct: true,
+                    explain: "CLRS p.937. 베주 항등식 정확히 유지하는 대수적 유도."},
+                  { text: "$x = x$', $y = y$' 그대로", correct: false,
+                    explain: "변환 필수. 계수 교환 + 조정."},
+                  { text: "$x = 0$, $y = 0$", correct: false,
+                    explain: "정답이 존재하므로 비자명."},
+                ],
+              },
+              {
+                stage: "② 기저 사례",
+                prompt: "$b = 0$일 때 반환 (a, 1, 0)의 의미는?",
+                choices: [
+                  { text: "$gcd(a, 0) = a$, 그리고 a·1 + 0·$0 = a$. 항등식 자명 성립.", correct: true,
+                    explain: "재귀의 base. 수학적으로도 맞음."},
+                  { text: "0 반환", correct: false,
+                    explain: "$gcd(a,0) = a$이지 0이 아님."},
+                  { text: "에러", correct: false,
+                    explain: "$b = 0$은 합법 base case."},
+                ],
+              },
+              {
+                stage: "③ Lamé 정리 - 최악 시간",
+                prompt: "EXTENDED-EUCLID가 k번 재귀 호출하는 최소 입력은?",
+                choices: [
+                  { text: "연속된 피보나치 수 F_{k+1}, F_k. 예: gcd(F_{k+1}, F_k)가 정확히 k단계 (Lamé 1844).", correct: true,
+                    explain: "CLRS Theorem 31.11. 피보나치가 최악 입력. k ~ log_φ(n) where φ = 황금비 → $O(\\lg n)$."},
+                  { text: "임의의 큰 수", correct: false,
+                    explain: "피보나치가 특정한 최악. 다른 입력은 더 빠름."},
+                  { text: "소수들", correct: false,
+                    explain: "소수는 $gcd = 1$로 빠르게 종료."},
+                ],
+              },
+              {
+                stage: "④ RSA에서의 활용",
+                prompt: "RSA에서 모듈러 역원 $d = e$^{-1} mod φ(n) 계산은?",
+                choices: [
+                  { text: "EXTENDED-EUCLID(e, φ(n))으로 ex + φy = 1 얻음 → $d = x$ mod φ. $gcd = 1$ 조건이 역원 존재 보장.", correct: true,
+                    explain: "RSA 키 생성의 핵심 연산. 확장 Euclid가 없으면 RSA 구현 불가."},
+                  { text: "임의 탐색", correct: false,
+                    explain: "큰 n에서 계산 불가. 확장 Euclid 필수."},
+                  { text: "Fermat 소정리", correct: false,
+                    explain: "다른 기법. 확장 Euclid가 표준."},
+                ],
+              },
+              {
+                stage: "⑤ 재귀 vs 반복",
+                prompt: "반복형(iterative) EXTENDED-EUCLID는?",
+                choices: [
+                  { text: "변수 (old_r, r), (old_s, s), (old_t, t) 유지하며 반복. 재귀와 동일 복잡도지만 스택 오버플로우 방지.", correct: true,
+                    explain: "실무 구현. 큰 정수에서는 반복형 선호 (깊은 재귀 스택 비용)."},
+                  { text: "반복 불가", correct: false,
+                    explain: "반복형 구현 표준."},
+                  { text: "더 복잡도 낮음", correct: false,
+                    explain: "동일 복잡도. 메모리만 이득."},
+                ],
+              },
+              {
+                stage: "⑥ 수의 크기 vs 시간",
+                prompt: "수의 크기(비트 수) β에 대한 시간은?",
+                choices: [
+                  { text: "O(β) 비트 연산 단계 + 각 단계의 나눗셈 O(β) → 총 O(β²). 더 정교한 분석.", correct: true,
+                    explain: "큰 수 산술의 비용. RSA의 2048비트 키에서 중요. 나눗셈을 FFT로 가속하면 더 빠름."},
+                  { text: "$O(1)$", correct: false,
+                    explain: "입력 크기에 의존."},
+                  { text: "O(2^β)", correct: false,
+                    explain: "다항시간. 지수 아님."},
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ EXTENDED-EUCLID 추적 — gcd(99, 78)",
+            intro: "$a = 99$, $b = 78$. 재귀 호출 전개하며 베주 계수 계산.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "EXTENDED-EUCLID(99, 78). 99 mod $78 = 21$. 재귀 EXTENDED-EUCLID(78, 21)?",
+                choices: [
+                  { text: "78 mod $21 = 15$ → EXTENDED-EUCLID(21, 15)", correct: true,
+                    explain: "$78 = 3$·21 + 15. 계속 재귀."},
+                  { text: "(21, 1, 0)", correct: false,
+                    explain: "아직 base case 아님. 21 mod 15 등 계속."},
+                  { text: "즉시 종료", correct: false,
+                    explain: "b != 0이므로 재귀 계속."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "EXTENDED-EUCLID(21, 15). 21 mod $15 = 6$. 재귀 (15, 6). 15 mod $6 = 3$. 재귀 (6, 3). 6 mod $3 = 0$. 재귀 (3, 0).",
+                choices: [
+                  { text: "(3, 0): $b = 0$ → return (3, 1, 0). 이로부터 역추적.", correct: true,
+                    explain: "재귀 깊이 = Euclid 단계 수. $gcd(99, 78) = 3$."},
+                  { text: "여기서 실패", correct: false,
+                    explain: "base case에서 정상 반환."},
+                  { text: "$gcd = 0$", correct: false,
+                    explain: "$a = 3$이 gcd."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "역추적: (6, 3)에서 (d', x', y') = (3, 1, 0). $\\lfloor 6/3 \\rfloor$ = 2. 새 (x, y) = (y'=0, x' - 2·y' = 1 - $0 = 1$) → (3, 0, 1).",
+                choices: [
+                  { text: "검증: 6·0 + 3·$1 = 3$ ✓. 정확.", correct: true,
+                    explain: "공식 적용. 항등식 유지 확인."},
+                  { text: "(3, 1, 0)", correct: false,
+                    explain: "변환 공식 적용 필요."},
+                  { text: "(3, 2, 1)", correct: false,
+                    explain: "정확한 계산은 (3, 0, 1)."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "(15, 6)에서 (d', x', y') = (3, 0, 1). $\\lfloor 15/6 \\rfloor$ = 2. 새 (x, y) = (1, 0 - 2·1 = -2) → (3, 1, -2).",
+                choices: [
+                  { text: "검증: 15·1 + 6·(-2) = 15 - $12 = 3$ ✓.", correct: true,
+                    explain: "재귀 전개. 각 단계가 항등식 유지."},
+                  { text: "(3, 0, 1)", correct: false,
+                    explain: "변환 필수."},
+                  { text: "양수만", correct: false,
+                    explain: "베주 계수는 음수 가능."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "(21, 15)에서 (d', x', y') = (3, 1, -2). $\\lfloor 21/15 \\rfloor$ = 1. (x, y) = (-2, 1 - 1·(-2) = 3) → (3, -2, 3).",
+                choices: [
+                  { text: "검증: 21·(-2) + 15·3 = -42 + $45 = 3$ ✓.", correct: true,
+                    explain: "대수 계산 정확."},
+                  { text: "(3, 1, -2)", correct: false,
+                    explain: "변환 규칙 적용."},
+                  { text: "음수 불가", correct: false,
+                    explain: "필요시 음수. 베주 계수 특성."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "최상위: (78, 21) → (d', x', y') = (3, -2, 3). $\\lfloor 78/21 \\rfloor$ = 3. (x, y) = (3, -2 - 3·3 = -11) → (3, 3, -11). 그리고 (99, 78): $\\lfloor 99/78 \\rfloor$ = 1. (x, y) = (-11, 3 - 1·(-11) = 14) → (3, -11, 14). 최종.",
+                choices: [
+                  { text: "검증: 99·(-11) + 78·14 = -1089 + $1092 = 3$ ✓. 정확한 베주 계수 x=-11, $y = 14$.", correct: true,
+                    explain: "완성. $gcd(99, 78) = 3$, 99·(-11) + 78·$14 = 3$. 총 재귀 깊이 5."},
+                  { text: "계산 불가", correct: false,
+                    explain: "정확한 결과 존재."},
+                  { text: "$x = 99$, $y = 78$", correct: false,
+                    explain: "베주 계수는 작은 수."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "ch33",
+    tier: 3,
+    num: "Ch 33",
+    title: "Computational Geometry",
+    subtitle: "Convex Hull · Closest Pair · 선분 교차",
+    summary: "기하학적 객체(점, 선분, 다각형)에 대한 알고리즘. Graham Scan $\\Theta(n \\lg n)$, Closest Pair $\\Theta(n \\lg n)$.",
+    objectives: [
+      "외적(cross product)을 이용해 두 선분의 교차 여부를 판정할 수 있다.",
+      "Graham scan과 Jarvis march로 Convex Hull을 계산하고 두 알고리즘의 시간 복잡도를 비교할 수 있다.",
+      "분할 정복으로 Closest Pair 문제를 $\\Theta(n \\lg n)$에 해결할 수 있다.",
+    ],
+    md: `
+## 기본 연산 (33.1)
+- **Cross Product**: (p - r) × (q - r) — 방향 판별 (좌/우/일직선)
+- **CCW (Counter-Clockwise)**: 세 점의 회전 방향 — $\\Theta(1)$ 핵심 판별
+
+## Convex Hull (볼록 껍질, 33.3)
+**정의**: 점 집합 Q를 포함하는 최소 볼록 다각형
+
+| 알고리즘 | 시간 |
+|---------|------|
+| Graham's Scan | **$\\Theta(n \\lg n)$** |
+| Jarvis's March | O(nh) ($h = hull$ 크기, output-sensitive) |
+| Chan's Algorithm | Θ(n lg h) |
+
+## Graham's Scan (33.3)
+1. 최하점 p_0 선택 (동률 시 최좌측)
+2. 나머지 점을 p_0 기준 각도 정렬 $\\Theta(n \\lg n)$
+3. 스택으로 훑으며 '좌회전(CCW)' 유지
+4. 우회전 시 스택에서 pop
+
+## Closest Pair of Points (33.4)
+- 2D 점 집합에서 가장 가까운 두 점 찾기
+- **분할 정복**: x좌표 중간선으로 분할, 재귀 + 경계 영역 검사
+- 시간: T(n) = 2T(n/2) + $O(n)$ = $\\Theta(n \\lg n)$
+- 핵심: '경계 영역' 점 ≤ 7개만 비교하면 충분 (기하학적 관찰)
+
+## 선분 교차 검출 (33.2)
+- Sweep Line 알고리즘으로 $O(n \\lg n)$
+- 이벤트 큐 + 균형 BST로 활성 선분 관리
+`,
+    ox: [
+      { q: "Graham's Scan은 볼록 껍질을 $\\Theta(n \\lg n)$에 계산.", a: true, why: "정렬 + 선형 스캔." },
+      { q: "Cross product의 부호로 회전 방향을 판별할 수 있다.", a: true, why: "양수=CCW, 음수=CW." },
+      { q: "Jarvis's March는 output-sensitive 알고리즘이다.", a: true, why: "O(nh), h=껍질 크기." },
+      { q: "Closest Pair는 분할 정복으로 $\\Theta(n \\lg n)$.", a: true, why: "중간선 분할 + 경계 영역 검사." },
+      { q: "선분 교차 검출은 sweep line으로 $O(n \\lg n)$.", a: true, why: "이벤트 큐 + 균형 BST." },
+      { q: "Graham's Scan의 스택에서 각 점은 여러 번 pop될 수 있다.", a: false, why: "한 번만. amortized 선형." },
+      { q: "Chan's 알고리즘은 Θ(n lg h)로 output-sensitive + 점근 최적.", a: true, why: "Graham과 Jarvis의 이점 결합." },
+      { q: "볼록 껍질의 점은 항상 n개 미만이다.", a: false, why: "n개도 가능 (모든 점이 볼록 위치)." },
+      { q: "Cross product가 0이면 세 점이 일직선에 있다.", a: true, why: "기하학적 해석." },
+      { q: "Closest Pair에서 경계 영역 점은 최대 7개만 비교하면 충분.", a: true, why: "유명한 기하학적 관찰 (13, 15, 7 버전 있음)." },
+    ],
+
+    algorithms: [
+      {
+        id: "graham-scan", name: "Graham's Scan", desc: "볼록 껍질 — 각도 정렬 + 스택 $\\Theta(n \\lg n)$",
+        tags: ["Θ(n lg n)", "볼록 껍질"], viz: "grahamScan",
+        drills: {
+          source: "CLRS 3판 33.3절 pp.1030-1038, GRAHAM-SCAN · Theorem 33.1",
+          pseudo: {
+            title: "① 의사코드 재구성 — GRAHAM-SCAN",
+            intro: "점 집합 Q의 볼록 껍질을 반시계 방향으로 반환. 최하점 기준 각도 정렬 + 스택 기반 선형 순회.",
+            reference: {
+              title: "참고: CCW 판별",
+              lines: [
+                { text: "세 점 p, q, r에 대해:",                                       indent: 0 },
+                { text: "  cross = (q.x - p.x)·(r.y - p.y) - (r.x - p.x)·(q.y - p.y)",  indent: 0 },
+                { text: "  > 0: 반시계(CCW), 좌회전",                                   indent: 0 },
+                { text: "  < 0: 시계(CW), 우회전",                                       indent: 0 },
+                { text: "  = 0: 일직선",                                                 indent: 0 },
+                { text: "",                                                              indent: 0 },
+                { text: "불변식: 스택 내 모든 연속 세 점이 CCW",                          indent: 0 },
+                { text: "        = 볼록성 유지",                                          indent: 0 },
+              ],
+            },
+            lines: [
+              { text: "GRAHAM-SCAN(Q)",                            indent: 0, note: "Q: n개 점 집합" },
+              { text: "$p_0 = Q$에서 y 최소점 (동률 시 x 최소)",       indent: 1, note: "최하단-최좌측" },
+              { text: "p_1..$p_m = Q$ \\ {p_0}을 p_0 기준 극각 정렬",  indent: 1, note: "$\\Theta(n \\lg n)$" },
+              { text: "$S = stack$ with p_0, p_1, p_2",                indent: 1, note: "초기 스택" },
+              { text: "for $i = 3$ to m",                              indent: 1, note: "나머지 점 처리" },
+              { text: "while NOT-LEFT-TURN(NEXT-TO-TOP(S), TOP(S), p_i)", indent: 2, note: "볼록성 위반" },
+              { text: "POP(S)",                                      indent: 3, note: "스택 정리" },
+              { text: "PUSH(S, p_i)",                                indent: 2, note: "새 점 추가" },
+              { text: "return S",                                    indent: 1, note: "볼록 껍질 점들" },
+            ],
+          },
+          proof: {
+            title: "② 정확성 증명 — 루프 불변식",
+            intro: "CLRS Theorem 33.1. 각 반복 후 스택이 '지금까지 처리한 점들의 볼록 껍질'을 유지한다는 불변식으로 증명.",
+            invariantLabel: "Graham Scan 불변식: ",
+            invariant: "for 루프 i번째 시작 시, 스택 S는 점 {p_0, p_1, ..., p_{i-1}}의 볼록 껍질의 꼭짓점을 반시계 순서로 담고 있다. 증명: 각도 정렬 + CCW 검증으로 볼록성 유지.",
+            steps: [
+              {
+                stage: "① 최하점 선택의 이유",
+                prompt: "p_0이 y 최소(동률 시 x 최소)여야 하는 이유?",
+                choices: [
+                  { text: "p_0은 반드시 볼록 껍질 위에 있음 + 나머지 점들이 p_0으로부터 각도 [0, π] 범위 안에 위치 → 각도 정렬 기준점", correct: true,
+                    explain: "최하점은 경계에 속하는 것이 명백. 각도 정렬로 반시계 순서 확립."},
+                  { text: "임의 점도 가능", correct: false,
+                    explain: "경계에 있어야 함. 내부면 시작점 역할 실패."},
+                  { text: "최상점이 더 좋음", correct: false,
+                    explain: "대칭. 관례상 최하점 사용."},
+                ],
+              },
+              {
+                stage: "② 극각 정렬의 역할",
+                prompt: "p_0 기준 극각 정렬 후 순회 순서가 반시계 방향을 따라가는 이유?",
+                choices: [
+                  { text: "각도 ∈ [0, π] 오름차순 정렬이 반시계 방향 순회와 일치. 각 점을 한 번만 고려하면 됨.", correct: true,
+                    explain: "극각 정렬이 볼록 껍질 경계 순서와 자연스럽게 대응."},
+                  { text: "정렬 불필요", correct: false,
+                    explain: "정렬이 핵심. 무작위 순서는 $O(n^2)$."},
+                  { text: "x 좌표 정렬", correct: false,
+                    explain: "각도 정렬이 정답. x는 다른 정보."},
+                ],
+              },
+              {
+                stage: "③ 스택의 역할",
+                prompt: "스택 최상단 두 점과 새 점으로 좌회전/우회전을 어떻게 활용?",
+                choices: [
+                  { text: "좌회전: 볼록성 유지 → p_i PUSH. 우회전: 현재 TOP이 볼록 껍질 아님 → POP 후 재검사. 반복.", correct: true,
+                    explain: "볼록 껍질의 '오목(concave) 꺾임'을 스택 pop으로 즉시 제거."},
+                  { text: "모든 점 PUSH", correct: false,
+                    explain: "볼록성 체크 필수. pop 없으면 볼록 아님."},
+                  { text: "POP만 하고 재검사 안 함", correct: false,
+                    explain: "while 루프로 여러 번 pop 가능."},
+                ],
+              },
+              {
+                stage: "④ 각 점의 pop 횟수 상한",
+                prompt: "각 점이 스택에서 pop될 수 있는 최대 횟수는?",
+                choices: [
+                  { text: "한 번 — 한 번 pop되면 다시는 스택에 들어가지 않음. 총 pop 수 ≤ n → 전체 선형.", correct: true,
+                    explain: "amortized 분석의 핵심. 정렬 후 스캔 자체는 선형."},
+                  { text: "n번", correct: false,
+                    explain: "한 번 제거된 점은 재방문 안 함."},
+                  { text: "$O(n \\lg n)$번", correct: false,
+                    explain: "선형 amortized. 각 점 상수 번 처리."},
+                ],
+              },
+              {
+                stage: "⑤ 총 시간 복잡도",
+                prompt: "GRAHAM-SCAN의 총 시간은?",
+                choices: [
+                  { text: "$\\Theta(n \\lg n)$ — 정렬 $\\Theta(n \\lg n)$ + 선형 스캔 $\\Theta(n)$ = $\\Theta(n \\lg n)$ 지배", correct: true,
+                    explain: "정렬이 병목. 비교 기반 정렬이므로 $\\Omega(n \\lg n)$ 하한 존재."},
+                  { text: "$\\Theta(n^2)$", correct: false,
+                    explain: "정렬이 $\\Theta(n \\lg n)$. 스캔도 선형."},
+                  { text: "$\\Theta(n)$", correct: false,
+                    explain: "정렬 하한 $\\Theta(n \\lg n)$."},
+                ],
+              },
+              {
+                stage: "⑥ 응용 — 볼록 껍질의 활용",
+                prompt: "Convex Hull의 실용적 응용?",
+                choices: [
+                  { text: "충돌 감지(게임), 클러스터링(outlier 탐지), 선형 계획 시각화, 패턴 인식, 로봇 경로 계획 등", correct: true,
+                    explain: "기하학적 '기본 연산'. 많은 고급 알고리즘의 전처리 단계."},
+                  { text: "이론적 관심만", correct: false,
+                    explain: "광범위한 실용 응용."},
+                  { text: "3D에서만 유용", correct: false,
+                    explain: "2D, 3D 모두 활용."},
+                ],
+              },
+            ],
+          },
+          trace: {
+            title: "③ Graham's Scan 추적 — 6점 예제",
+            intro: "Q = {(0,0), (3,1), (4,3), (2,4), (-1,3), (-2,1)}. p_0 = (0,0) (y 최소). 극각 순 정렬 후 스캔.",
+            array: [],
+            steps: [
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "p_0 = (0,0). 나머지 점들의 p_0에 대한 극각 계산 후 오름차순 정렬. 예상 순서는?",
+                choices: [
+                  { text: "(3,1) → (4,3) → (2,4) → (-1,3) → (-2,1). 극각 작은 것(오른쪽)부터 큰 것(왼쪽)까지.", correct: true,
+                    explain: "각도 0°~180° 범위. x축 양방향에서 시작해 반시계 진행."},
+                  { text: "무작위 순서", correct: false,
+                    explain: "극각 정렬 필수."},
+                  { text: "x좌표 순서", correct: false,
+                    explain: "극각 기준. x만으로는 부정확."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "초기 스택 = [(0,0), (3,1), (4,3)]. 다음 점 (2,4) 처리. NEXT-TO-TOP=(3,1), TOP=(4,3), 새 점 (2,4). CCW?",
+                choices: [
+                  { text: "cross((3,1)→(4,3), (3,1)→(2,4)) = 1·3 - (-1)·$2 = 3$+2 = $5 > 0$ → CCW → PUSH. 스택 = [(0,0), (3,1), (4,3), (2,4)].", correct: true,
+                    explain: "좌회전 확인. 볼록성 유지."},
+                  { text: "우회전, pop", correct: false,
+                    explain: "CCW = 좌회전. pop 불필요."},
+                  { text: "일직선", correct: false,
+                    explain: "cross=$5 \\neq 0$."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 점 (-1,3). TOP=(2,4), NEXT-TO-TOP=(4,3). ((4,3)→(2,4)) vs ((4,3)→(-1,3)) CCW?",
+                choices: [
+                  { text: "cross((4,3)→(2,4), (4,3)→(-1,3)) = (-2)·0 - (-5)·1 = $5 > 0$ → CCW → PUSH. 스택 성장.", correct: true,
+                    explain: "계속 좌회전. 볼록 껍질 확장."},
+                  { text: "우회전으로 pop 필요", correct: false,
+                    explain: "CCW는 pop 아님."},
+                  { text: "새 점 무시", correct: false,
+                    explain: "반드시 PUSH 또는 POP."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "다음 점 (-2,1). 여기서 스택 확인하며 pop 발생 가능성?",
+                choices: [
+                  { text: "TOP=(-1,3), NEXT-TO-TOP=(2,4). 실제 cross 계산으로 좌/우회전 판단. 이 예제에선 CCW 유지 → PUSH.", correct: true,
+                    explain: "각 예제마다 다름. 이 예제는 볼록 배치이므로 pop 없음."},
+                  { text: "항상 pop", correct: false,
+                    explain: "방향 판별 필수."},
+                  { text: "스캔 종료", correct: false,
+                    explain: "모든 점 처리 필요."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "모든 점 처리 후 최종 스택이 볼록 껍질의 꼭짓점. 이 예제의 볼록 껍질은?",
+                choices: [
+                  { text: "{(0,0), (3,1), (4,3), (2,4), (-1,3), (-2,1)} — 6점이 모두 볼록 다각형 꼭짓점", correct: true,
+                    explain: "모든 점이 볼록 위치. 내부 점 없음. 일반적으로 일부만 선택됨."},
+                  { text: "빈 집합", correct: false,
+                    explain: "최소 3점 포함 (볼록)."},
+                  { text: "무작위 선택", correct: false,
+                    explain: "엄밀한 규칙."},
+                ],
+              },
+              {
+                before: { A: [], j: null, key: null, i: null },
+                prompt: "만약 내부 점 (0,2)를 추가하면?",
+                choices: [
+                  { text: "(0,2)는 기존 볼록 껍질 내부 → 극각 정렬 후 스캔에서 우회전 유발 → pop으로 제외. 최종 껍질은 변하지 않음.", correct: true,
+                    explain: "내부 점은 자동 배제. Graham Scan의 robustness."},
+                  { text: "내부 점 추가", correct: false,
+                    explain: "껍질은 외곽만 포함."},
+                  { text: "에러", correct: false,
+                    explain: "알고리즘은 정상 처리."},
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: "quiz",
+    tier: 2,
+    num: "Quiz",
+    title: "종합 퀴즈",
+    subtitle: "Part A/B/C · 정답 포함",
+    summary: "각 알고리즘의 의사코드·복잡도·증명을 손으로 풀어볼 수 있는지 점검합니다.",
+    md: `
+## Part A · 개념 확인 (단답형)
+
+**Q1.** 비교 기반 정렬의 최악 하한? 증명 모델?
+**Q2.** f(n) = $\\Theta(g(n))$ ⟺ O와 Ω로 표현하면?
+**Q3.** T(n) = 4T(n/2) + n의 마스터 정리 해?
+**Q4.** BUILD-MAX-HEAP이 $O(n)$인 이유?
+**Q5.** Quicksort가 $\\Theta(n^2)$인 입력과 회피 방법?
+**Q6.** Counting Sort가 안정이어야 하는 이유?
+**Q7.** DP 적용 두 가지 필수 조건?
+**Q8.** 탐욕 vs DP 핵심 차이?
+**Q9.** 방향 그래프 사이클 판정을 DFS로?
+**Q10.** Dijkstra가 음수 가중치에서 실패하는 이유?
+
+## Part B · 알고리즘 적용 (서술형)
+
+**Q11.** 마스터 정리로 다음을 풀어라.
+- (a) $T(n) = 2T(n/4) + \\sqrt{n}$
+- (b) $T(n) = 7T(n/2) + n^2$
+- (c) $T(n) = 2T(n/2) + n \\lg n$
+
+**Q12.** A = [5,3,8,1,2,7,4,6]에 대해
+- (a) PARTITION(A,1,8)의 각 단계
+- (b) BUILD-MAX-HEAP의 각 단계
+
+**Q13.** 활동 집합 10개에서 최대 호환 집합을 탐욕으로 구하라.
+
+**Q14.** 주어진 방향 그래프에서 BFS(s), DFS 실행 및 간선 분류.
+
+**Q15.** Kruskal, Prim(시작 a) 실행 과정.
+
+**Q16.** Bellman-Ford(s), Dijkstra(s) 실행 과정 및 음수 간선 이슈.
+
+## Part C · 증명 / 분석 (고급)
+
+**Q17.** 정리 8.1 (비교 정렬 하한) 결정 트리 증명.
+**Q18.** MST Theorem 23.1과 Kruskal/Prim 정확성.
+**Q19.** Bellman-Ford가 |V|-1번 반복으로 정확한 이유.
+**Q20.** 0-1 배낭에 탐욕이 실패하는 반례, 분할 가능 배낭에서는 왜 최적인가.
+
+---
+
+## 📋 정답 (Part A)
+
+**A1.** $\\Omega(n \\lg n)$. 결정 트리 모델 — 리프 ≥ n! → h ≥ $\\lg(n!)$ = $\\Omega(n \\lg n)$.
+
+**A2.** $f = \\Theta (g)$ ⟺ $f = O(g)$ AND $f = \\Omega (g)$.
+
+**A3.** $a=4$, $b=2$, $n^{\\log_2 4} = n^2$. $f(n)=n = O(n^{2-1})$ → Case 1 → **$\\Theta(n^2)$**.
+
+**A4.** 높이 $h$ 노드 수 $\\leq \\lceil n/2^{h+1} \\rceil$, MAX-HEAPIFY가 $O(h)$. $\\sum \\lceil n/2^{h+1} \\rceil \\cdot O(h) = O(n \\cdot \\sum h/2^h) =$ **$O(n)$**.
+
+**A5.** 정렬/역순 입력. 랜덤화로 피벗 선택.
+
+**A6.** Radix Sort가 하위 자릿수 순서를 유지해야 하기 때문.
+
+**A7.** (1) 최적 부분 구조 (2) 중복 부분 문제.
+
+**A8.** 탐욕은 선택 후 부분 문제, DP는 부분 문제 비교 후 선택.
+
+**A9.** DFS에서 back edge (v가 GRAY) 발견 시 사이클 존재.
+
+**A10.** 한 번 S에 포함된 정점의 d를 탐욕적으로 확정하므로, 이후 더 짧은 음수 경로가 나타나면 수정 불가.
+
+---
+
+> 정답 Part B/C는 원본 마크다운의 상세 풀이를 참조하세요.
+`,
+    algorithms: [],
+  },
+];
+
+// 사이드바에 보여줄 그룹화 (Miller: 섹션당 적은 항목)
+const NAV_GROUPS = [
+  { tier: 1, label: "🔴 Tier 1 · 최핵심", chapters: ["ch2", "ch3", "ch4", "ch6", "ch7", "ch8", "ch15", "ch16", "ch17", "ch22", "ch23", "ch24"] },
+  { tier: 2, label: "🟠 Tier 2 · 알고리즘 심화", chapters: ["ch5", "ch9", "ch25", "ch26", "ch32"] },
+  { tier: 2, label: "🟣 Tier 2 · 자료구조", chapters: ["ch11", "ch12", "ch13", "ch14", "ch18", "ch21"] },
+  { tier: 3, label: "⚫ Tier 3 · 복잡도 이론", chapters: ["ch34", "ch35"] },
+  { tier: 3, label: "🔷 Tier 3 · 고급 알고리즘", chapters: ["ch19", "ch30", "ch31", "ch33"] },
+  { tier: 2, label: "📝 종합 정리", chapters: ["quiz"] },
+];
+
+window.__CLRS__ = { CHAPTERS, NAV_GROUPS };

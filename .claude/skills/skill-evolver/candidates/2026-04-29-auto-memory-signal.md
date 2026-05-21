@@ -1,0 +1,111 @@
+<!--
+PROPOSAL: Add auto-memory as primary signal source for skill-evolver.
+Targeted change (Principle 1: Conservative editing).
+Diff scope: only "Inputs you should gather first" §1.
+All other sections preserved verbatim.
+-->
+---
+name: skill-evolver
+description: Trigger when the user asks to evolve, refine, update,
+  consolidate, or improve their .claude/skills/. Also trigger when
+  the user asks to review recent work and turn lessons into skill
+  updates. NOT for: writing a new skill from scratch when no prior
+  version exists, simple file edits unrelated to skill evolution.
+category: meta
+---
+
+# Skill Evolver
+
+This skill orchestrates SkillClaw-style evolution of skills in
+`.claude/skills/`. Always follow the SKILL EVOLUTION POLICY in
+the project's CLAUDE.md.
+
+## Inputs you should gather first
+
+1. Recent session signals — gather in this order:
+   - **Auto-memory (default for this repo)**: read
+     `~/.claude/projects/<proj-slug>/memory/MEMORY.md` and follow its
+     links to relevant `feedback_*.md`, `project_*.md` files. Treat
+     entries with concrete failure/success language as evidence.
+   - `.claude/session-logs/` if it exists: read files modified in the
+     last N days (default: 7).
+   - If neither yields ≥2 distinct signals for any one skill, ask
+     the user to describe 2-3 recent failures or wins.
+
+2. Current skill inventory:
+   - List all directories under `.claude/skills/`
+   - For each, read SKILL.md and the entire `history/` if present
+
+3. The CLAUDE.md SKILL EVOLUTION POLICY block (re-read every time)
+
+## Workflow
+
+Step 1: Group evidence by skill
+- For each piece of session evidence, decide which existing skill
+  it relates to (or no skill = G(empty))
+- Build a mental table: skill → [list of relevant sessions, with
+  outcome label: success / failure / mixed]
+
+Step 2: Per-skill decision
+For each skill with at least 2 pieces of evidence, decide ONE action:
+- improve_skill — targeted edits to fix recurring failures
+- optimize_description — body is fine, but skill is being matched
+  to wrong tasks
+- create_skill — pattern doesn't fit any existing skill (only if
+  the pattern recurred at least 2 distinct times)
+- skip — evidence too weak or ambiguous
+
+When in doubt, prefer skip.
+
+Step 3: Reason jointly over success and failure
+For each skill you plan to change, explicitly write out:
+- INVARIANTS: what behaviors past success depended on (preserve)
+- TARGETS: what specific failures the change must fix
+- NON-TARGETS: failures that look related but are agent/env
+  problems, not skill problems (do not change the skill for these)
+
+Step 4: Stage as candidate
+- Write the proposed new content to
+  skills/<name>/candidates/<YYYY-MM-DD>-<short-slug>.md
+- Do NOT touch SKILL.md yet
+
+Step 5: Validation gates
+Run through the validation gates from CLAUDE.md. Print the
+checklist and your answer for each item.
+
+Step 6: Promote (only if all gates pass)
+- Snapshot current SKILL.md to history/v<N>.md (figure out N by
+  listing existing v*.md)
+- Write history/v<N>_evidence.md with the 5 sections from CLAUDE.md
+- Replace SKILL.md with the candidate content
+- Note in your reply which candidate file was promoted
+
+Step 7: Report
+Tell the user:
+- Skills evolved (which, what changed in one sentence each)
+- Skills with rejected candidates (and why they didn't pass gates)
+- Skills skipped (and why)
+
+## What this skill must NOT do
+
+- Don't evolve a skill on a single session's evidence — wait for
+  recurrence (≥2 sessions showing the same pattern)
+- Don't modify SKILL.md without first writing a candidate file
+- Don't skip the history/ read step, even if it feels redundant
+- Don't add generic best-practice text to skills
+
+## File layout this skill maintains
+
+```
+.claude/
+└── skills/
+    └── <skill-name>/
+        ├── SKILL.md                  ← deployed (best validated)
+        ├── candidates/               ← proposed updates awaiting review
+        │   └── <date>-<slug>.md
+        └── history/                  ← change ledger
+            ├── v1.md
+            ├── v1_evidence.md
+            ├── v2.md
+            └── v2_evidence.md
+```

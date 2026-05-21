@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>특허 도면 시안 — 도 2 (시스템 블록 구성도, 신청구항 대응)</title>
+<style>
+  body { font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; margin: 0; padding: 24px; background: #f6f7f9; color: #222; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .sub { color: #666; font-size: 13px; margin-bottom: 18px; }
+  .toolbar { margin-bottom: 18px; }
+  .toolbar button { padding: 8px 14px; margin-right: 8px; border: 1px solid #888; background: white; cursor: pointer; border-radius: 4px; font-size: 13px; }
+  .toolbar button:hover { background: #eef; }
+  .figure { background: white; border: 1px solid #ccc; border-radius: 6px; padding: 24px; margin-bottom: 32px; }
+  .figure svg { width: 100%; height: auto; display: block; }
+  .caption { margin-top: 18px; padding-top: 12px; border-top: 1px dashed #aaa; font-size: 13.5px; line-height: 1.75; color: #333; }
+  @media print { body { background: white; padding: 0; } .toolbar { display: none; } .figure { border: none; padding: 0; margin: 0; } }
+</style>
+</head>
+<body>
+  <h1>특허 도면 시안 — 도 2 (시스템 블록 구성도)</h1>
+  <div class="sub">독립항 1 (장치 청구항) 대응 — 구성 A → 구성 B → 구성 C</div>
+  <div class="toolbar">
+    <button onclick="window.print()">인쇄 / PDF 저장</button>
+    <button onclick="downloadSvg('fig2')">도 2 SVG 다운로드</button>
+  </div>
+
+  <div class="figure">
+    <svg id="fig2" viewBox="0 0 1100 1100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+        </marker>
+      </defs>
+
+      <text x="550" y="34" text-anchor="middle" font-size="22" font-weight="bold">도 2. 빔 전류 신호 처리 시스템 블록 구성도</text>
+      <text x="550" y="58" text-anchor="middle" font-size="13" fill="#555">독립항 1 (장치 청구항) — 구성 A (분배·증폭) → 구성 B (신호 생성·선택) → 구성 C (디지털 변환)</text>
+
+      <!-- Column headers -->
+      <text x="180" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#444">[독립항 1 구성요소]</text>
+      <text x="550" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#444">[블록 구성도]</text>
+      <text x="920" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="#444">[상세 도면 참조]</text>
+
+      <line x1="350" y1="105" x2="350" y2="990" stroke="#ddd" stroke-dasharray="4 3"/>
+      <line x1="750" y1="105" x2="750" y2="990" stroke="#ddd" stroke-dasharray="4 3"/>
+
+      <!-- 입력 -->
+      <ellipse cx="550" cy="140" rx="160" ry="28" fill="#e0e7ff" stroke="#1e40af" stroke-width="1.8"/>
+      <text x="550" y="138" text-anchor="middle" font-size="12" font-weight="bold">입자 가속기 슬릿 스캐너</text>
+      <text x="550" y="153" text-anchor="middle" font-size="11">패러데이 컵 측정 신호</text>
+      <line x1="550" y1="168" x2="550" y2="200" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- 구성 A 그룹 frame (dashed enclosure) -->
+      <rect x="376" y="200" width="348" height="240" rx="10" fill="none" stroke="#0e7490" stroke-width="1.2" stroke-dasharray="6 4"/>
+      <text x="380" y="216" font-size="11" font-weight="bold" fill="#0e7490">[구성 A]</text>
+
+      <!-- A-1 스플리터 [100] -->
+      <rect x="380" y="220" width="340" height="90" rx="8" fill="#cffafe" stroke="#0e7490" stroke-width="2"/>
+      <text x="550" y="244" text-anchor="middle" font-size="13" font-weight="bold" fill="#0e7490">A-1  스플리터  [100]</text>
+      <text x="550" y="266" text-anchor="middle" font-size="11" fill="#333">패러데이 컵으로부터 측정된 신호를</text>
+      <text x="550" y="282" text-anchor="middle" font-size="11" fill="#333">분배기를 통해 N개로 분배</text>
+      <text x="550" y="300" text-anchor="middle" font-size="10" fill="#777" font-style="italic">(일 실시예: N=4 동일 분배)</text>
+
+      <text x="20" y="248" font-size="11" font-weight="bold" fill="#0e7490">구성 A-1</text>
+      <text x="20" y="266" font-size="10.5" fill="#333">"입자 가속기 빔 진단을</text>
+      <text x="20" y="280" font-size="10.5" fill="#333">위한 슬릿 스캐너에 구비된</text>
+      <text x="20" y="294" font-size="10.5" fill="#333">패러데이 컵으로부터 측정된</text>
+      <text x="20" y="308" font-size="10.5" fill="#333">신호를 분배기를 통해 분배"</text>
+
+      <text x="770" y="252" font-size="11" font-weight="bold" fill="#0e7490">→ 도 3 [100]</text>
+      <text x="770" y="270" font-size="10.5" fill="#333">→ 도 4 (분배기 회로</text>
+      <text x="770" y="284" font-size="10.5" fill="#333">상세, 임피던스 정합)</text>
+
+      <line x1="550" y1="310" x2="550" y2="342" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- A-2 다중 게인 증폭부 [200] -->
+      <rect x="380" y="344" width="340" height="90" rx="8" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
+      <text x="550" y="368" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">A-2  다중 게인 증폭부  [200]</text>
+      <text x="550" y="390" text-anchor="middle" font-size="11" fill="#333">분배된 신호를 서로 다른 다중 게인</text>
+      <text x="550" y="406" text-anchor="middle" font-size="11" fill="#333">(low, mid, high)으로 병렬 증폭</text>
+      <text x="550" y="424" text-anchor="middle" font-size="10" fill="#777" font-style="italic">(실시예: STAGE 1~4 / 1 mA/V ~ 1 nA/V)</text>
+
+      <text x="20" y="372" font-size="11" font-weight="bold" fill="#15803d">구성 A-2</text>
+      <text x="20" y="390" font-size="10.5" fill="#333">"분배된 신호를 서로 다른</text>
+      <text x="20" y="404" font-size="10.5" fill="#333">다중 게인(low, mid, high)</text>
+      <text x="20" y="418" font-size="10.5" fill="#333">으로 병렬 증폭하는</text>
+      <text x="20" y="432" font-size="10.5" fill="#333">다중 게인 증폭부"</text>
+
+      <text x="770" y="372" font-size="11" font-weight="bold" fill="#15803d">→ 도 3 [210~240]</text>
+      <text x="770" y="390" font-size="10.5" fill="#333">→ 도 5 (TIA 4채널</text>
+      <text x="770" y="404" font-size="10.5" fill="#333">병렬 증폭 회로)</text>
+
+      <line x1="550" y1="434" x2="550" y2="466" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- LCS frame (dashed) around B-1 + B-2 -->
+      <rect x="370" y="468" width="360" height="266" rx="12" fill="none" stroke="#5b21b6" stroke-width="1.6" stroke-dasharray="8 4"/>
+      <text x="376" y="486" font-size="12" font-weight="bold" fill="#5b21b6">[구성 B] LCS (Logic Control System)</text>
+
+      <!-- B-1 신호 생성부 [300] ★ -->
+      <rect x="380" y="492" width="340" height="100" rx="8" fill="#ede9fe" stroke="#5b21b6" stroke-width="2.6"/>
+      <text x="550" y="516" text-anchor="middle" font-size="13" font-weight="bold" fill="#5b21b6">★ B-1  신호 생성부  [300] (진보성 핵심)</text>
+      <text x="550" y="540" text-anchor="middle" font-size="11" fill="#333">증폭 신호의 포화 및 연속성을</text>
+      <text x="550" y="556" text-anchor="middle" font-size="11" fill="#333">LCS로 모니터링 → 최적 게인 선택</text>
+      <text x="550" y="572" text-anchor="middle" font-size="11" fill="#333">을 위한 제어 신호 생성</text>
+      <text x="550" y="588" text-anchor="middle" font-size="10" fill="#777" font-style="italic">(실시예: 10 mV &lt; V_n &lt; 4.9 V → FLAG_n)</text>
+
+      <text x="20" y="520" font-size="11" font-weight="bold" fill="#5b21b6">구성 B-1</text>
+      <text x="20" y="538" font-size="10.5" fill="#333">"증폭된 신호의 포화 및</text>
+      <text x="20" y="552" font-size="10.5" fill="#333">연속성을 모니터링하여</text>
+      <text x="20" y="566" font-size="10.5" fill="#333">최적의 게인 선택을 위한</text>
+      <text x="20" y="580" font-size="10.5" fill="#333">제어 신호를 LCS를 통해</text>
+      <text x="20" y="594" font-size="10.5" fill="#333">생성하는 신호 생성부"</text>
+
+      <text x="770" y="520" font-size="11" font-weight="bold" fill="#5b21b6">→ 도 6 (모니터링부)</text>
+      <text x="770" y="538" font-size="10.5" fill="#333">윈도우 컴퍼레이터 회로</text>
+      <text x="770" y="552" font-size="10.5" fill="#333">(포화/연속성 검출)</text>
+      <text x="770" y="572" font-size="11" font-weight="bold" fill="#5b21b6">→ 도 7 (제어신호 생성)</text>
+      <text x="770" y="586" font-size="10.5" fill="#333">우선순위 캐스케이드</text>
+      <text x="770" y="600" font-size="10" fill="#b91c1c" font-style="italic">[선행문헌 차별화]</text>
+
+      <line x1="550" y1="592" x2="550" y2="612" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- B-2 신호 선택부 [400] ★ -->
+      <rect x="380" y="614" width="340" height="100" rx="8" fill="#fce7f3" stroke="#9d174d" stroke-width="2.6"/>
+      <text x="550" y="638" text-anchor="middle" font-size="13" font-weight="bold" fill="#9d174d">★ B-2  신호 선택부  [400] (진보성 핵심)</text>
+      <text x="550" y="662" text-anchor="middle" font-size="11" fill="#333">병렬 증폭된 다중 게인 신호 상태를</text>
+      <text x="550" y="678" text-anchor="middle" font-size="11" fill="#333">LCS로 모니터링하고, 측정 신호 범위에</text>
+      <text x="550" y="694" text-anchor="middle" font-size="11" fill="#333">적합한 최적 게인 신호를 MUX로 1차 선택</text>
+      <text x="550" y="710" text-anchor="middle" font-size="10" fill="#777" font-style="italic">(실시예: 4-to-1 Digital MUX)</text>
+
+      <text x="20" y="642" font-size="11" font-weight="bold" fill="#9d174d">구성 B-2</text>
+      <text x="20" y="660" font-size="10.5" fill="#333">"병렬 증폭된 다중 게인</text>
+      <text x="20" y="674" font-size="10.5" fill="#333">신호의 상태를 LCS를 통해</text>
+      <text x="20" y="688" font-size="10.5" fill="#333">모니터링하고, 측정 신호</text>
+      <text x="20" y="702" font-size="10.5" fill="#333">범위에 적합한 최적의 게인</text>
+      <text x="20" y="716" font-size="10.5" fill="#333">신호를 MUX로 1차 선택"</text>
+
+      <text x="770" y="642" font-size="11" font-weight="bold" fill="#9d174d">→ 도 7 (MUX 동작부)</text>
+      <text x="770" y="660" font-size="10.5" fill="#333">N-to-1 MUX 트랜지션</text>
+      <text x="770" y="674" font-size="10.5" fill="#333">제어 신호(SELECT)를</text>
+      <text x="770" y="688" font-size="10.5" fill="#333">통해 최적 채널 출력</text>
+      <text x="770" y="708" font-size="10" fill="#b91c1c" font-style="italic">[선행문헌 차별화]</text>
+
+      <line x1="550" y1="734" x2="550" y2="766" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- C ADC 변환부 [500] -->
+      <rect x="380" y="768" width="340" height="90" rx="8" fill="#fef3c7" stroke="#a16207" stroke-width="2"/>
+      <text x="550" y="792" text-anchor="middle" font-size="13" font-weight="bold" fill="#a16207">C  ADC 변환부  [500]</text>
+      <text x="550" y="814" text-anchor="middle" font-size="11" fill="#333">선택된 최적 아날로그 게인 신호를</text>
+      <text x="550" y="830" text-anchor="middle" font-size="11" fill="#333">디지털 신호로 변환 → 빔 진단 데이터 획득</text>
+      <text x="550" y="848" text-anchor="middle" font-size="10" fill="#777" font-style="italic">(넓은 동적 영역, 약 120 dB 커버)</text>
+
+      <text x="20" y="796" font-size="11" font-weight="bold" fill="#a16207">구성 C</text>
+      <text x="20" y="814" font-size="10.5" fill="#333">"MUX를 통해 선택된 최적의</text>
+      <text x="20" y="828" font-size="10.5" fill="#333">아날로그 게인 신호를 디지털</text>
+      <text x="20" y="842" font-size="10.5" fill="#333">신호로 변환하여 넓은 동적</text>
+      <text x="20" y="856" font-size="10.5" fill="#333">영역의 빔 진단 데이터를</text>
+      <text x="20" y="870" font-size="10.5" fill="#333">획득하는 ADC 변환부"</text>
+
+      <text x="770" y="796" font-size="11" font-weight="bold" fill="#a16207">→ 도 3 [500]</text>
+      <text x="770" y="814" font-size="10.5" fill="#333">시스템 후단 ADC 위치,</text>
+      <text x="770" y="828" font-size="10.5" fill="#333">데이터 저장부 [600] 연결</text>
+      <text x="770" y="846" font-size="11" font-weight="bold" fill="#a16207">→ 도 11 (동적범위)</text>
+      <text x="770" y="860" font-size="10.5" fill="#333">120 dB 커버리지</text>
+
+      <line x1="550" y1="858" x2="550" y2="890" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
+
+      <!-- 출력 -->
+      <ellipse cx="550" cy="920" rx="160" ry="28" fill="#e0e7ff" stroke="#1e40af" stroke-width="1.8"/>
+      <text x="550" y="918" text-anchor="middle" font-size="12" font-weight="bold">넓은 동적 영역의</text>
+      <text x="550" y="933" text-anchor="middle" font-size="12" font-weight="bold">빔 진단 데이터 (DATA)</text>
+
+      <!-- Footer -->
+      <line x1="40" y1="990" x2="1060" y2="990" stroke="#bbb" stroke-dasharray="6 4"/>
+      <text x="550" y="1015" text-anchor="middle" font-size="13" fill="#444">
+        ※ 구성 B (B-1 신호 생성부 + B-2 신호 선택부)는 LCS(Logic Control System)로 통합 제어되며, 본 발명의 진보성 핵심에 해당함.
+      </text>
+      <text x="550" y="1035" text-anchor="middle" font-size="11" fill="#666" font-style="italic">
+        도면부호: [100] 스플리터 / [200] 다중 게인 증폭부 / [300] 신호 생성부 / [400] 신호 선택부 / [500] ADC 변환부.
+      </text>
+      <text x="550" y="1055" text-anchor="middle" font-size="11" fill="#666" font-style="italic">
+        한정 수치(N=4, 1 mA/V~1 nA/V, 10 mV / 4.9 V)는 일 실시예이며 종속항으로 다층화 권장.
+      </text>
+    </svg>
+
+    <div class="caption">
+      <strong>도 2.</strong> 본 도면은 독립항 1(장치 청구항)의 5개 구성요소(A-1, A-2, B-1, B-2, C)와 그 연결 관계를 도시한 시스템 블록 구성도이다.
+      좌측 열에는 청구항 구성요소 정의를, 중앙 열에는 블록 구성도를, 우측 열에는 각 구성요소를 상세히 도시하는 보강 도면 번호를 표기하였다.
+      <br><br>
+      <strong>구성 B의 LCS 통합:</strong> B-1 신호 생성부와 B-2 신호 선택부는 점선 프레임으로 표시된 LCS(Logic Control System) 내부에서 통합 제어된다.
+      B-1은 증폭 신호의 포화·연속성 모니터링을 통해 제어 신호(SELECT)를 생성하고, B-2는 해당 제어 신호로 MUX를 통해 최적 채널을 1차 선택한다.
+      이 LCS 기반 모니터링·제어 통합 동작이 선행문헌 1(트리거 판독 로직)과 선행문헌 2 거절이유(통상적 마이크로프로세서 제어 설계 변경)에 대한 직접 반박 근거가 된다.
+      <br><br>
+      <strong>도면부호 권장:</strong> [100] 스플리터, [200] 다중 게인 증폭부, [300] 신호 생성부, [400] 신호 선택부, [500] ADC 변환부.
+      각 구성의 하위 구성요소(예: [210~240], [310~340], [350])는 도 3에서 상세 도시.
+    </div>
+  </div>
+
+  <script>
+    function downloadSvg(id) {
+      const svg = document.getElementById(id);
+      const serializer = new XMLSerializer();
+      let str = serializer.serializeToString(svg);
+      str = '<?xml version="1.0" encoding="UTF-8"?>\n' + str;
+      const blob = new Blob([str], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = id + '.svg'; a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

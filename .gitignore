@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets / env
+.env
+.env.local
+*.key
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Copyrighted reference PDFs (do not redistribute)
+*.pdf
+
+# One-off debug scripts (kept locally, not in repo)
+_scan_dollar_brace.py
+_count_single_bs.py
+_test_escape.js
+_smoke_viz.js
+
+# Playwright session snapshots / generated test outputs
+ch4-snapshot.md
+homepage.png
+ch4.png
+masterCase-init.png
+masterCase-final.png

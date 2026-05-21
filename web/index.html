@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLRS · Algorithms</title>
+<link rel="stylesheet" href="css/styles.css?v=40">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">본문 바로가기</a>
+
+<header class="topbar" role="banner">
+  <a class="brand" href="#home" aria-label="홈으로">
+    <span class="brand-mark" aria-hidden="true">Σ</span>
+    <span class="brand-text">CLRS<em> · Algorithms</em></span>
+  </a>
+
+  <nav class="breadcrumb" id="breadcrumb" aria-label="경로"></nav>
+
+  <div class="topbar-actions">
+    <button type="button" class="btn btn-ghost" id="btn-cmdk" data-tooltip="검색 (⌘K)" aria-label="검색 열기">
+      <span class="btn-icon-glyph">⌘K</span>
+      <span class="btn-text">검색</span>
+    </button>
+    <button type="button" class="btn btn-ghost btn-icon" id="btn-help" data-tooltip="도움말 (?)" aria-label="도움말 열기">?</button>
+    <button type="button" class="btn btn-ghost btn-icon" id="btn-toc" data-tooltip="목차 토글" aria-expanded="true" aria-controls="sidebar" aria-label="목차 토글">☰</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="목차 탐색">
+    <div class="sidebar-search" role="search">
+      <button type="button" class="cmdk-trigger" id="sidebar-cmdk" data-tooltip="⌘K로 빠르게 열기">
+        <span aria-hidden="true">⌕</span>
+        <span>검색…</span>
+        <kbd>⌘K</kbd>
+      </button>
+    </div>
+    <nav id="nav-root"></nav>
+    <div class="sidebar-footer">
+      <div class="progress-card" id="progress-card">
+        <div class="progress-card-head">
+          <span class="small">드릴 완주</span>
+          <span class="small" id="drill-progress-text">0 / 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-bar-fill drill" id="drill-progress-fill"></div></div>
+
+        <div class="progress-card-head progress-card-sub">
+          <span class="muted small">챕터 방문</span>
+          <span class="muted small" id="progress-text">0 / 11</span>
+        </div>
+        <div class="progress-bar subtle"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main" class="main" tabindex="-1">
+    <article id="content" class="content" aria-live="polite"></article>
+
+    <section class="empty-home" id="empty-home" hidden>
+      <div class="empty-card">
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <rect x="10" y="14" width="44" height="36" rx="4" stroke="currentColor" stroke-width="2.5"/>
+            <line x1="32" y1="14" x2="32" y2="50" stroke="currentColor" stroke-width="2"/>
+            <line x1="18" y1="24" x2="26" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="18" y1="32" x2="26" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="38" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="38" y1="32" x2="46" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="empty-eyebrow">CLRS · Interactive notes</p>
+        <h1>알고리즘을<br><span class="hl">눈으로</span> 따라가기</h1>
+        <p class="lead">
+          핵심 21개 알고리즘을 단계별 시각화로 풀어 두었습니다.
+          좌측 목록에서 챕터를 고르거나, <kbd>⌘</kbd><kbd>K</kbd>로 바로 검색하세요.
+        </p>
+
+        <div class="cta-row">
+          <button type="button" class="btn btn-primary btn-lg" id="cta-resume" data-goto="ch2">
+            <span id="cta-resume-label">처음부터 시작</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="btn btn-outline btn-lg" id="cta-search">
+            <span aria-hidden="true">⌕</span>
+            검색 열기
+          </button>
+        </div>
+
+        <ul class="home-highlights">
+          <li>
+            <span class="hl-num">21</span>
+            <span class="hl-label">알고리즘 시각화</span>
+          </li>
+          <li>
+            <span class="hl-num">11</span>
+            <span class="hl-label">핵심 챕터</span>
+          </li>
+          <li>
+            <span class="hl-num">&lt;400ms</span>
+            <span class="hl-label">즉각적 반응</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Side Memo Panel (slide-in from right, per-chapter) -->
+<aside id="memo-side" class="memo-side" hidden aria-label="챕터 메모">
+  <button type="button" class="memo-side-handle" id="memo-side-handle"
+          aria-label="메모 열기" data-tooltip="메모 열기/닫기 (M)">
+    <span class="memo-side-handle-icon" aria-hidden="true">📝</span>
+    <span class="memo-side-handle-text">메모</span>
+  </button>
+  <div class="memo-side-panel" id="memo-side-panel" aria-hidden="true">
+    <header class="memo-side-head">
+      <div>
+        <p class="memo-side-eyebrow" id="memo-side-eyebrow">챕터</p>
+        <h3 class="memo-side-title" id="memo-side-title">메모</h3>
+      </div>
+      <div class="memo-side-actions">
+        <span class="memo-side-status" id="memo-side-status" aria-live="polite"></span>
+        <button type="button" class="btn btn-ghost btn-icon" id="memo-side-close"
+                aria-label="메모 닫기" data-tooltip="닫기 (M / Esc)">✕</button>
+      </div>
+    </header>
+    <div class="memo-side-input" id="memo-side-input"
+         contenteditable="true"
+         data-placeholder="이 챕터에 대한 메모를 자유롭게 작성하세요... (이미지 붙여넣기 OK)"></div>
+    <footer class="memo-side-foot muted small">
+      <span><kbd>M</kbd> 토글 · <kbd>Esc</kbd> 닫기 · 이미지 붙여넣기 가능</span>
+    </footer>
+  </div>
+</aside>
+
+<!-- Visualizer Panel -->
+<div class="viz-overlay" id="viz-overlay" hidden>
+  <section class="viz-panel" role="dialog" aria-modal="true" aria-labelledby="viz-title">
+    <header class="viz-header">
+      <div>
+        <p class="viz-eyebrow" id="viz-eyebrow"></p>
+        <h2 id="viz-title">시각화</h2>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon" id="viz-close" data-tooltip="닫기 (Esc)" aria-label="시각화 닫기">✕</button>
+    </header>
+
+    <div class="viz-body">
+      <div class="viz-stage" id="viz-stage" aria-live="polite">
+        <!-- 시각화 SVG가 여기에 삽입됩니다 -->
+        <div class="viz-celebrate" id="viz-celebrate" hidden aria-hidden="true">
+          <div class="viz-celebrate-check">✓</div>
+          <p>완료했습니다!</p>
+        </div>
+      </div>
+
+      <aside class="viz-side">
+        <div class="viz-status" aria-live="polite">
+          <div class="viz-progress">
+            <div class="viz-progress-bar" id="viz-progress-bar"></div>
+          </div>
+          <p class="viz-step" id="viz-step">Step 0 / 0</p>
+          <p class="viz-message" id="viz-message">준비 중…</p>
+        </div>
+
+        <div class="viz-pseudo" id="viz-pseudo" aria-label="의사코드"></div>
+
+        <div class="viz-legend" id="viz-legend"></div>
+      </aside>
+    </div>
+
+    <footer class="viz-footer">
+      <div class="viz-controls">
+        <button type="button" class="btn btn-outline" id="viz-prev" data-tooltip="이전 단계 (←)" aria-label="이전 단계">◀ 이전</button>
+        <button type="button" class="btn btn-outline" id="viz-play" data-tooltip="자동 재생 (Space)" aria-label="자동 재생">▶ 자동 재생</button>
+        <button type="button" class="btn btn-primary" id="viz-next" data-tooltip="다음 단계 (→)" aria-label="다음 단계">다음 ▶</button>
+      </div>
+      <div class="viz-tips muted small">
+        <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>Space</kbd> 재생 · <kbd>Esc</kbd> 닫기
+      </div>
+    </footer>
+  </section>
+</div>
+
+<!-- Command Palette (Cmd+K) -->
+<div class="cmdk-overlay" id="cmdk" hidden>
+  <section class="cmdk-panel" role="dialog" aria-modal="true" aria-labelledby="cmdk-title">
+    <h2 id="cmdk-title" class="visually-hidden">검색 및 빠른 이동</h2>
+    <div class="cmdk-search">
+      <span class="cmdk-search-icon" aria-hidden="true">⌕</span>
+      <input type="text" class="cmdk-input" id="cmdk-input"
+             placeholder="검색: 챕터, 알고리즘, 키워드…"
+             autocomplete="off" spellcheck="false">
+      <kbd>esc</kbd>
+    </div>
+    <ul class="cmdk-list" id="cmdk-list" role="listbox"></ul>
+    <footer class="cmdk-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 이동</span>
+      <span><kbd>↵</kbd> 열기</span>
+      <span><kbd>esc</kbd> 닫기</span>
+    </footer>
+  </section>
+</div>
+
+<!-- Help Overlay -->
+<div class="help-overlay" id="help" hidden>
+  <section class="help-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <header class="help-head">
+      <div>
+        <p class="muted small">단축키 · 도움말</p>
+        <h2 id="help-title">키보드만으로 모든 것을 할 수 있습니다</h2>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon" id="help-close" aria-label="도움말 닫기">✕</button>
+    </header>
+    <div class="help-body">
+      <section class="help-section">
+        <h3>전역</h3>
+        <dl>
+          <dt><kbd>⌘</kbd><kbd>K</kbd> <span class="muted">/ </span><kbd>Ctrl</kbd><kbd>K</kbd></dt>
+          <dd>검색 팔레트 열기</dd>
+          <dt><kbd>?</kbd></dt>
+          <dd>이 도움말 열기</dd>
+          <dt><kbd>g</kbd> <kbd>h</kbd></dt>
+          <dd>홈으로 이동</dd>
+          <dt><kbd>esc</kbd></dt>
+          <dd>모든 오버레이 닫기</dd>
+        </dl>
+      </section>
+      <section class="help-section">
+        <h3>시각화 안에서</h3>
+        <dl>
+          <dt><kbd>→</kbd> <span class="muted">/ </span><kbd>Space</kbd></dt>
+          <dd>다음 단계</dd>
+          <dt><kbd>←</kbd></dt>
+          <dd>이전 단계</dd>
+          <dt>마우스 좌/우클릭</dt>
+          <dd>다음/이전 단계</dd>
+        </dl>
+      </section>
+      <section class="help-section">
+        <h3>챕터 탐색</h3>
+        <dl>
+          <dt><kbd>j</kbd> <span class="muted">/ </span><kbd>k</kbd></dt>
+          <dd>다음/이전 챕터</dd>
+        </dl>
+      </section>
+    </div>
+    <footer class="help-foot muted small">
+      대부분의 액션은 클릭이 아니라 키보드로 더 빠르게 가능합니다.
+    </footer>
+  </section>
+</div>
+
+<!-- Toast (System status) -->
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- Tooltip (live, attached on hover) -->
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<!-- App logic -->
+<script src="js/content.js?v=40"></script>
+<script src="js/exam-data.js?v=40"></script>
+<script src="js/exam-view.js?v=40"></script>
+<script src="js/viz-core.js?v=40"></script>
+<script src="js/viz-sort.js?v=40"></script>
+<script src="js/viz-dp.js?v=40"></script>
+<script src="js/viz-greedy.js?v=40"></script>
+<script src="js/viz-graph.js?v=40"></script>
+<script src="js/viz-misc.js?v=40"></script>
+<script src="js/viz-ds.js?v=40"></script>
+<script src="js/ask.js?v=40"></script>
+<script src="js/drills.js?v=40"></script>
+<script src="js/interactive.js?v=40"></script>
+<script src="js/app.js?v=40"></script>
+
+</body>
+</html>
