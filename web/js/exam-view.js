@@ -63,6 +63,9 @@
     ch_extra_linked_list: "연결 리스트 (CLRS 외)",
     ch_extra_sparse: "희소 행렬 (CLRS 외)",
     ch_extra_josephus: "원탁/Josephus (CLRS 외)",
+    ch_extra_stack: "스택 응용 (CLRS 외)",
+    ch_extra_queue: "큐/원형 큐 (CLRS 외)",
+    ch_extra_binary_tree: "이진 트리 표현/순회 (CLRS 외)",
   };
 
   function esc(s) {

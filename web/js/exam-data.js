@@ -24,7 +24,7 @@ window.__EXAM__ = {
               "answer": "[수식] a - b * c (괄호 없음, 우선순위 * > -)\n\n[가] 후위 표기식: **a b c * -**\n\n[나] 스택 변환 과정 (스택 = 연산자, 출력 = 후위식)\n- 우선순위: '*' = 2, '-' = 1.  스택 top 우선순위 ≥ 입력 연산자면 pop.\n\n| 입력 | 스택 | 출력 |\n|------|------|------|\n| a    | -    | a    |\n| -    | -    | a    |  (스택 push)\n| b    | -    | a b  |\n| *    | - *  | a b  |  (top=`-`, 우선순위 낮음 → push)\n| c    | - *  | a b c |\n| 끝   | (비움)| a b c * - |  (남은 스택 pop)\n\n→ 최종 후위식: **a b c * -**\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -34,7 +34,7 @@ window.__EXAM__ = {
               "answer": "[수식] a * (b - c) + d (괄호와 우선순위 모두 포함)\n\n[가] 후위 표기식: **a b c - * d +**\n\n[나] 스택 변환 과정\n- 규칙: '(' 만나면 스택에 push (우선순위 최저 취급).\n- ')' 만나면 '(' 만날 때까지 pop.\n- 일반 연산자는 우선순위 ≥ top 이면 pop 후 push.\n\n| 입력 | 스택   | 출력         |\n|------|--------|--------------|\n| a    |        | a            |\n| *    | *      | a            |\n| (    | * (    | a            |\n| b    | * (    | a b          |\n| -    | * ( -  | a b          |\n| c    | * ( -  | a b c        |\n| )    | *      | a b c -      | ('(' 까지 pop)\n| +    | +      | a b c - *    | ('+' 우선순위 ≤ '*' → '*' pop, then push '+')\n| d    | +      | a b c - * d  |\n| 끝   | (비움) | a b c - * d + |\n\n→ 최종 후위식: **a b c - * d +**\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -44,7 +44,7 @@ window.__EXAM__ = {
               "answer": "[후위식] 1 2 + 7 *\n\n[가] 연산 결과: **(1+2) * 7 = 21**\n\n[나] 스택 변화 (피연산자는 push, 이항 연산자는 두 개 pop 후 결과 push)\n- 두 개 pop 시 **먼저 pop = 우항(B)**, 나중 pop = 좌항(A).\n\n| 입력 | 동작            | 스택        |\n|------|----------------|-------------|\n| 1    | push 1         | [1]         |\n| 2    | push 2         | [1, 2]      |\n| +    | 2 pop, 1 pop → 1+2=3, push | [3] |\n| 7    | push 7         | [3, 7]      |\n| *    | 7 pop, 3 pop → 3*7=21, push | [21] |\n| 끝   | 결과 = 스택 top = **21** |       |\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -54,7 +54,7 @@ window.__EXAM__ = {
               "answer": "[수식] a + b * (c - d)\n\n[가] 이진 트리 (루트 = 마지막에 계산되는 연산자 '+')\n```\n        +\n       / \\\n      a   *\n         / \\\n        b   -\n           / \\\n          c   d\n```\n- '+'가 루트 (우선순위 최저)\n- 우자식 '*'의 우자식이 '-'\n- '-' 의 자식이 단말 c, d\n\n[나] 후위 순회 = 좌→우→루트 순서\n- 좌: a\n- 우: (b, (c, d, -), *) → b c d - *\n- 루트: +\n- **a b c d - * +**\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -64,7 +64,7 @@ window.__EXAM__ = {
               "answer": "[수식] a + b / c\n\n[이진 트리]\n```\n      +\n     / \\\n    a   /\n       / \\\n      b   c\n```\n\n[스레드 이진 트리] — 빈 left/rightChild 포인터를 중위 후속자/선행자로 채움.\n\n중위 순회 순서: **a + b / c**\n\n- a (단말): left가 비어있다 → 머리(헤드) 노드로 스레드(선행자 없음)\n            right가 비어있다 → 후속자는 '+' (점선)\n- '+' (루트): left = a (실선), right = '/' (실선)\n- b (단말): left가 비어있다 → 선행자 '+' (점선)\n            right가 비어있다 → 후속자 '/' (점선)\n- '/': left = b (실선), right = c (실선)\n- c (단말): left가 비어있다 → 선행자 '/' (점선)\n            right가 비어있다 → 후속자 없음 = 헤드 노드 (점선)\n\n(시험 답안지에는 위 트리 그림에서 각 단말의 left/right 빈 포인터를 점선\n화살표로 중위 순서상 직전·직후 노드로 연결하여 표시하면 된다.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             }
           ]
@@ -233,7 +233,7 @@ window.__EXAM__ = {
               "answer": "[enqueue(Q, e) — 두 스택 큐의 후단 삽입]\n\n방법: 새 원소를 항상 S1 의 top 으로 push.\n\n```pseudo\nenqueue(Q, e):\n  push(S1, e)\n  return\n```\n\n근거: 후단(rear) = S1 의 top. dequeue 시 S1 을 모두 S2 로 옮기면\n       전단이 S2 의 top 으로 노출되므로 큐의 FIFO 가 보존된다.\n\n[시간 복잡도] O(1) (단일 push).\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             },
             {
@@ -270,7 +270,7 @@ window.__EXAM__ = {
               "answer": "[수식] A * B / C - E * F / G (좌결합, *·/ 우선순위 > -)\n\n[이진 트리]\n```\n            -\n           / \\\n          /   /\n         / \\ / \\\n        *  C *   G\n       / \\  / \\\n      A   B E   F\n```\n구체적으로:\n- 루트 '-': 좌 = (A*B/C), 우 = (E*F/G).\n- 좌부분: '/' 의 좌 = (A*B), 우 = C.\n- (A*B) 의 좌 = A, 우 = B.\n- 우부분도 유사: '/' 좌 = (E*F), 우 = G.\n\n[검증] 중위 순회: A * B / C - E * F / G ✓\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             },
             {
@@ -280,7 +280,7 @@ window.__EXAM__ = {
               "answer": "[스레드 이진 트리 구성 규칙]\n- 노드 구조: (leftThread, leftChild, data, rightChild, rightThread)\n  · 두 boolean 플래그가 자식 포인터가 진짜 자식인지(0) 스레드인지(1) 표시.\n- 빈 left 포인터 → 중위 순회상 **선행자(predecessor)** 노드를 가리키도록 스레드 처리.\n- 빈 right 포인터 → 중위 순회상 **후속자(successor)** 노드를 가리키도록 스레드 처리.\n- 최좌단/최우단 단말의 빈 포인터는 헤드(더미) 노드로 연결.\n\n[(1)의 트리에 스레드 적용] — 중위 순서: A * B / C - E * F / G\n\n| 단말 | left 스레드 → | right 스레드 → |\n|------|--------------|----------------|\n| A    | (헤드)       | *              |\n| B    | *            | /              |\n| C    | /            | -              |\n| E    | -            | *              |\n| F    | *            | /              |\n| G    | /            | (헤드)         |\n\n내부 노드 (*, /, -, ...) 들은 실자식이 모두 있으므로 leftThread=rightThread=0.\n답안 그림에는 트리에 점선 화살표로 위 스레드 6쌍을 표시.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             },
             {
@@ -290,7 +290,7 @@ window.__EXAM__ = {
               "answer": "[insucc(temp) — 중위 순회의 후속자]\n\n알고리즘:\n1) temp 의 rightThread 가 1 이면 그 스레드 자체가 후속자.\n2) rightThread 가 0 이면 (실제 우자식이 있음) — 우서브트리의 **최좌단** 노드가 후속자.\n\n```pseudo\ninsucc(threadedPointer temp):\n  threadedPointer p = temp.rightChild\n  if (temp.rightThread == 0):           // 실제 우자식 존재\n    while (p.leftThread == 0):          // 최좌단까지\n      p = p.leftChild\n  return p\n```\n\n[복잡도] 각 호출은 트리 높이에 비례 (O(h)) 이지만,\n전체 중위 순회를 n 번 insucc 로 수행하면 **총 O(n)** (분할 상환).\n\n[정확성]\n- right 스레드 = 1 → 정의상 그 노드가 중위 후속자.\n- 실 우자식 = 우서브트리의 최좌단이 우서브트리 내에서 가장 작은 키 → temp 직후.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             }
           ]
@@ -314,7 +314,7 @@ window.__EXAM__ = {
               "answer": "[원형 큐] 크기 = 6, 인덱스 0~5, F=R 이 empty 조건, 두 원소 {34, 23} 가 인덱스 0, 1 에 저장.\n\n원형 큐 일반 규약:\n- F = front 포인터: 다음에 **삭제될** 자리의 **직전** 인덱스 (또는 첫 원소 인덱스, 책마다 다름).\n- R = rear 포인터: 마지막 **삽입된** 자리의 인덱스 (또는 다음 삽입 자리).\n\nCLRS / 다수 책 규약 (\"F 는 첫 원소 직전, R 은 마지막 원소 인덱스\"):\n- 초기 F = R = 0 (empty).\n- enqueue 시 R = (R+1) mod 6, 그 자리에 저장.\n- 34, 23 두 개 삽입 후 → 34 는 인덱스 1, 23 은 인덱스 2 에 들어가야 함.\n\n그러나 문제 그림은 34, 23 이 **[0], [1]** 위치라고 표기 → 다른 규약 사용:\n- F = 첫 원소 인덱스 = 0, R = 다음 삽입 자리 인덱스 = 2.\n\n**답**: F = 0, R = 2\n\n(책의 정의에 따라 F=R=0 시작 + \"rear 가 다음 자리 가리킴\" 규약을 따른다.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             },
             {
@@ -324,7 +324,7 @@ window.__EXAM__ = {
               "answer": "[2개 연속 삭제 후]\n\n(1) 답 (F=0, R=2) 에서 dequeue 두 번:\n- dequeue 1회: 34 제거, F = (0+1) mod 6 = 1.\n- dequeue 2회: 23 제거, F = (1+1) mod 6 = 2.\n- R 은 변하지 않음 = 2.\n\n**답**: F = 2, R = 2\n\n이 때 F == R 이므로 **큐 empty** 상태.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             },
             {
@@ -334,7 +334,7 @@ window.__EXAM__ = {
               "answer": "[원형 큐: (1) 상태 (F=0, R=2) 에서 7, 25, 8, 16 삽입]\n\n각 enqueue: 새 자리 인덱스 = R, 저장 후 R = (R+1) mod 6.\n\n| 단계 | 동작        | 인덱스 [0][1][2][3][4][5] | F | R |\n|------|------------|---------------------------|---|---|\n| 초기 |            | 34 23  -  -  -  -         | 0 | 2 |\n| +7   | 7 at idx 2 | 34 23  7  -  -  -         | 0 | 3 |\n| +25  | at idx 3   | 34 23  7 25  -  -         | 0 | 4 |\n| +8   | at idx 4   | 34 23  7 25  8  -         | 0 | 5 |\n| +16  | at idx 5   | 34 23  7 25  8 16         | 0 | 0 |\n\n[발생 결과] R = (5+1) mod 6 = 0. **F == R = 0 → \"큐가 가득 찼다\"의 표현이 empty 조건(F=R)과 충돌!**\n\n이는 원형 큐의 고전적 문제: F=R 만으로는 empty 와 full 을 구분할 수 없다.\n\n[해결책] 두 가지 표준 방법:\n1) **한 자리 비워두기**: 큐가 가득 찼다고 보는 시점을 (R+1) mod n == F 로 정의. 실용 용량 = n-1.\n2) **카운터 사용**: 원소 수 count 를 별도 유지.\n3) **태그/플래그**: full/empty 플래그를 별도 비트로 관리.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             }
           ]
@@ -378,7 +378,7 @@ window.__EXAM__ = {
               "answer": "[n 개 노드 이진 트리의 최소/최대 높이]\n(루트 레벨 = 1 가정)\n\n**최소 높이** — 완전(균형) 이진 트리일 때.\n높이 h 인 완전 이진 트리의 최대 노드 수 = 2^h - 1.\n따라서 n 개를 담는 최소 h 는\n  h_min = ⌈log₂(n+1)⌉ = **⌊log₂ n⌋ + 1**\n\n**최대 높이** — 사슬(skewed) 형태일 때.\n모든 노드가 한 줄로 늘어선 경우:\n  h_max = **n**\n\n(루트 레벨을 0 으로 잡는 책 규약이면 각각 ⌊lg n⌋, n-1.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             }
           ]
@@ -449,7 +449,7 @@ window.__EXAM__ = {
               "answer": "[명제식 이진 트리 노드 구조 (C)]\n\n```c\ntypedef struct node {\n    struct node *left_child;     // 좌자식\n    char data;                   // 연산자(∧, ∨, ¬) 또는 변수(x1, x2, ...)\n    char value;                  // 'T' 또는 'F' (변수에만 의미, 연산자엔 계산 후 저장)\n    struct node *right_child;    // 우자식\n} node;\n\ntypedef node *tree_ptr;\n```\n\n(¬ 는 단항 연산자라 right_child 만 사용하거나 별도 표시 필요. 변수는 leaf 노드.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             },
             {
@@ -459,7 +459,7 @@ window.__EXAM__ = {
               "answer": "[수식] (x₁ ∧ ¬x₂) ∨ (¬x₁ ∧ ¬x₃) ∨ x₃\n\n좌결합 ∨ 가정 → ((x₁∧¬x₂) ∨ (¬x₁∧¬x₃)) ∨ x₃\n\n[이진 트리]\n```\n              ∨\n            /   \\\n           ∨     x₃\n          /   \\\n         ∧    ∧\n        / \\  / \\\n      x₁ ¬x₂ ¬x₁ ¬x₃\n            (¬는 단항: 우자식만 사용, 좌자식 NULL)\n```\n\n[중위 순회 결과 (괄호 제외)]: x₁ ∧ ¬ x₂ ∨ ¬ x₁ ∧ ¬ x₃ ∨ x₃ ✓\n(단항 ¬ 의 표기 위치는 책 규약에 따라 조정.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             },
             {
@@ -836,7 +836,7 @@ window.__EXAM__ = {
               "answer": "[후위 표기식] 5 7 + 2 / 1 3 * -\n\n[스택 변환 단계]\n| 입력 | 동작                | 스택           |\n|------|---------------------|----------------|\n| 5    | push                | [5]            |\n| 7    | push                | [5, 7]         |\n| +    | pop 7,5 → 12, push  | [12]           |\n| 2    | push                | [12, 2]        |\n| /    | pop 2,12 → 6, push  | [6]            |\n| 1    | push                | [6, 1]         |\n| 3    | push                | [6, 1, 3]      |\n| *    | pop 3,1 → 3, push   | [6, 3]         |\n| -    | pop 3,6 → 3, push   | [3]            |\n\n**결과** = 3.\n\n[컴퓨터 내부 활용 이유]\n- 괄호 없이 우선순위와 결합 방향이 명확히 표현됨.\n- 단일 스택으로 O(n) 평가 가능 — 컴파일러·계산기·JVM 바이트코드 평가의 표준.\n- 표현식 트리(AST) 의 후위 순회와 일대일 대응.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -846,7 +846,7 @@ window.__EXAM__ = {
               "answer": "[후위식 → 중위식]\n5 7 + 2 / 1 3 * - 의 결합 표현:\n- (5 + 7) / 2 - (1 * 3)\n- **((5 + 7) / 2) - (1 * 3)**\n\n(괄호 일부 생략 가능: ((5+7)/2) - 1*3 = 3 이 답.)\n\n[이진 트리]\n```\n            -\n           / \\\n          /   *\n         / \\  / \\\n        +  2 1  3\n       / \\\n      5   7\n```\n\n후위 순회: 5, 7, +, 2, /, 1, 3, *, - ✓\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -856,7 +856,7 @@ window.__EXAM__ = {
               "answer": "[중위 순회 — 스택 사용 C 함수]\n\n```c\nvoid iter_inorder(tree_pointer node) {\n  int top = -1;\n  tree_pointer stack[MAX_STACK_SIZE];\n  for ( ; ; ) {\n    // ① 좌측으로 끝까지 내려가며 스택에 push\n    for ( ; node; node = node->left_child)\n      add(stack, &top, node);\n\n    // ② 스택이 비면 종료\n    node = delete(stack, &top);\n    if (!node) break;\n\n    // ③ 출력\n    printf(\"%d\", node->data);\n\n    // ④ 우측 서브트리로 이동\n    node = node->right_child;\n  }\n}\n```\n\n빈칸 ①~④:\n- ①  `for (; node; node = node->left_child) add(stack, &top, node);`\n- ②  `node = delete(stack, &top);`\n- ③  `if (!node) break;`\n- ④  `node = node->right_child;`\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -866,7 +866,7 @@ window.__EXAM__ = {
               "answer": "[재귀 vs 스택(반복) 트리 순회]\n\n| 특성      | 재귀 (Recursive)              | 스택 백트래킹 (Iterative)       |\n|----------|------------------------------|--------------------------------|\n| 구현 난이도 | 매우 간단 (3~5줄)            | 복잡 (스택 관리)                |\n| 코드 길이  | 짧음                         | 길음                            |\n| 가독성    | 우수 (구조 명확)              | 보통 (스택 흐름 추적 필요)       |\n| 메모리    | 호출 스택 O(h) — 한도 있음    | 명시적 스택 O(h) — 크기 조절 가능 |\n| 성능      | 함수 호출 오버헤드            | 호출 오버헤드 없음, 약간 빠름    |\n| 스택 오버 | 깊은 트리에서 발생 가능        | 동적 크기 조절로 회피 가능       |\n| 디버깅    | 호출 스택으로 추적 용이        | 자체 스택 내용 출력 필요         |\n\n[결론]\n- 트리 깊이가 작고 가독성이 중요하면 → **재귀**.\n- 트리 깊이가 매우 크거나 스택 오버플로 위험이 있으면 → **반복 + 명시적 스택**.\n- 모리스 순회(Morris Traversal): O(1) 공간 — 스레드 사용 시 백트래킹 없이 가능.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             }
           ]
@@ -1499,7 +1499,7 @@ window.__EXAM__ = {
               "answer": "**원형큐 (Q_SIZE - 1 개 공간 사용)** — front 가 첫 원소의 **바로 전 위치**.\n\n[조건 정의]\n  empty :  front == rear\n  full  :  ( (rear + 1) % Q_SIZE )  ==  front\n\n(한 칸을 일부러 비워둠 — 이로써 empty 와 full 을 동일한 식 front == rear 로\n혼동하지 않고 구분.)\n\n[큐에 저장된 모든 원소를 앞에서부터 순서대로 출력]\nfront 다음 위치부터 rear 까지 순회.\n\n  void print_queue() {\n      int i;\n      if (front == rear) {           // empty\n          printf(\"queue empty\\n\");\n          return;\n      }\n      i = (front + 1) % Q_SIZE;      // 첫 원소 위치\n      while (1) {\n          printf(\"%d \", cqueue[i]);\n          if (i == rear) break;       // 마지막 원소까지 출력했으면 종료\n          i = (i + 1) % Q_SIZE;\n      }\n      printf(\"\\n\");\n  }\n\n(rear 가 마지막 원소 위치를 가리킴. front+1 부터 rear 까지 mod Q_SIZE 로 순환.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             },
             {
@@ -1509,7 +1509,7 @@ window.__EXAM__ = {
               "answer": "**Q_SIZE 전체 공간을 모두 사용하기 위한 방법**\n\nempty/full 구분이 한 식 `front == rear` 로 충돌하는 문제를 해결하기 위해\n**별도의 개수 변수 `count`** 또는 **boolean flag `tag`** 를 추가한다. (가장\n일반적인 방식은 count.)\n\n[변수 추가]\n  int cqueue[Q_SIZE];\n  int front = 0, rear = 0;\n  int count = 0;                  // 현재 원소 개수 (0 ~ Q_SIZE)\n\n[삽입 — addq]\n  void addq(int item) {\n      if (count == Q_SIZE) {                // full — Q_SIZE 칸 모두 차 있음\n          fprintf(stderr, \"queue full\\n\");\n          return;\n      }\n      rear = (rear + 1) % Q_SIZE;\n      cqueue[rear] = item;\n      count++;\n  }\n\n[삭제 — deleteq]\n  int deleteq() {\n      int item;\n      if (count == 0) {                     // empty\n          fprintf(stderr, \"queue empty\\n\");\n          return -1;                         // 에러 표시값\n      }\n      front = (front + 1) % Q_SIZE;\n      item = cqueue[front];\n      count--;\n      return item;\n  }\n\n[조건]\n  empty :  count == 0\n  full  :  count == Q_SIZE\n\ncount 변수를 도입함으로써 **Q_SIZE 칸을 모두 데이터 저장에 활용** 할 수 있고,\nempty·full 의 구분이 명확해진다. (대안: tag = 0/1 변수로 마지막 연산이 add\n인지 delete 인지 기록 — empty/full 동시 처리 가능.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             },
             {
@@ -1519,7 +1519,7 @@ window.__EXAM__ = {
               "answer": "**front 가 첫 번째 원소를 직접 가리키게 할 경우의 문제점**\n\n원래 관례는 `front` 가 첫 원소의 **바로 직전(empty 슬롯)** 을 가리키도록\n설계해 `(front+1) % Q_SIZE` 위치가 첫 원소가 되게 한다. 이를 바꾸어 front\n가 **첫 원소 자체**를 가리키게 하면 다음 문제가 발생한다.\n\n(1) **빈 큐 상태의 초기화·표현이 모호해진다**\n초기에 큐가 비어 있을 때 첫 원소 자리가 없으므로 front 가 가리킬 곳이\n없다. 어떤 초기값(예: front = -1) 을 별도 약속해야 하며, 그 약속이 매\n연산에서 일관되게 검사돼야 한다.\n\n(2) **empty 와 full 의 구분 식이 일관되지 않아진다**\nfront 가 \"직전 빈 자리\" 를 가리킬 때는\n  empty : front == rear\n  full  : (rear + 1) % Q_SIZE == front\n로 깔끔히 분리되지만, front 가 \"첫 원소 자체\" 를 가리키면 양쪽 식이 모두\n`front == rear` 또는 `front == (rear+1) % Q_SIZE` 와 같이 변하면서 빈 큐와\n원소 1 개의 큐를 같은 인덱스 관계로 표현하게 된다. 이로 인해 별도 변수\n(count, tag) 가 필수가 된다.\n\n(3) **deleteq 후의 처리가 복잡해진다**\n\"첫 원소를 가리키는 front\" 는 deleteq 때 그 원소를 반환한 뒤 front 를\n다음 위치로 옮겨야 한다. 그러나 큐가 비게 되면 그 다음 위치가 의미가\n없어진다 — 빈 큐 검출 분기를 매 연산마다 따로 두어야 한다.\n\n(4) **순회 코드와 인덱스 계산 일관성이 깨진다**\n\"front 직전 자리\" 규약이 있어야 모든 순회를 `(front+1) … rear` 의 모듈러\n수식 하나로 표현할 수 있다. front 가 첫 원소 자체면 빈 큐의 처음 enqueue\n경우 등 예외 분기가 늘어나 코드 가독성·유지보수성이 저하된다.\n\n요컨대 \"한 칸을 비워두고 front 는 직전 자리를 가리키는\" 관례는 작은 메모리\n대가로 **empty/full 구분·순회식·예외 분기**를 모두 단순화시키는 설계\n선택이며, 이를 깨면 보조 변수가 필요해진다.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_queue",
               "answered": true
             }
           ]
@@ -1664,7 +1664,7 @@ window.__EXAM__ = {
               "answer": "[스택의 특징]\n- **LIFO(Last-In, First-Out)** — 마지막에 push 된 원소가 가장 먼저 pop.\n- push·pop 모두 한쪽 끝(top) 에서 일어나므로 두 연산 모두 O(1).\n- 호출·반환 같은 **재귀적 흐름**과 **백트래킹(backtracking)** 에 자연스러운 자료구조.\n\n[미로 찾기에서 스택을 활용하는 이유]\n미로 탐색은 한 분기를 따라 가다가 막히면 **이전 분기점으로 되돌아가\n다른 방향을 시도하는 백트래킹** 알고리즘이다. 스택은 이런 흐름과 정확히\n맞물린다.\n\n  ① 진행한 칸을 push 하면 **현재까지의 경로가 그대로 스택에 보존**된다.\n  ② 막혀서 되돌아갈 때 pop 만 하면 직전 칸으로 자동 복귀 — 부모 포인터를\n     별도 관리할 필요가 없다.\n  ③ 스택 top 의 \"다음 시도 방향(ND)\" 정보를 저장해 두면, 같은 분기점에서\n     이미 시도한 방향을 다시 시도하지 않고 다음 방향으로 자연스럽게 진행.\n\n이러한 LIFO 성질이 DFS 기반 미로 탐색의 경로 보존·복귀를 가장 단순한\n1 회 자료구조 호출로 처리할 수 있게 한다.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -1674,7 +1674,7 @@ window.__EXAM__ = {
               "answer": "탐색 순서 : L → B → R → T (입구는 R 부터). 좌표 = (행, 열).\n주어진 미로(7×6) 에서 E(3,0) → X(1,5) 경로 탐색.\n\n표 첫 8 칸까지가 주어진 부분. (5,4) → T → (4,4) → T → (3,4) 부터 이어 진행.\n\n| 단계 | 현재위치 | 이동방향 | 스택 top    | 다음위치 |\n|  9   | (3,4)    |   T      | (3,4, ^)    | (2,4)    |\n|  10  | (2,4)    |   L      | (2,4, B)    | (2,3)    |   ← (2,4) 위·우 모두 벽\n|  11  | (2,3)    |   L      | (2,3, B)    | (2,2)    |\n|  12  | (2,2)    |   L      | (2,2, B)    | (2,1)    |\n|  13  | (2,1)    |   T      | (2,1, ^)    | (1,1)    |   ← (2,1) 좌·하·우 모두 막힘/방문\n|  14  | (1,1)    |   R      | (1,1, T)    | (1,2)    | ※ (1,2) 가 벽이면 pop 후 (1,3) 시도로 우회\n|  …   |          |          |             |          |\n|  +n  | (1,3)    |   R      | (1,3, T)    | (1,4)    |\n|  +n+1| (1,4)    |   R      | (1,4, T)    | (1,5)    |\n|  종료| (1,5)=X  |   —      | —           |  출구 도달|\n\n(주: 미로의 정확한 벽 배치에 따라 (2,4) 가 벽이거나 (1,2) 가 벽인 등의\n세부 차이로 중간 백트래킹이 1~2회 추가될 수 있다. 위 표는 가장 합리적인\n경로 가정. 핵심은 ND 가 다음 시도 방향을 가리키며 막히면 pop 으로 백트랙.)\n\n**최종 경로 (스택에 남은 순서)** :\n  (3,0) → (3,1) → (4,1) → (5,1) → (5,2) → (5,3) → (5,4) → (4,4) → (3,4)\n  → (2,4) → (2,3) → (2,2) → (2,1) → (1,1) → (1,2 또는 우회) → (1,3) → (1,4) → (1,5)\n\n※ Claude 생성 답안 — 검토 필요 (정확한 표는 미로의 정확한 벽 배치를 따른다)",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -1684,7 +1684,7 @@ window.__EXAM__ = {
               "answer": "[최적 경로]\n출발 E(3,0) 에서 출구 X(1,5) 까지의 **최단 경로** (BFS 로 구함):\n  (3,0) → (3,1) → (2,1) → (2,2) → (2,3) → (1,3) → (1,4) → (1,5) = X\n  ⇒ **7 step 의 경로**.\n\n[(2) 의 경로가 비효율적인 원인]\n주어진 탐색은 **L → B → R → T 의 고정된 우선순위로 한 분기를 끝까지\n따라가는 DFS(깊이 우선 탐색)** 이다. (3,0) 에서 R 로 진입한 뒤 즉시 하향\n(B → B) 으로 가버려, 출구(1,5) 와는 정반대 방향(5,1)까지 깊게 내려갔다가\n다시 우회한다.\n  - 출구 방향(상·우)을 우선시하지 않아 **U-turn 경로**가 발생.\n  - DFS 의 본질상 **최단경로를 보장하지 않으며**, 휴리스틱 정보가 없으면\n    무작정 한쪽 끝까지 가버린다.\n  - 백트랙 과정에서 push/pop 비용도 누적.\n\n[개선 방안]\n1. **너비 우선 탐색(BFS)** 사용 — 큐 기반으로 입구로부터 거리가 짧은 칸\n   부터 펼쳐 가므로 **모든 칸의 비용이 같을 때 최단경로 보장**.\n2. **A* 알고리즘** — 휴리스틱(예: 맨해튼 거리 |row−1| + |col−5|) 을 추가해\n   목표 쪽 진행을 우선시. DFS·BFS 모두에 비해 평균 탐색 노드 수가 감소.\n3. 탐색 순서를 **고정 L,B,R,T 가 아니라 목표와의 방향으로 동적 정렬** —\n   현재 위치에서 X 쪽으로 가까워지는 방향 우선 시도.\n4. 다이크스트라/양방향 탐색 등 더 정교한 그래프 알고리즘 적용 (가중치\n   있는 미로일 때).\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             }
           ]
@@ -1913,7 +1913,7 @@ window.__EXAM__ = {
               "answer": "**증명 : T = M + 1**\n\n표기:  N = 전체 노드 수,\n       T = 차수 0 (단말) 노드 수,\n       S = 차수 1 노드 수,\n       M = 차수 2 노드 수.\n\n[관계식 1 — 노드 수의 분할]\n모든 노드는 차수 0, 1, 2 중 하나이므로\n       N = T + S + M                              … (1)\n\n[관계식 2 — 간선 수]\n일반 트리에서 간선 수 E = N − 1 (루트를 제외한 모든 노드가 부모로부터 들어오는\n간선 하나씩을 가짐).\n또 한편, 부모 입장에서 각 노드는 자기 차수만큼의 간선을 자식 방향으로\n내보낸다. 따라서\n       E = 0·T + 1·S + 2·M = S + 2M               … (2)\n\n(1) 과 (2) 를 결합:\n       N − 1 = E = S + 2M\n       T + S + M − 1 = S + 2M               (← (1) 을 N 에 대입)\n       T − 1 = M\n       ∴ **T = M + 1** ∎\n\n[직관적 해석]\n차수 2 인 노드를 새로 하나 추가할 때마다 단말이 하나 늘어난다 (자식 둘 중\n하나는 새 단말). 차수 1 노드는 단말·차수2 수에 영향 없음. 따라서 단말이\n정확히 차수 2 노드 수보다 1 만큼 많다.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             },
             {
@@ -1923,7 +1923,7 @@ window.__EXAM__ = {
               "answer": "**N 개 노드의 이진트리에서 깊이 d (= 레벨 수, 루트의 레벨 = 1)** 에 대해\n다음을 보인다.\n\n────────────────────────────────────\n**1. 최대 깊이 = N**\n────────────────────────────────────\n가장 깊은 형태는 모든 노드가 한쪽 자식만 갖는 사선형(skewed) 트리.\n이때 노드가 일렬로 매달리므로 레벨 1, 2, …, N 에 각각 한 노드씩,\n**깊이 = N** 이 가능하며 그 이상의 깊이는 노드 수 부족으로 불가능.\n\n────────────────────────────────────\n**2. 최소 깊이 = ⌊log₂ N⌋ + 1**\n────────────────────────────────────\n깊이가 d 인 이진트리에 들어갈 수 있는 최대 노드 수는 (각 레벨에 최대 2^{k-1}개)\n       1 + 2 + 4 + ⋯ + 2^{d-1} = 2^d − 1.\n즉 깊이 d 의 이진트리는 최대 2^d − 1 개의 노드를 보유.\n\n깊이 d 가 N 개 노드를 모두 담을 수 있으려면\n       2^d − 1 ≥ N    ⇔    2^d ≥ N + 1    ⇔    d ≥ log₂(N + 1).\n정수 d 의 최솟값은 ⌈log₂(N + 1)⌉.\n한편 2^{⌊log₂ N⌋} ≤ N < 2^{⌊log₂ N⌋+1}, 즉 ⌊log₂ N⌋ < log₂(N+1) ≤ ⌊log₂ N⌋+1.\n따라서 ⌈log₂(N + 1)⌉ = ⌊log₂ N⌋ + 1.\n\n가능 여부: 깊이 ⌊log₂ N⌋ + 1 의 완전(혹은 거의 완전) 이진트리를 항상\n구성할 수 있고, 이 트리는 노드 N 개를 모두 담는다. 즉 이 값이 **달성 가능\n한 최소**.\n\n∴ **최소 깊이 = ⌊log₂ N⌋ + 1** ∎\n\n[예시] N = 7: 최대 깊이 7 (한쪽으로 매달린 트리), 최소 깊이 ⌊log₂ 7⌋+1 = 3\n(완전이진트리). N = 1: 최대=최소=1.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             }
           ]
@@ -2058,7 +2058,7 @@ window.__EXAM__ = {
               "answer": "중위표기  a / ( b - c * d ) * e + f  →  후위표기 변환\n\n규칙:\n- 피연산자(a, b, c, …) : 즉시 출력\n- '(' : 스택에 push\n- ')' : '(' 만날 때까지 스택을 pop 해 출력 (괄호 자체는 출력 안 함)\n- 연산자 : 스택 top 의 연산자가 우선순위 ≥ 현재 연산자이면 pop 해 출력,\n            그 후 현재 연산자를 push. 우선순위 *,/ > +,-.\n\n| 다음 토큰 | 스택 [0]…[4]    | 출력(후위) |\n|  없음    | empty           | 없음       |\n|   a      | empty           | a          |\n|   /      | /               | a          |\n|   (      | /  (            | a          |\n|   b      | /  (            | a b        |\n|   -      | /  (  -         | a b        |\n|   c      | /  (  -         | a b c      |\n|   *      | /  (  -  *      | a b c      |\n|   d      | /  (  -  *      | a b c d    |\n|   )      | /               | a b c d * - |  ※ '*', '-' pop, '(' 제거\n|   *      | *               | a b c d * - / |  ※ 같은 우선순위 '/' pop\n|   e      | *               | a b c d * - / e |\n|   +      | +               | a b c d * - / e * | ※ '*' pop (우선순위↑)\n|   f      | +               | a b c d * - / e * f |\n|   eos    | empty           | **a b c d * - / e * f +** | ※ 스택 남은 '+' pop\n\n최종 후위표기 :  `a b c d * - / e * f +`\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2068,7 +2068,7 @@ window.__EXAM__ = {
               "answer": "후위표기  a b c + d * * e /  의 스택 평가\n\n규칙: 피연산자는 push. 연산자는 두 원소 pop (먼저 pop = 우항, 두 번째 pop = 좌항) →\n계산 결과를 push.\n\n| 다음 토큰 | 스택 [0]…[4]              | 비고 |\n|   없음    | empty                     |      |\n|    a      | a                         |      |\n|    b      | a  b                      |      |\n|    c      | a  b  c                   |      |\n|    +      | a  (b+c)                  | pop c, b → push (b+c)\n|    d      | a  (b+c)  d               |\n|    *      | a  ((b+c)*d)              | pop d, (b+c) → push ((b+c)*d)\n|    *      | (a*((b+c)*d))             | pop ((b+c)*d), a → push\n|    e      | (a*((b+c)*d))  e          |\n|    /      | ((a*((b+c)*d))/e)         | pop e, (a*((b+c)*d)) → push\n|   eos     | empty                     | 스택 top 출력 = (a × ((b+c)×d)) / e\n\n최종 계산 결과 식 :  **( a × (b + c) × d ) / e**\n\n(변수 값이 주어지지 않았으므로 기호 식으로 표시. 토큰별 스택 상태가\n표 한 줄씩 채워지는 것이 채점 포인트.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2078,7 +2078,7 @@ window.__EXAM__ = {
               "answer": "**컴파일러가 중위표기 → 후위표기 변환 후 계산하는 이유**\n\n(1) 평가의 단순성·일관성\n중위표기는 연산자 우선순위와 결합 방향, 괄호의 영향이 복잡해, 식 평가에\n재귀적·문맥적 탐색이 필요하다. 후위표기는 **연산자의 등장 위치 자체가\n계산 순서**이므로, 토큰을 왼쪽에서 오른쪽으로 한 번만 스캔하며 스택\n하나만으로 평가가 끝난다 — **단일 패스 + 단일 스택**.\n\n(2) 괄호·우선순위 정보의 내재화\n후위표기는 변환 단계에서 우선순위와 괄호의 영향이 이미 반영되어 있어,\n평가 시에는 **별도의 우선순위 비교나 괄호 처리가 필요 없다**. 따라서\n파서·평가기 코드가 매우 단순하고 빠르다.\n\n(3) 코드 생성과의 직접 매핑\n후위표기의 각 연산자는 스택 머신 명령(PUSH 피연산자, OP 연산)과 거의 1:1\n대응된다. 그래서 후위표기는 **목적 코드(어셈블리, JVM 바이트코드 등)\n생성의 자연스러운 중간 표현**이 되어, 컴파일러 백엔드 구현이 쉬워진다.\n\n(4) 효율성\n스택 평가는 시간 O(n), 공간 O(d) (d = 식의 깊이). 비교 기반 중위표기\n평가의 오버헤드가 사라져 반복 평가 시 빠르다.\n\n요컨대, 후위표기 변환은 **수식 평가를 알고리즘적으로 단순화·고속화하고\n코드 생성에 자연스러운 형태**로 만들기 위함이다.\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             }
           ]
@@ -2351,7 +2351,7 @@ window.__EXAM__ = {
               "answer": "크기 2 스택 + 입력 A, B, C, D 순서 + pop 4 회 (모든 알파벳 출력).\n\"스택 내 동시 적재 ≤ 2\" 제약 하에서 가능한 출력 순열 탐색.\n\n핵심 관찰\n- 입력 순서 A→B→C→D 는 고정. push 는 이 순서로만 발생.\n- 어떤 시점에서든 스택 크기 ≤ 2.\n- C 또는 D 가 가장 먼저 출력될 수는 없다. (C 가 첫 pop 이려면 A, B 두 개를\n  먼저 push 해야 하므로 이미 스택이 가득 차 C 를 push 불가능. D 도 동일.)\n\n→ 첫 출력 문자는 A 또는 B 만 가능. 모든 경우를 나열하면:\n\nA 부터 시작 (4가지):\n  · A push, A pop;  B push, B pop;  C push, C pop;  D push, D pop      → **ABCD**\n  · A push, A pop;  B push, B pop;  C push, D push, D pop, C pop       → **ABDC**\n  · A push, A pop;  B push, C push, C pop, B pop;  D push, D pop       → **ACBD**\n  · A push, A pop;  B push, C push, C pop;  D push, D pop, B pop       → **ACDB**\n\nB 부터 시작 (4가지):\n  · A push, B push, B pop, A pop;  C push, C pop;  D push, D pop       → **BACD**\n  · A push, B push, B pop, A pop;  C push, D push, D pop, C pop        → **BADC**\n  · A push, B push, B pop;  C push, C pop, A pop;  D push, D pop       → **BCAD**\n  · A push, B push, B pop;  C push, C pop;  D push, D pop, A pop       → **BCDA**\n\n→ **가능한 출력은 정확히 8 가지: ABCD, ABDC, ACBD, ACDB, BACD, BADC, BCAD, BCDA.**\n\n(참고: 크기 제한이 없을 때의 catalan 수 C₄ = 14 가지에서, 크기 2 제약으로\n\"AB 가 모두 스택에 있는 상태에서 C 가 먼저 나오는 6 가지\"가 배제되어 8 가지로 줄어든다.)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2597,7 +2597,7 @@ window.__EXAM__ = {
               "answer": "1. 스택을 이용하는 탐색 — 깊이 우선 탐색(DFS)\n스택은 LIFO(Last-In, First-Out) 구조로, 가장 최근에 방문한 정점부터 다시\n끄집어내 탐색을 이어 간다. 한 분기를 끝까지 깊게 들어간 후 막히면 백트랙\n하여 다른 분기를 시도한다. 미로의 한 경로를 끝까지 따라가 보고 막히면\n되돌아오는 방식이며, 메모리는 경로의 깊이에 비례(O(depth)).\n특징: 한 해(solution path)만 빠르게 찾기 좋음. 재귀로도 구현 가능.\n\n2. 큐를 이용하는 탐색 — 너비 우선 탐색(BFS)\n큐는 FIFO(First-In, First-Out) 구조로, 먼저 발견한 정점부터 차례로 꺼내\n탐색한다. 시작점에서 가까운 정점부터 동심원처럼 펼쳐 가며 방문하므로,\n미로에서 입구로부터 거리가 같은 칸들을 같은 단계에 모두 살펴본다.\n특징: 가중치가 모두 같을 때 최단경로 보장. 메모리는 한 단계의 후보 개수에\n비례(O(width)).\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2607,7 +2607,7 @@ window.__EXAM__ = {
               "answer": "1. <top의 변화과정> 빈칸\n탐색 진행 (우선순위 상→하→좌→우, 방문지 재방문 금지):\npush (1,0)→(1,1)→(0,1)→pop→(2,1)→(3,1)→pop→(2,2)→(2,3)→(1,3)→(0,3)→pop→pop→(3,3)→(3,4)\n\n표 채움:\n  ① = (2,1)    (단계 6: (3,1) 막혀 pop 후 top)\n  ② = (2,1)    (단계 8: (2,2) 직전 top — (2,1)에서 우로 push (2,2))\n  ③ = (2,3)    (단계 10: (2,2) → 우로 push (2,3))\n  ④ = (0,3)    (단계 12: (1,3) → 상으로 push (0,3))\n  ⑤ = (2,3)    (단계 14: (0,3)·(1,3) 막혀 두 번 pop 후 top → (2,3) → 하로 push (3,3))\n\n2. <소스코드> 빈칸\n재귀 DFS 패턴:\n  ⑥  push(pos);            // 현 위치를 스택에 넣고\n  ⑦  find_path(maps, visited, next);   // 인접 이동 가능 칸으로 재귀 호출\n  ⑧  pop();                // 모든 이동 시도 후 백트랙 (현 위치 제거)\n\n※ Claude 생성 답안 — 검토 필요 (top 변화 표는 출제자 의도에 따라 해석이 갈릴 수 있음)",
               "hints": [],
               "category": null,
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2738,7 +2738,7 @@ window.__EXAM__ = {
               "answer": "이진탐색트리 remove(parent, node) — 빈칸 ①∼④\n\n[case 1] 단말노드 삭제 (parent ≠ NULL)\n  ① :  if LEFT(parent) = node then LEFT(parent) ← NULL\n                              else RIGHT(parent) ← NULL;\n       DELETE();\n       // 부모의 어느 쪽 자식인지 확인 후 그 포인터를 NULL 로\n\n[case 2] 자식이 하나만 있는 경우 (node ≠ root)\n  ② :  if LEFT(parent) = node then LEFT(parent) ← child\n                              else RIGHT(parent) ← child;\n       DELETE();\n       // 부모를 child 와 직접 연결해 node 를 건너뛴다\n\n[case 3] 자식이 둘 다 있는 경우 — 후계자(successor) 또는 선행자(predecessor)로 대체\n첫번째 방안: 오른쪽 부분트리의 최솟값(inorder successor) 사용\n  ③ :  while LEFT(succ) ≠ NULL do\n           succp ← succ;\n           succ  ← LEFT(succ);\n       KEY(node) ← KEY(succ);\n       // succ 가 가리키는 노드의 키를 node 로 복사한 뒤\n       // succp 의 자식 포인터에서 succ 를 떼어 낸다\n\n두번째 방안: 왼쪽 부분트리의 최댓값(inorder predecessor) 사용\n  ④ :  while RIGHT(succ) ≠ NULL do\n           succp ← succ;\n           succ  ← RIGHT(succ);\n       KEY(node) ← KEY(succ);\n       // 동일하게 키만 복사하고 succ 노드를 실제로 떼어내 DELETE\n\n(시간복잡도: 균형 O(log n), 최악 O(n). case3 은 in-order 직후/직전 노드를 찾는 표준 기법)\n\n※ Claude 생성 답안 — 검토 필요",
               "hints": [],
               "category": null,
-              "chapter": "ch12",
+              "chapter": "ch_extra_binary_tree",
               "answered": true
             }
           ]
@@ -2894,7 +2894,7 @@ window.__EXAM__ = {
                 "cases": "수식 컴파일, 계산기 구현, 표현식 최적화.",
                 "resolution": "토큰별 입력/스택/출력 표를 만들어 풀이 흐름을 시각적으로 검증한다."
               },
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             },
             {
@@ -2921,7 +2921,7 @@ window.__EXAM__ = {
                 "cases": "RPN 계산기(HP), JVM 바이트코드 평가.",
                 "resolution": "변수값이 미지정이므로 부분식을 기호로 표현하며 단계별 스택 상태를 기록."
               },
-              "chapter": "ch2",
+              "chapter": "ch_extra_stack",
               "answered": true
             }
           ]
@@ -3114,7 +3114,7 @@ window.__EXAM__ = {
     }
   ],
   "byChapter": {
-    "ch2": [
+    "ch_extra_stack": [
       {
         "exam": "45회",
         "year": 2008,
@@ -3156,86 +3156,6 @@ window.__EXAM__ = {
         "answered": true
       },
       {
-        "exam": "46회",
-        "year": 2009,
-        "problemNo": 3,
-        "sqNo": 1,
-        "snippet": "큐 Q의 후단(rear) 위치에 원소 e를 삽입하는 enqueue(Q, e) 함수를 위 의세 연산함수를 활용하여 의사코드(pseudo code)",
-        "answered": true
-      },
-      {
-        "exam": "46회",
-        "year": 2009,
-        "problemNo": 4,
-        "sqNo": 1,
-        "snippet": "사칙연산의 일반적인 수행순서가 표현되도록 위의 산술식을 이진트리 (binary tree)로 나타내시오.",
-        "answered": true
-      },
-      {
-        "exam": "46회",
-        "year": 2009,
-        "problemNo": 4,
-        "sqNo": 2,
-        "snippet": "스레드(thread) 이진트리를 구성하는 규칙을 기술하고, 위 산술식이 표현된 스 레드 이진트리를 그림으로 나타내시오. (단, 자료구조는 다음과",
-        "answered": true
-      },
-      {
-        "exam": "46회",
-        "year": 2009,
-        "problemNo": 4,
-        "sqNo": 3,
-        "snippet": "다음은 스레드 이진트리를 중위순회(inorder traversal)하는 알고리증이다. (2) 에서 주어진 자료구조를 사용하여, 아래 알고리즘에서",
-        "answered": true
-      },
-      {
-        "exam": "47회",
-        "year": 2010,
-        "problemNo": 1,
-        "sqNo": 1,
-        "snippet": "위 그림이 나타내는 원형 큐에서의 F와 R의 값을 쓰시오.",
-        "answered": true
-      },
-      {
-        "exam": "47회",
-        "year": 2010,
-        "problemNo": 1,
-        "sqNo": 2,
-        "snippet": "문항 (1)의 원형 큐 상태에서 2개의 원소를 연속으로 삭제한 후의 F와 R의 값을 쓰시오.",
-        "answered": true
-      },
-      {
-        "exam": "47회",
-        "year": 2010,
-        "problemNo": 1,
-        "sqNo": 3,
-        "snippet": "문항 (1)의 원형 큐 상태에서 7, 25, 8, 16을 연속으로 삽입한 후의 원형 큐 의 최종 상태를 그리시오. 그리고 이 때 발생할 수 있는",
-        "answered": true
-      },
-      {
-        "exam": "47회",
-        "year": 2010,
-        "problemNo": 4,
-        "sqNo": 2,
-        "snippet": "n개의 노드를 갖는 이진트리의 최소 높이와 최대 높이는 각각 얼마인가? (단, 루트의 레벨은 1로 가정함) 데이터구조론 2-2-[2교시]",
-        "answered": true
-      },
-      {
-        "exam": "48회",
-        "year": 2011,
-        "problemNo": 2,
-        "sqNo": 1,
-        "snippet": "명제식을 이진트리(binary tree)로 나타내고자 한다. 이진트리의 노드 구조가 다음과 같을 때 이를 C 언어로 표현하시오. (단, node",
-        "answered": true
-      },
-      {
-        "exam": "48회",
-        "year": 2011,
-        "problemNo": 2,
-        "sqNo": 2,
-        "snippet": "위의 식을 이진트리로 나타내시오. 이진 트리를 중위(inorder) 순회하였을 때, 위의 식과 같은 결과가 나오도록 하여야 한다. (단, 괄호는",
-        "answered": true
-      },
-      {
         "exam": "50회",
         "year": 2013,
         "problemNo": 3,
@@ -3268,62 +3188,6 @@ window.__EXAM__ = {
         "answered": true
       },
       {
-        "exam": "53회",
-        "year": 2016,
-        "problemNo": 2,
-        "sqNo": 1,
-        "snippet": "주어진 동일한 문제를 해결하기 위해서는 여러 가지 알고리즘이 존재하고, 평균수행시간이나 이의 상수, 그리고 데이터의 수에 따라 어느 알고리즘이 ",
-        "answered": true
-      },
-      {
-        "exam": "53회",
-        "year": 2016,
-        "problemNo": 2,
-        "sqNo": 2,
-        "snippet": "성능이 서로 다른 2 대의 컴퓨터와 서로 다른 알고리즘을 사용할 경우, 컴퓨터의 선택보다 알고리즘의 선택이 더 중요할 경우가 있다. 알고리즘 선",
-        "answered": true
-      },
-      {
-        "exam": "53회",
-        "year": 2016,
-        "problemNo": 3,
-        "sqNo": 2,
-        "snippet": "삽입 정렬 프로그램(오름차순 정렬) 을 C 언어로 완성하시오.   1) void insertionSort(int data[], int n) { ",
-        "answered": true
-      },
-      {
-        "exam": "53회",
-        "year": 2016,
-        "problemNo": 3,
-        "sqNo": 3,
-        "snippet": "삽입 정렬의 성능 향상을 위해 삽입 위치를 빠르게 검색하기 위한 방법으로 이진 탐색을 적용하고자 한다. (단, 개선된 삽입 정렬 또한 안정적이어",
-        "answered": true
-      },
-      {
-        "exam": "54회",
-        "year": 2017,
-        "problemNo": 2,
-        "sqNo": 1,
-        "snippet": "Q_SIZE - 1 개의 공간만을 사용하는 원형큐에서 empty 조건과 full 조건을 정의하고, 큐에 저장된 모든 원소를 삭제 없이 앞에서부터",
-        "answered": true
-      },
-      {
-        "exam": "54회",
-        "year": 2017,
-        "problemNo": 2,
-        "sqNo": 2,
-        "snippet": "원형큐의 전체 공간(Q_SIZE)을 모두 사용하기 위한 방법을 제시하고, 이 경우에 원소를 삽입하는 함수와 삭제하는 함수를 각각 작성하시오. a",
-        "answered": true
-      },
-      {
-        "exam": "54회",
-        "year": 2017,
-        "problemNo": 2,
-        "sqNo": 3,
-        "snippet": "일반적인 원형큐의 front 변수는 첫번째 원소의 바로 전 위치를 가리킨다. front 가 첫번째 원소를 항상 가리키게 할 경우 발생할 수 있는",
-        "answered": true
-      },
-      {
         "exam": "55회",
         "year": 2018,
         "problemNo": 2,
@@ -3345,22 +3209,6 @@ window.__EXAM__ = {
         "problemNo": 2,
         "sqNo": 3,
         "snippet": "주어진 미로에서 최적의 경로를 제시하고, 문제 (2)에서 찾은 경로가 최적의 경로에 비해 비효율적인 원인을 분석하고 이를 개선할 수 있는 방안을",
-        "answered": true
-      },
-      {
-        "exam": "56회",
-        "year": 2019,
-        "problemNo": 4,
-        "sqNo": 1,
-        "snippet": "N 개의 노드를 가지고 있는 이진트리에서 차수(degree) 가 0 인 단말노드의 개수를 T 라고 하고, 차수가 2 인 노드의 개수를 M 이라고",
-        "answered": true
-      },
-      {
-        "exam": "56회",
-        "year": 2019,
-        "problemNo": 4,
-        "sqNo": 2,
-        "snippet": "N 개의 노드를 가지고 있는 이진트리의 가능한 최대 깊이는 N 이고, 최소 깊이는 ⌊log₂ N⌋ + 1 임을 설명하시오.",
         "answered": true
       },
       {
@@ -3942,6 +3790,138 @@ window.__EXAM__ = {
         "answered": true
       }
     ],
+    "ch_extra_queue": [
+      {
+        "exam": "46회",
+        "year": 2009,
+        "problemNo": 3,
+        "sqNo": 1,
+        "snippet": "큐 Q의 후단(rear) 위치에 원소 e를 삽입하는 enqueue(Q, e) 함수를 위 의세 연산함수를 활용하여 의사코드(pseudo code)",
+        "answered": true
+      },
+      {
+        "exam": "47회",
+        "year": 2010,
+        "problemNo": 1,
+        "sqNo": 1,
+        "snippet": "위 그림이 나타내는 원형 큐에서의 F와 R의 값을 쓰시오.",
+        "answered": true
+      },
+      {
+        "exam": "47회",
+        "year": 2010,
+        "problemNo": 1,
+        "sqNo": 2,
+        "snippet": "문항 (1)의 원형 큐 상태에서 2개의 원소를 연속으로 삭제한 후의 F와 R의 값을 쓰시오.",
+        "answered": true
+      },
+      {
+        "exam": "47회",
+        "year": 2010,
+        "problemNo": 1,
+        "sqNo": 3,
+        "snippet": "문항 (1)의 원형 큐 상태에서 7, 25, 8, 16을 연속으로 삽입한 후의 원형 큐 의 최종 상태를 그리시오. 그리고 이 때 발생할 수 있는",
+        "answered": true
+      },
+      {
+        "exam": "54회",
+        "year": 2017,
+        "problemNo": 2,
+        "sqNo": 1,
+        "snippet": "Q_SIZE - 1 개의 공간만을 사용하는 원형큐에서 empty 조건과 full 조건을 정의하고, 큐에 저장된 모든 원소를 삭제 없이 앞에서부터",
+        "answered": true
+      },
+      {
+        "exam": "54회",
+        "year": 2017,
+        "problemNo": 2,
+        "sqNo": 2,
+        "snippet": "원형큐의 전체 공간(Q_SIZE)을 모두 사용하기 위한 방법을 제시하고, 이 경우에 원소를 삽입하는 함수와 삭제하는 함수를 각각 작성하시오. a",
+        "answered": true
+      },
+      {
+        "exam": "54회",
+        "year": 2017,
+        "problemNo": 2,
+        "sqNo": 3,
+        "snippet": "일반적인 원형큐의 front 변수는 첫번째 원소의 바로 전 위치를 가리킨다. front 가 첫번째 원소를 항상 가리키게 할 경우 발생할 수 있는",
+        "answered": true
+      }
+    ],
+    "ch_extra_binary_tree": [
+      {
+        "exam": "46회",
+        "year": 2009,
+        "problemNo": 4,
+        "sqNo": 1,
+        "snippet": "사칙연산의 일반적인 수행순서가 표현되도록 위의 산술식을 이진트리 (binary tree)로 나타내시오.",
+        "answered": true
+      },
+      {
+        "exam": "46회",
+        "year": 2009,
+        "problemNo": 4,
+        "sqNo": 2,
+        "snippet": "스레드(thread) 이진트리를 구성하는 규칙을 기술하고, 위 산술식이 표현된 스 레드 이진트리를 그림으로 나타내시오. (단, 자료구조는 다음과",
+        "answered": true
+      },
+      {
+        "exam": "46회",
+        "year": 2009,
+        "problemNo": 4,
+        "sqNo": 3,
+        "snippet": "다음은 스레드 이진트리를 중위순회(inorder traversal)하는 알고리증이다. (2) 에서 주어진 자료구조를 사용하여, 아래 알고리즘에서",
+        "answered": true
+      },
+      {
+        "exam": "47회",
+        "year": 2010,
+        "problemNo": 4,
+        "sqNo": 2,
+        "snippet": "n개의 노드를 갖는 이진트리의 최소 높이와 최대 높이는 각각 얼마인가? (단, 루트의 레벨은 1로 가정함) 데이터구조론 2-2-[2교시]",
+        "answered": true
+      },
+      {
+        "exam": "48회",
+        "year": 2011,
+        "problemNo": 2,
+        "sqNo": 1,
+        "snippet": "명제식을 이진트리(binary tree)로 나타내고자 한다. 이진트리의 노드 구조가 다음과 같을 때 이를 C 언어로 표현하시오. (단, node",
+        "answered": true
+      },
+      {
+        "exam": "48회",
+        "year": 2011,
+        "problemNo": 2,
+        "sqNo": 2,
+        "snippet": "위의 식을 이진트리로 나타내시오. 이진 트리를 중위(inorder) 순회하였을 때, 위의 식과 같은 결과가 나오도록 하여야 한다. (단, 괄호는",
+        "answered": true
+      },
+      {
+        "exam": "56회",
+        "year": 2019,
+        "problemNo": 4,
+        "sqNo": 1,
+        "snippet": "N 개의 노드를 가지고 있는 이진트리에서 차수(degree) 가 0 인 단말노드의 개수를 T 라고 하고, 차수가 2 인 노드의 개수를 M 이라고",
+        "answered": true
+      },
+      {
+        "exam": "56회",
+        "year": 2019,
+        "problemNo": 4,
+        "sqNo": 2,
+        "snippet": "N 개의 노드를 가지고 있는 이진트리의 가능한 최대 깊이는 N 이고, 최소 깊이는 ⌊log₂ N⌋ + 1 임을 설명하시오.",
+        "answered": true
+      },
+      {
+        "exam": "61회",
+        "year": 2024,
+        "problemNo": 4,
+        "sqNo": 3,
+        "snippet": "삭제(remove) 의사코드의 빈칸 ①∼④를 완성하시오. remove(parent, node)   // case1: 삭제할 노드가 단말노드   ",
+        "answered": true
+      }
+    ],
     "ch25": [
       {
         "exam": "47회",
@@ -4241,14 +4221,6 @@ window.__EXAM__ = {
         "problemNo": 4,
         "sqNo": 2,
         "snippet": "삽입(insert) 의사코드의 빈칸 ①∼④를 완성하시오. insert(root, node)   if KEY(node) = KEY(root) th",
-        "answered": true
-      },
-      {
-        "exam": "61회",
-        "year": 2024,
-        "problemNo": 4,
-        "sqNo": 3,
-        "snippet": "삭제(remove) 의사코드의 빈칸 ①∼④를 완성하시오. remove(parent, node)   // case1: 삭제할 노드가 단말노드   ",
         "answered": true
       },
       {
@@ -4763,6 +4735,40 @@ window.__EXAM__ = {
         "problemNo": 3,
         "sqNo": 3,
         "snippet": "퀵정렬 알고리즘에서 표시한 ① 부분을 아래와 같이 수정했을 때, 물음 (1)에 주어진 배열 A에 대한 알고리즘의 실행 과정을 아래 표를 활용하여",
+        "answered": true
+      }
+    ],
+    "ch2": [
+      {
+        "exam": "53회",
+        "year": 2016,
+        "problemNo": 2,
+        "sqNo": 1,
+        "snippet": "주어진 동일한 문제를 해결하기 위해서는 여러 가지 알고리즘이 존재하고, 평균수행시간이나 이의 상수, 그리고 데이터의 수에 따라 어느 알고리즘이 ",
+        "answered": true
+      },
+      {
+        "exam": "53회",
+        "year": 2016,
+        "problemNo": 2,
+        "sqNo": 2,
+        "snippet": "성능이 서로 다른 2 대의 컴퓨터와 서로 다른 알고리즘을 사용할 경우, 컴퓨터의 선택보다 알고리즘의 선택이 더 중요할 경우가 있다. 알고리즘 선",
+        "answered": true
+      },
+      {
+        "exam": "53회",
+        "year": 2016,
+        "problemNo": 3,
+        "sqNo": 2,
+        "snippet": "삽입 정렬 프로그램(오름차순 정렬) 을 C 언어로 완성하시오.   1) void insertionSort(int data[], int n) { ",
+        "answered": true
+      },
+      {
+        "exam": "53회",
+        "year": 2016,
+        "problemNo": 3,
+        "sqNo": 3,
+        "snippet": "삽입 정렬의 성능 향상을 위해 삽입 위치를 빠르게 검색하기 위한 방법으로 이진 탐색을 적용하고자 한다. (단, 개선된 삽입 정렬 또한 안정적이어",
         "answered": true
       }
     ],

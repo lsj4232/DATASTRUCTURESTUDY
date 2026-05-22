@@ -82,8 +82,10 @@ def classify_chapter(passage: str, question: str) -> str:
         ("ch3", ["big-oh", "big oh", "빅오", "빅-오", "점근적", "점근 표기", "시간 복잡도", "시간복잡도", "growth of function", "big \"", "big o\"", "big Ω", "big Θ", "표기법에 대하여", "표기법에 대해"]),
         ("ch2", ["삽입 정렬", "삽입정렬", "insertion sort", "합병 정렬", "합병정렬", "merge sort", "이진 탐색", "이진탐색", "binary search"]),
         ("ch32", ["kmp", "knuth", "실패 함수", "실패함수", "패턴 매칭", "패턴매칭", "string matching"]),
-        # 스택/큐/연결리스트/트리 일반 → ch12 (BST가 가장 가까움) 또는 ch2
-        ("ch2", ["후위 표기식", "후위표기식", "중위 표기식", "중위표기식", "postfix", "infix", "스택", "큐 ", "원형 큐", "원형큐", "circular queue", "이진 트리", "이진트리", "스레드", "thread", "외부 정렬", "외부정렬", "external sort"]),
+        # CLRS 외 — 스택/큐/이진트리 일반 응용 (구체 카테고리 분리)
+        ("ch_extra_stack", ["후위 표기식", "후위표기식", "중위 표기식", "중위표기식", "postfix", "infix", "스택", "미로"]),
+        ("ch_extra_queue", ["원형 큐", "원형큐", "circular queue", "enqueue", "dequeue", "큐 "]),
+        ("ch_extra_binary_tree", ["이진 트리", "이진트리", "binary tree", "스레드", "threaded", "트리 순회", "전위 순회", "중위 순회", "후위 순회", "레벨 순회", "preorder", "inorder", "postorder", "level order"]),
     ]
 
     # 매칭되는 첫 룰의 챕터 반환
