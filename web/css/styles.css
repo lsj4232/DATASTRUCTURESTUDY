@@ -3532,11 +3532,136 @@ body.theme-light .prob-eyebrow { background: rgba(219, 39, 119, 0.08); }
 }
 
 /* ============================================================
-   변리사 기출 (Exam Browser) — exam-view.js 용 스타일
+   BLS 기출문제 (Exam Browser) — exam-view.js 용 스타일
    ============================================================ */
 .nav-group-exam .nav-group-title {
   color: var(--header-accent, #3d5a8a);
 }
+
+/* --- Overview 탭 토글 (★ 난이도 / 연도) --- */
+.ds-tabs {
+  display: inline-flex;
+  gap: 0;
+  margin: 14px 0 18px;
+  border: 1px solid var(--border, #e0d9d0);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface, #fff);
+}
+.ds-tabs button {
+  background: transparent;
+  color: var(--text, #1f2937);
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.92rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.ds-tabs button + button {
+  border-left: 1px solid var(--border, #e0d9d0);
+}
+.ds-tabs button.active {
+  background: var(--header-accent, #3d5a8a);
+  color: #fff;
+}
+.ds-tabs button:not(.active):hover {
+  background: var(--surface-hover, rgba(0,0,0,0.04));
+}
+
+/* --- 난이도 섹션 --- */
+.ds-diff-section {
+  margin: 18px 0 28px;
+}
+.ds-diff-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border, #e0d9d0);
+}
+.ds-diff-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.ds-diff-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ds-diff-count {
+  font-size: 0.85rem;
+}
+
+/* --- 소문제 카드 (난이도 탭) --- */
+.ds-subq-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+.ds-subq-card {
+  display: block;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e0d9d0);
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--text, #1f2937);
+  transition: border-color 0.12s, transform 0.08s;
+}
+.ds-subq-card:hover {
+  border-color: var(--header-accent, #3d5a8a);
+  transform: translateY(-1px);
+}
+.ds-subq-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.ds-subq-card-badge {
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+}
+.ds-subq-card-loc {
+  font-size: 0.85rem;
+  color: var(--text, #1f2937);
+  font-weight: 500;
+}
+.ds-subq-card-pts {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--muted, #6b7280);
+}
+.ds-subq-card-snip {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text, #1f2937);
+  margin-bottom: 4px;
+}
+.ds-subq-card-meta {
+  font-size: 0.75rem;
+  color: var(--muted, #6b7280);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.ds-subq-card-ch {
+  color: var(--header-accent, #3d5a8a);
+  font-weight: 500;
+}
+.ds-subq-card-reason {
+  font-style: italic;
+}
+
 .ds-exam-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -3750,10 +3875,12 @@ body.theme-light .prob-eyebrow { background: rgba(219, 39, 119, 0.08); }
 .ds-answer-card {
   background: var(--answer-bg, #f7fbf4);
   border-color: var(--answer-border, #b8d9b0);
+  color: #1f2937; /* 카드 배경이 항상 밝은 톤이므로 다크 테마에서도 어두운 텍스트 강제 */
 }
 .ds-answer-card.pending {
   background: #fdfaf2;
   border-color: #e9d99c;
+  color: #1f2937;
 }
 .ds-answer-body {
   font-size: 0.92rem;

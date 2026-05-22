@@ -1,5 +1,5 @@
 /* =========================================================
-   exam-view.js — 변리사 데이터구조론 기출 뷰어
+   exam-view.js — BLS 기출문제 뷰어
    - window.__EXAM__ 데이터를 사용 (exam-data.js 에서 주입)
    - 라우트:
        #ds           → 회차 목록 + 통계
@@ -12,6 +12,13 @@
   "use strict";
 
   const DATA = window.__EXAM__ || null;
+  const DIFF = window.__EXAM_DIFFICULTY__ || {
+    buckets: ["easy", "medium", "hard", "expert"],
+    labels: { easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert" },
+    colors: { easy: "#2f9e44", medium: "#1971c2", hard: "#e67700", expert: "#c92a2a" },
+    map: {},
+  };
+  const TAB_STORAGE_KEY = "clrs:bls:overviewTab";
 
   // 챕터 id → 라벨 (사이드바/링크 표기용)
   const CH_LABEL = {
@@ -87,11 +94,117 @@
     return html;
   }
 
-  // ---------- 회차 목록 페이지 (#ds) ----------
-  function renderOverview() {
-    if (!DATA) return "<p>변리사 기출 데이터가 로드되지 않았습니다.</p>";
-    const { stats, exams } = DATA;
+  // ---------- 헬퍼: 난이도 lookup / 짧은 발췌 ----------
+  function lookupDiff(examNum, problemNo, sqNo) {
+    const key = `${examNum}-${problemNo}-${sqNo}`;
+    return (DIFF.map && DIFF.map[key]) || null;
+  }
 
+  function subqSnippet(text, max) {
+    if (!text) return "";
+    const flat = String(text).replace(/\s+/g, " ").trim();
+    const limit = max || 60;
+    return flat.length > limit ? flat.slice(0, limit) + "…" : flat;
+  }
+
+  // 평탄화: DATA.exams → [{examNum, exam, year, problemNo, sqNo, points, question, chapter, answered, diff}]
+  function flattenSubqs() {
+    if (!DATA) return [];
+    const out = [];
+    DATA.exams.forEach((e) => {
+      e.problems.forEach((p) => {
+        p.subquestions.forEach((s) => {
+          out.push({
+            examNum: e.examNum,
+            exam: e.exam,
+            year: e.year,
+            problemNo: p.problemNo,
+            sqNo: s.no,
+            points: s.points,
+            question: s.question,
+            chapter: s.chapter,
+            answered: s.answered,
+            diff: lookupDiff(e.examNum, p.problemNo, s.no),
+          });
+        });
+      });
+    });
+    return out;
+  }
+
+  // 소문제 카드 HTML (난이도 탭에서 사용)
+  function subqCardHtml(item) {
+    const d = item.diff;
+    const bucket = d ? d.d : "unassigned";
+    const color = DIFF.colors[bucket] || "#868e96";
+    const label = d ? (DIFF.labels[d.d] || d.d) : "미분류";
+    const chLabel = CH_LABEL[item.chapter] || item.chapter;
+    return `
+      <a class="ds-subq-card" href="#ds-q-${item.examNum}-${item.problemNo}-${item.sqNo}"
+         data-bucket="${bucket}">
+        <div class="ds-subq-card-head">
+          <span class="ds-subq-card-badge" style="background:${color}">${esc(label)}</span>
+          <span class="ds-subq-card-loc">${esc(item.exam)} · 문제 ${item.problemNo}-(${item.sqNo})</span>
+          <span class="ds-subq-card-pts">${item.points}점</span>
+        </div>
+        <div class="ds-subq-card-snip">${esc(subqSnippet(item.question, 80))}</div>
+        <div class="ds-subq-card-meta">
+          <span class="ds-subq-card-ch">${esc(chLabel)}</span>
+          ${d && d.r ? `<span class="ds-subq-card-reason muted small">— ${esc(d.r)}</span>` : ""}
+        </div>
+      </a>`;
+  }
+
+  // ---------- Overview: 난이도 탭 ----------
+  function renderDiffTab() {
+    const items = flattenSubqs();
+    const groups = { easy: [], medium: [], hard: [], expert: [], unassigned: [] };
+    items.forEach((it) => {
+      const k = it.diff ? it.diff.d : "unassigned";
+      (groups[k] || groups.unassigned).push(it);
+    });
+
+    const sectionHtml = (bucket, label, color) => {
+      const list = groups[bucket] || [];
+      if (list.length === 0 && bucket !== "unassigned") {
+        return `
+          <section class="ds-diff-section" data-bucket="${bucket}">
+            <header class="ds-diff-head">
+              <span class="ds-diff-dot" style="background:${color}"></span>
+              <h2>${esc(label)}</h2>
+              <span class="ds-diff-count muted">0개</span>
+            </header>
+            <p class="muted small">아직 이 버킷으로 분류된 문제가 없습니다.</p>
+          </section>`;
+      }
+      const cards = list.map(subqCardHtml).join("");
+      return `
+        <section class="ds-diff-section" data-bucket="${bucket}">
+          <header class="ds-diff-head">
+            <span class="ds-diff-dot" style="background:${color}"></span>
+            <h2>${esc(label)}</h2>
+            <span class="ds-diff-count muted">${list.length}개</span>
+          </header>
+          <div class="ds-subq-card-grid">${cards}</div>
+        </section>`;
+    };
+
+    const unassignedCount = groups.unassigned.length;
+    const sections = [
+      sectionHtml("easy", DIFF.labels.easy, DIFF.colors.easy),
+      sectionHtml("medium", DIFF.labels.medium, DIFF.colors.medium),
+      sectionHtml("hard", DIFF.labels.hard, DIFF.colors.hard),
+      sectionHtml("expert", DIFF.labels.expert, DIFF.colors.expert),
+    ];
+    if (unassignedCount > 0) {
+      sections.push(sectionHtml("unassigned", "미분류 (난이도 평가 대기)", "#868e96"));
+    }
+    return sections.join("");
+  }
+
+  // ---------- Overview: 연도 탭 (기존 회차 카드) ----------
+  function renderYearTab() {
+    const { exams } = DATA;
     const cards = exams.map((e) => {
       const total = e.problems.reduce((a, p) => a + p.subquestions.length, 0);
       const ans = e.problems.reduce(
@@ -117,19 +230,68 @@
           </div>
         </a>`;
     }).join("");
+    return `<section class="ds-exam-grid">${cards}</section>`;
+  }
+
+  // ---------- 회차 목록 페이지 (#ds) ----------
+  function renderOverview() {
+    if (!DATA) return "<p>BLS 기출문제 데이터가 로드되지 않았습니다.</p>";
+    const { stats } = DATA;
+
+    let activeTab = "diff";
+    try {
+      const stored = localStorage.getItem(TAB_STORAGE_KEY);
+      if (stored === "diff" || stored === "year") activeTab = stored;
+    } catch (e) { /* localStorage 비활성: diff 유지 */ }
+
+    const diffBody = renderDiffTab();
+    const yearBody = renderYearTab();
+    const assignedCount = Object.keys(DIFF.map || {}).length;
 
     return `
       <div class="chapter-head">
-        <span class="eyebrow tier2">변리사 시험 · 데이터구조론</span>
-        <h1>기출 문제 (45~62회 · 2008~2025)</h1>
+        <span class="eyebrow tier2">BLS</span>
+        <h1>BLS 기출문제 (45~62회 · 2008~2025)</h1>
         <p class="lead muted">
           총 <strong>${stats.examCount}회차</strong> · <strong>${stats.totalSubquestions}개</strong> 소문제 ·
           답안 <strong>${stats.answered}개</strong> · 미완 <strong>${stats.missing}개</strong>.
-          본문 노란 하이라이트에 마우스를 올리면 출제 포인트가 표시됩니다.
+          난이도 분류 진행률 <strong>${assignedCount}/${stats.totalSubquestions}</strong>.
         </p>
       </div>
-      <section class="ds-exam-grid">${cards}</section>
+      <div class="ds-tabs" role="tablist">
+        <button type="button" data-tab="diff" class="${activeTab === "diff" ? "active" : ""}"
+                role="tab" aria-selected="${activeTab === "diff"}">★ 난이도</button>
+        <button type="button" data-tab="year" class="${activeTab === "year" ? "active" : ""}"
+                role="tab" aria-selected="${activeTab === "year"}">연도</button>
+      </div>
+      <div class="ds-tab-panel" data-panel="diff" ${activeTab === "diff" ? "" : "hidden"}>
+        ${diffBody}
+      </div>
+      <div class="ds-tab-panel" data-panel="year" ${activeTab === "year" ? "" : "hidden"}>
+        ${yearBody}
+      </div>
     `;
+  }
+
+  // ---------- 탭 토글 이벤트 바인딩 ----------
+  function bindOverview(root) {
+    if (!root) return;
+    const tabs = root.querySelectorAll(".ds-tabs button[data-tab]");
+    if (tabs.length === 0) return;
+    tabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.tab;
+        tabs.forEach((b) => {
+          const on = b.dataset.tab === target;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        root.querySelectorAll(".ds-tab-panel").forEach((p) => {
+          p.hidden = p.dataset.panel !== target;
+        });
+        try { localStorage.setItem(TAB_STORAGE_KEY, target); } catch (e) {}
+      });
+    });
   }
 
   // ---------- 단일 회차 페이지 (#ds-N) ----------
@@ -171,7 +333,7 @@
 
     return `
       <div class="chapter-head">
-        <span class="eyebrow tier2">변리사 기출 · ${esc(exam.exam)}</span>
+        <span class="eyebrow tier2">BLS 기출문제 · ${esc(exam.exam)}</span>
         <h1>${esc(exam.exam)} 데이터구조론 (${esc(exam.year)})</h1>
         <p class="lead muted">
           ${exam.problems.length}개 문제 ·
@@ -259,7 +421,7 @@
     `;
   }
 
-  // ---------- 챕터 내부에 "관련 변리사 기출" 섹션 주입 ----------
+  // ---------- 챕터 내부에 "관련 BLS 기출문제" 섹션 주입 ----------
   function injectRelatedRefs(rootEl, chapterId) {
     if (!DATA || !rootEl) return;
     const refs = (DATA.byChapter && DATA.byChapter[chapterId]) || [];
@@ -267,7 +429,7 @@
     const section = document.createElement("section");
     section.className = "ds-related";
     section.innerHTML = `
-      <h2>📚 변리사 기출 (이 챕터 관련) <span class="ds-related-count">${refs.length}</span></h2>
+      <h2>📚 BLS 기출문제 (이 챕터 관련) <span class="ds-related-count">${refs.length}</span></h2>
       <ul class="ds-related-list">
         ${refs.map((r) => `
           <li>
@@ -322,6 +484,7 @@
     renderSubq,
     injectRelatedRefs,
     bindHintTooltips,
+    bindOverview,
     CH_LABEL,
   };
 })();

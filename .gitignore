@@ -14,6 +14,9 @@ Thumbs.db
 .env.local
 *.key
 
+# Local Claude Code settings (personal permissions)
+.claude/settings.local.json
+
 # Playwright MCP artifacts
 .playwright-mcp/
 

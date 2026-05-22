@@ -34,6 +34,17 @@ def load_pymodule(path: Path, name: str):
     return mod
 
 
+def sanitize_text(s: str) -> str:
+    """문제 본문에 인용된 출처 footer를 BLS 표기로 통일."""
+    if not s:
+        return s
+    return re.sub(
+        r"(\d{4})년 변리사 \d차 - 데이터구조론 - (\d+) - (\d+) \[2교시\]",
+        r"\1년 BLS - \2-\3",
+        s,
+    )
+
+
 def classify_chapter(passage: str, question: str) -> str:
     """문제 본문 + 소문제 텍스트를 보고 CLRS 챕터 id 추론."""
     txt = (passage or "") + "\n" + (question or "")
@@ -123,7 +134,7 @@ def main():
         exam = p["exam"]                 # "62회"
         year = p["year"]
         prob_no = p["problemNo"]
-        passage = p.get("passage", "")
+        passage = sanitize_text(p.get("passage", ""))
         points = p.get("points", 0)
         subqs = p.get("subquestions", []) or []
         # 문제 전체 텍스트 (passage + 모든 소문제) 기반 1차 분류
@@ -131,7 +142,7 @@ def main():
         parent_chapter = classify_chapter(passage, full_q)
         for sq in subqs:
             sq_no = sq["no"]
-            question = sq.get("question", "")
+            question = sanitize_text(sq.get("question", ""))
             key_t = (exam, prob_no, sq_no)
             key_s = f"{exam}:{prob_no}:{sq_no}"
             answer = ANSWERS.get(key_t, "")

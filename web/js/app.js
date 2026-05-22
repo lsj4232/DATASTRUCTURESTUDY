@@ -184,7 +184,7 @@
       root.appendChild(wrap);
     });
 
-    // 변리사 기출 그룹 (Exam Browser) — 도구 위에 표시
+    // BLS 기출문제 그룹 (Exam Browser) — 도구 위에 표시
     if (window.__EXAM__) {
       const exams = window.__EXAM__.exams || [];
       const examWrap = document.createElement("div");
@@ -196,7 +196,7 @@
           <span class="check" aria-hidden="true">✓</span>
         </a>`).join("");
       examWrap.innerHTML = `
-        <h3 class="nav-group-title tier2"><span class="dot"></span>📚 변리사 기출 (데이터구조론)</h3>
+        <h3 class="nav-group-title tier2"><span class="dot"></span>📚 BLS 기출문제</h3>
         <a class="nav-link tool-link" href="#ds" data-chapter="ds">
           <span class="num">⌘</span>
           <span class="title">전체 회차 보기</span>
@@ -674,7 +674,7 @@
 
       content.appendChild(memoWrap);
 
-      // Related 변리사 기출 (이 챕터 매핑된 소문제 링크 카드)
+      // Related BLS 기출문제 (이 챕터 매핑된 소문제 링크 카드)
       if (window.ExamView) ExamView.injectRelatedRefs(content, id);
 
       // Mount AI ask widget BEFORE the chapter footer (Linear UX: progression at the end)
@@ -802,13 +802,13 @@
     }
   }
 
-  /* ---------- 변리사 기출 라우트 ---------- */
+  /* ---------- BLS 기출문제 라우트 ---------- */
   function renderExamRoute(hash) {
     const content = document.getElementById("content");
     const home = document.getElementById("empty-home");
     home.hidden = true;
     if (!window.ExamView) {
-      content.innerHTML = "<p>변리사 기출 뷰어 로드 실패</p>";
+      content.innerHTML = "<p>BLS 기출문제 뷰어 로드 실패</p>";
       return;
     }
     const html = ExamView.render(hash);
@@ -818,11 +818,14 @@
     }
     content.innerHTML = html;
     ExamView.bindHintTooltips(content);
+    if (hash === "ds" && typeof ExamView.bindOverview === "function") {
+      ExamView.bindOverview(content);
+    }
 
     // breadcrumb
     let crumb = [
       { label: "홈", href: "#" },
-      { label: "변리사 기출", href: "#ds" },
+      { label: "BLS 기출문제", href: "#ds" },
     ];
     const m1 = hash.match(/^ds-q-(\d+)-(\d+)-(\d+)$/);
     const m2 = hash.match(/^ds-(\d+)$/);
